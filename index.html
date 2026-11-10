@@ -534,9 +534,9 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
       <button id="menu-mode-snake" class="menu-btn hero" onclick="menuPane('home')">
         <span class="mi">🐍</span><span><div class="mt">Snake Game</div><div class="md">Dungeon of Snakes &amp; Ladders — solo, two players on one screen, or online with up to 5</div></span>
       </button>
-      <button id="menu-mode-party" class="menu-btn party" aria-disabled="true" onclick="menuParty()">
-        <span class="mi">👑</span><span><div class="mt">Party Game — Save the Princess<span class="menu-badge">Coming soon</span></div><div class="md">Win mini-game contests, sabotage your rivals and race to rescue the princess</div></span>
-      </button>
+      <a id="menu-mode-party" class="menu-btn party" href="party.html" style="text-decoration:none">
+        <span class="mi">👑</span><span><div class="mt">Party Game — Save the Princess</div><div class="md">Win mini-game contests, sabotage your rivals and race to rescue the princess · 2–4 players, bots welcome</div></span>
+      </a>
     </div>
     <p class="menu-tip">More game modes are on the way.</p>
   </div>
@@ -2275,7 +2275,6 @@ function menuOnline() {
 }
 
 // Placeholder for the planned party game; the card stays on screen so players can see it is coming
-function menuParty() { toast('👑 Party Game — Save the Princess is coming soon!'); }
 
 function menuHelp() { helpFromMenu = true; openModal('help-modal'); }
 function closeHelp() { closeModal('help-modal'); helpFromMenu = false; }

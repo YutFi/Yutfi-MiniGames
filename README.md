@@ -1,13 +1,13 @@
 # Yutfi MiniGames
 
-A small collection of browser mini-games by Yutfi. Single-file site (`index.html`), no build step.
+A small collection of browser mini-games by Yutfi. Two single-file pages (`index.html` hub + Snake Game, `party.html` Party Game), no build step.
 
 **Play:** https://yutfi.github.io/Yutfi-MiniGames/ (after GitHub Pages is enabled, see below)
 
 | Game | Status |
 |------|--------|
 | 🐍 **Snake Game** — *Dungeon of Snakes & Ladders*: a dungeon-themed Snakes & Ladders with cash, traps and class powers. Solo, 2 players on one screen, or online with up to 5. | Playable |
-| 👑 **Party Game — Save the Princess**: mini-game contests, sabotage and a race to the castle. | Coming soon |
+| 👑 **Party Game — Save the Princess** (`party.html`): a fantasy party game for 2–4 players (humans and/or bots) on one screen. Win mini-games to cross a branching map, sabotage rivals, beat bosses and clear the Dark Castle. | Playable (core game + 10 mini-games) |
 
 ## Welcome splash and music
 Opening the link shows a **Welcome to Yutfi MiniGames** splash. Tap (or press any key) to start. Browsers only allow sound after a tap, so the music begins from that tap rather than on page load.
@@ -22,7 +22,7 @@ The soundtrack is a slow, heroic D-minor adventure theme generated live with Ton
 ### Main menu
 After the splash you land on the **Yutfi MiniGames** screen with two game modes:
 - **🐍 Snake Game** — this game (Snakes & Ladders in the dungeon). Opens the menu below.
-- **👑 Party Game — Save the Princess** — *coming soon*; shown as a placeholder card for now.
+- **👑 Party Game — Save the Princess** — opens `party.html` (see below).
 
 Inside **Snake Game**:
 - **▶ Resume match** — appears when you reopen the menu (☰ **Menu**, top right) during a match
@@ -59,15 +59,26 @@ Limits worth knowing:
 - Classes: **Human** (extra income), **Wizard** (cheaper market, longer ladders), **Demon** (steals gold as it passes rivals), **Angel** (starts shielded, immune to freeze).
 - Every mine, snake bite, swap, power-up and penalty triggers a full-screen meme splash (toggle with **Memes On/Off**; tap or press Space to skip).
 
+## Party Game — Save the Princess
+Local 2–4 players (any mix of humans and bots, three bot difficulties). Pick a race (Human, Angel, Devil, Wizard — each has a one-time ability) and a mode (Classic, Chaos, Speed Rescue).
+
+- **Loop:** each round is a mini-game; finishing order moves you along the map and pays gold. Choose a route at the crossroads, play cards (Tornado, Curse, Swap, Bandit, Freeze, Reverse, Trap, Lucky, Shield, Double) on rivals, shop at the Magic River bazaar, survive world and personal events.
+- **Bosses:** Ice Titan, Ancient Dragon and Bandit Lord are co-op fights on the map; top damage dealer gets a bonus.
+- **Finale:** reach the Dark Castle and clear its 5 trials (3 in Speed Rescue). First to finish rescues the princess — the ending depends on who wins (Hero, Devil, Angel, Wizard, a secret-path ending, or the Dragon takes the kingdom if time runs out).
+- **Mini-games (10):** Archery Target Challenge, Fantasy Horse Race, Sword Fighting Arena, Penguin Platform Push, Arrow Reaction Challenge, Magical Chess (duel), Archer vs Obstacle Runner (duel), Dragon Egg Delivery, Magical Potion Mixing, Treasure Hunting Race — plus a Dragon boss arena.
+- **Controls:** four direction keys + one action key per player — P1 `A D W S` + `Space`, P2 arrows + `Enter`, P3 `J L I K` + `U`, P4 numpad `4 6 8 5` + `0`. On phones/tablets Player 1 gets an on-screen pad; chess is click/tap.
+- **Not built yet:** the other 20 mini-games, rivalries/alliances, team challenges, Team Rescue / Survival / Boss Rush modes, online multiplayer.
+
 ## Enable GitHub Pages
 Repository **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)`**, then save. The site appears at the URL above within a minute or two.
 
 ## Run locally
-Open `index.html` in a browser. It loads Tailwind, Tone.js, MQTT.js and Google Fonts from CDNs, so it needs an internet connection.
+Open `index.html` (or `party.html` directly) in a browser. They load Tailwind (Snake Game only), Tone.js, MQTT.js (Snake Game only) and Google Fonts from CDNs, so an internet connection is needed.
 
 ## Project layout
 ```
-index.html              the whole game (open it, or host it)
+index.html              hub + Snake Game (open it, or host it)
+party.html              Party Game — Save the Princess
 README.md
 docs/ARCHITECTURE.md    how replication and the online relay work
 tests/                  jsdom tests: multiplayer sync, main menu and chat  (cd tests && npm install && npm test)

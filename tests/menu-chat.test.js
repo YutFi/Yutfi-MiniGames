@@ -85,10 +85,8 @@ async function until(fn, ms = 3000) { for (let t = 0; t < ms / 10; t++) { if (fn
   check('champion screen is no longer forced open on load', !vis(A, 'class-modal'));
   check('Resume is hidden before any match is started', !vis(A, 'menu-resume'));
   check('menu counts as open for the game (Space cannot roll behind it)', ev(A, 'anyModalOpen()'));
-  click(A, '#menu-mode-party');
   const party = A.d.getElementById('menu-mode-party');
-  check('Party Game is a labelled Coming-soon placeholder that does not navigate', vis(A, 'menu-modes') && party.getAttribute('aria-disabled') === 'true' && party.textContent.includes('Coming soon'));
-  check('...and tapping it shows a coming-soon message', A.d.getElementById('toast-layer').textContent.includes('coming soon'));
+  check('Party Game card is a real link to party.html (no Coming-soon placeholder)', party.tagName === 'A' && party.getAttribute('href') === 'party.html' && !party.textContent.includes('Coming soon') && !party.hasAttribute('aria-disabled'));
   click(A, '#menu-mode-snake');
   check('Snake Game opens its menu with Solo / Online / How to Play', vis(A, 'menu-home') && !vis(A, 'menu-modes') && vis(A, 'menu-solo') && vis(A, 'menu-online'));
   A.w.dispatchEvent(new A.w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
