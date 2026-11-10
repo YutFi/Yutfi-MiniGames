@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dungeon of Snakes &amp; Ladders</title>
+<meta name="description" content="A dungeon-themed Snakes &amp; Ladders with classes, a black market, meme splash screens and online rooms for up to 5 players.">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#fbbf24;
+  --noise:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .16 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  user-select:none;color:#e7e3f1;min-height:100vh;overflow-x:hidden;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -10%, #3b2358 0%, transparent 60%),
+    radial-gradient(ellipse 70% 40% at 50% 115%, #3a2212 0%, transparent 60%),
+    #0a0710;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.7;
+  background-image:var(--noise),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 2px, transparent 2px 70px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.3) 0 2px, transparent 2px 130px);
+}
+.hidden{display:none !important}
+.page{position:relative;z-index:1}
+.font-display{font-family:'Cinzel',Georgia,serif;letter-spacing:.02em}
+
+/* Embers */
+#embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#embers span{position:absolute;bottom:-12px;border-radius:50%;background:#fb923c;box-shadow:0 0 8px 2px rgba(251,146,60,.7);opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}100%{transform:translate(var(--sway,0px),-105vh);opacity:0}}
+
+/* Panels & buttons */
+.panel{
+  background:linear-gradient(180deg,rgba(42,36,58,.93),rgba(22,19,31,.96));
+  border:1px solid #4a4260;border-radius:16px;
+  box-shadow:0 12px 30px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.07), inset 0 0 40px rgba(0,0,0,.35);
+}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;border-radius:12px;padding:9px 14px;font-size:13px;transition:transform .12s, filter .15s, box-shadow .15s;border:1px solid transparent;cursor:pointer}
+.btn:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.btn:active:not(:disabled){transform:translateY(1px) scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:linear-gradient(180deg,#8b5cf6,#5b21b6);border-color:#c4b5fd55;color:#fff;font-size:15px;padding:12px 16px;box-shadow:0 6px 18px rgba(124,58,237,.4), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-gold{background:linear-gradient(180deg,#f59e0b33,#b4530922);border-color:#f59e0b88;color:#fcd34d}
+.btn-ghost{background:rgba(255,255,255,.05);border-color:#ffffff22;color:#d6d0e6}
+.btn-danger{background:linear-gradient(180deg,#e11d48cc,#9f1239cc);color:#fff;border-color:#fb718555}
+.seg{display:flex;padding:3px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid #ffffff1a}
+.seg button{padding:6px 11px;border-radius:9px;font-size:12px;font-weight:700;color:#9a93b2;transition:all .15s}
+.seg button.on{background:linear-gradient(180deg,#8b5cf6,#5b21b6);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.logo{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(145deg,#4a4458,#1b1824);border:1px solid #6b6384;box-shadow:0 0 18px rgba(251,146,60,.35), inset 0 1px 0 rgba(255,255,255,.2)}
+
+/* Board frame & torches */
+.board-frame{
+  position:relative;width:100%;max-width:600px;padding:16px;border-radius:18px;
+  background:var(--noise), linear-gradient(145deg,#51495f,#2b2737 45%,#1a1723);
+  box-shadow:0 25px 60px rgba(0,0,0,.75), inset 0 2px 0 rgba(255,255,255,.14), inset 0 -3px 8px rgba(0,0,0,.6), 0 0 0 2px #0c0a12;
+}
+.board-inner{position:relative;width:100%;aspect-ratio:1/1;border-radius:6px;overflow:hidden;background:#0d0a14;box-shadow:inset 0 0 0 3px #0c0a12, 0 0 30px rgba(0,0,0,.85)}
+#board-grid,#board-svg,#trap-layer,#tokens-layer,#fx-layer,.board-light{position:absolute;inset:0;width:100%;height:100%}
+#board-grid{display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);z-index:1}
+#board-svg{z-index:3;pointer-events:none}
+#trap-layer{z-index:4;pointer-events:none}
+.board-light{z-index:5;pointer-events:none;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(251,146,60,.32), transparent 38%),
+    radial-gradient(circle at 100% 0%, rgba(251,146,60,.32), transparent 38%),
+    radial-gradient(circle at 0% 100%, rgba(251,146,60,.32), transparent 38%),
+    radial-gradient(circle at 100% 100%, rgba(251,146,60,.32), transparent 38%),
+    radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,.55) 100%);
+  animation:lightPulse 3.2s ease-in-out infinite alternate}
+@keyframes lightPulse{from{opacity:.78}to{opacity:1}}
+#tokens-layer{z-index:8;pointer-events:none}
+#fx-layer{z-index:9;pointer-events:none}
+.torch{position:absolute;width:18px;height:32px;z-index:6;pointer-events:none}
+.torch::before{content:'';position:absolute;bottom:0;left:6px;width:6px;height:15px;background:linear-gradient(#92400e,#431407);border-radius:2px;box-shadow:0 0 0 1px #00000088}
+.flame{position:absolute;left:1px;top:0;width:16px;height:24px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  background:radial-gradient(ellipse at 50% 75%,#fff7c2 0%,#fbbf24 30%,#f97316 60%,transparent 72%);
+  animation:flicker .18s infinite alternate;filter:blur(.4px);box-shadow:0 0 18px 6px rgba(249,115,22,.55)}
+@keyframes flicker{from{transform:scale(1,1) rotate(-3deg);opacity:.9}to{transform:scale(.9,1.12) rotate(3deg);opacity:1}}
+
+/* Stone tiles */
+.tile{position:relative;background-color:#2b2836;background-image:var(--noise);
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.08), inset -1px -1px 0 rgba(0,0,0,.65), inset 0 0 14px rgba(0,0,0,.4);
+  transition:box-shadow .25s, filter .25s;overflow:hidden}
+.tile::before{content:'';position:absolute;inset:3px;border-radius:3px;border:1px solid rgba(0,0,0,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);pointer-events:none}
+.tile-num{position:absolute;top:3px;left:5px;font-family:'Cinzel',serif;font-size:clamp(8px,1.7vw,11px);font-weight:800;color:#9189a8;text-shadow:0 1px 0 #000,0 0 4px rgba(0,0,0,.9);z-index:2}
+.tile-badge{position:absolute;bottom:2px;right:2px;font-size:clamp(7px,1.45vw,10px);font-weight:800;padding:1px 4px;border-radius:5px;background:rgba(8,6,12,.78);border:1px solid;display:flex;align-items:center;gap:2px;z-index:2;white-space:nowrap}
+.badge-ladder{color:#fcd34d;border-color:rgba(252,211,77,.55)}
+.badge-snake{color:#fda4af;border-color:rgba(253,164,175,.55)}
+.badge-start{color:#86efac;border-color:rgba(134,239,172,.55)}
+.badge-finish{color:#fde047;border-color:rgba(253,224,71,.8)}
+.tile-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,3.3vw,26px);animation:runePulse 2.2s ease-in-out infinite alternate;z-index:1}
+@keyframes runePulse{from{transform:scale(.9);opacity:.75}to{transform:scale(1.08);opacity:1}}
+.tile.rune-shield{background-image:radial-gradient(circle,rgba(34,211,238,.3),transparent 70%),var(--noise)}
+.tile.rune-boost{background-image:radial-gradient(circle,rgba(250,204,21,.28),transparent 70%),var(--noise)}
+.tile.rune-cash{background-image:radial-gradient(circle,rgba(251,191,36,.33),transparent 70%),var(--noise)}
+.tile.rune-freeze{background-image:radial-gradient(circle,rgba(147,197,253,.33),transparent 70%),var(--noise)}
+.tile.finish{background-image:radial-gradient(circle,rgba(251,191,36,.55),rgba(168,85,247,.2) 60%,transparent 80%),var(--noise);animation:glowGold 1.8s ease-in-out infinite alternate}
+@keyframes glowGold{from{box-shadow:inset 0 0 10px rgba(251,191,36,.4)}to{box-shadow:inset 0 0 26px rgba(251,191,36,.9)}}
+.tile.start{background-image:radial-gradient(circle,rgba(74,222,128,.22),transparent 70%),var(--noise)}
+.tile .crack{position:absolute;width:70%;height:70%;opacity:.5;pointer-events:none}
+.tile .decor{position:absolute;bottom:1px;left:3px;font-size:clamp(9px,2vw,14px);opacity:.2;pointer-events:none}
+.tile.occ1{box-shadow:inset 0 0 0 2px rgba(96,165,250,.95), inset 0 0 18px rgba(59,130,246,.55)}
+.tile.occ2{box-shadow:inset 0 0 0 2px rgba(248,113,113,.95), inset 0 0 18px rgba(239,68,68,.55)}
+.tile.occ1.occ2{box-shadow:inset 0 0 0 2px rgba(96,165,250,.95), inset 0 0 0 5px rgba(248,113,113,.9), inset 0 0 18px rgba(167,139,250,.5)}
+
+/* Snake animation */
+.snake-scales{animation:scales 6s linear infinite}
+@keyframes scales{to{stroke-dashoffset:-48}}
+
+/* Tokens */
+.game-token{position:absolute;width:10.5%;aspect-ratio:1/1;transform:translate(-50%,-82%);
+  transition:left var(--dur,.2s) ease-in-out, top var(--dur,.2s) ease-in-out;pointer-events:none}
+.game-token svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 3px rgba(0,0,0,.75))}
+.game-token.team1{--team:#3b82f6}
+.game-token.team2{--team:#ef4444}
+.game-token.active .bobber{animation:bob 1.3s ease-in-out infinite}
+.game-token.active::after{content:'';position:absolute;left:10%;right:10%;bottom:8%;height:12%;border-radius:50%;box-shadow:0 0 14px 5px var(--team);opacity:.8}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.game-token .aura{position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.5),transparent 68%);opacity:0;transition:opacity .3s}
+.game-token.shielded .aura{opacity:1;animation:auraPulse 1.5s ease-in-out infinite alternate}
+@keyframes auraPulse{from{transform:scale(.92)}to{transform:scale(1.1)}}
+.game-token .ice{position:absolute;inset:-4%;display:none;align-items:center;justify-content:center;font-size:clamp(14px,3vw,24px);border-radius:12px;background:rgba(125,211,252,.35);border:1px solid rgba(186,230,253,.8);backdrop-filter:blur(1px)}
+.game-token.frozen .ice{display:flex}
+.game-token.frozen svg{filter:grayscale(.4) brightness(1.15) drop-shadow(0 0 6px #7dd3fc)}
+
+/* FX */
+.float-text{position:absolute;white-space:nowrap;font-weight:800;font-size:clamp(11px,2.3vw,15px);text-shadow:0 2px 0 #000,0 0 8px currentColor;animation:floatUp 1.4s ease-out forwards}
+@keyframes floatUp{0%{transform:translate(-50%,-50%);opacity:0}15%{opacity:1}100%{transform:translate(-50%,-220%);opacity:0}}
+.burst{position:absolute;font-size:16px;animation:burstOut .9s ease-out forwards}
+@keyframes burstOut{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.4);opacity:0}}
+.mine{position:absolute;transform:translate(-50%,-50%);font-size:clamp(12px,2.8vw,22px);filter:drop-shadow(0 0 5px rgba(244,63,94,.8));animation:mineBlink 1.1s ease-in-out infinite alternate}
+@keyframes mineBlink{from{transform:translate(-50%,-50%) scale(.92)}to{transform:translate(-50%,-50%) scale(1.1)}}
+
+/* Dice */
+.dice-wrap{cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px}
+.dice-scene{perspective:700px;width:72px;height:72px}
+.cube{width:72px;height:72px;position:relative;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.2,.8,.2,1)}
+.face{position:absolute;width:72px;height:72px;border-radius:14px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:12px;
+  background:linear-gradient(145deg,#f5ecd6,#cdbf9c);border:2px solid #8a7a52;
+  box-shadow:inset 0 0 12px rgba(80,60,20,.35), 0 4px 10px rgba(0,0,0,.35);backface-visibility:hidden}
+.pip{width:12px;height:12px;border-radius:50%;place-self:center;background:radial-gradient(circle at 35% 35%,#4a4a4a,#0b0813);box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+.pip.red{background:radial-gradient(circle at 35% 35%,#f87171,#991b1b)}
+.f1{transform:rotateY(0deg) translateZ(36px)}
+.f6{transform:rotateY(180deg) translateZ(36px)}
+.f2{transform:rotateY(90deg) translateZ(36px)}
+.f5{transform:rotateY(-90deg) translateZ(36px)}
+.f3{transform:rotateX(90deg) translateZ(36px)}
+.f4{transform:rotateX(-90deg) translateZ(36px)}
+.dice-shadow{width:56px;height:10px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%)}
+
+/* Turn panel */
+.turn-glow{position:absolute;inset:0;pointer-events:none;transition:background .5s;background:radial-gradient(ellipse at 20% 0%,rgba(59,130,246,.18),transparent 60%)}
+.turn-glow.p2{background:radial-gradient(ellipse at 20% 0%,rgba(239,68,68,.2),transparent 60%)}
+.dot{width:12px;height:12px;border-radius:50%;background:#3b82f6;box-shadow:0 0 10px #3b82f6;animation:dotPulse 1.2s infinite}
+.dot.p2{background:#ef4444;box-shadow:0 0 10px #ef4444}
+@keyframes dotPulse{50%{transform:scale(1.35);opacity:.7}}
+.extra-badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:rgba(245,158,11,.25);color:#fcd34d;border:1px solid rgba(245,158,11,.6);animation:bounceSm .8s infinite alternate}
+@keyframes bounceSm{to{transform:translateY(-3px)}}
+
+/* Player cards */
+.player-card{display:flex;gap:10px;padding:12px;transition:opacity .3s, transform .3s, border-color .3s}
+.player-card.team1{border-left:4px solid #3b82f6}
+.player-card.team2{border-left:4px solid #ef4444}
+.player-card:not(.active){opacity:.62}
+.player-card.active{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.55), 0 0 22px rgba(251,191,36,.12)}
+.portrait{width:58px;height:58px;flex:none;border-radius:14px;background:radial-gradient(circle at 50% 35%,#3a3350,#14111d);border:1px solid #5b5275;padding:2px;box-shadow:inset 0 0 14px rgba(0,0,0,.6)}
+.portrait svg{width:100%;height:100%;display:block}
+.pname{font-size:13px;font-weight:800;color:#f1edfa}
+.class-badge{font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px;background:rgba(139,92,246,.25);color:#c4b5fd;border:1px solid rgba(139,92,246,.5)}
+.stats{display:flex;gap:10px;align-items:center;margin-top:3px;font-size:12px;font-weight:700}
+.stats .cash{color:#fbbf24}
+.stats .tilepos{color:#cbd5e1}
+.progress{height:5px;border-radius:99px;background:rgba(0,0,0,.45);margin:6px 0;overflow:hidden;border:1px solid #ffffff12}
+.progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#a78bfa)}
+.team2 .progress i{background:linear-gradient(90deg,#ef4444,#f59e0b)}
+.buffs{display:flex;flex-wrap:wrap;gap:4px;min-height:20px}
+.buff{font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;border:1px solid}
+.buff.cyan{background:rgba(6,182,212,.18);color:#67e8f9;border-color:rgba(6,182,212,.5)}
+.buff.green{background:rgba(16,185,129,.18);color:#6ee7b7;border-color:rgba(16,185,129,.5)}
+.buff.amber{background:rgba(245,158,11,.18);color:#fcd34d;border-color:rgba(245,158,11,.5)}
+.buff.blue{background:rgba(96,165,250,.18);color:#bfdbfe;border-color:rgba(96,165,250,.5)}
+.buff.none{border-color:transparent;color:#6b6384;font-style:italic;font-weight:600}
+.passive{font-size:10px;color:#8f88a6;margin-top:4px;line-height:1.35}
+
+/* Log */
+.log-entry{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:10px;background:rgba(0,0,0,.28);border:1px solid #ffffff10;animation:fadeIn .3s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.log-tag{font-size:9px;font-weight:800;padding:1px 6px;border-radius:6px;border:1px solid;flex:none}
+.log-tag.p1{background:rgba(59,130,246,.2);color:#93c5fd;border-color:rgba(59,130,246,.4)}
+.log-tag.p2{background:rgba(239,68,68,.2);color:#fca5a5;border-color:rgba(239,68,68,.4)}
+.custom-scroll::-webkit-scrollbar{width:6px}
+.custom-scroll::-webkit-scrollbar-track{background:rgba(0,0,0,.3);border-radius:4px}
+.custom-scroll::-webkit-scrollbar-thumb{background:rgba(120,110,150,.5);border-radius:4px}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;padding:10px 14px;font-size:11px;font-weight:600;color:#b4adc8;width:100%;max-width:600px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+
+/* Modals */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(5,3,10,.82);backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}
+.modal.show{opacity:1}
+.modal-card{width:100%;max-height:92vh;overflow-y:auto;transform:scale(.95);transition:transform .25s;padding:18px}
+.modal.show .modal-card{transform:scale(1)}
+.shop-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;
+  background:rgba(255,255,255,.04);border:1px solid #ffffff1a;transition:all .15s;cursor:pointer}
+.shop-item:hover{background:color-mix(in srgb,var(--accent) 22%,transparent);border-color:var(--accent);transform:translateX(2px)}
+.shop-item.disabled{opacity:.45;filter:grayscale(.5)}
+.shop-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;background:color-mix(in srgb,var(--accent) 25%,transparent);border:1px solid var(--accent)}
+.price{font-size:12px;font-weight:800;color:#fbbf24;padding:3px 9px;border-radius:9px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);flex:none}
+.price.poor{color:#fb7185;background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.35)}
+.class-card{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid #ffffff18;transition:all .15s;cursor:pointer}
+.class-card:hover{background:rgba(255,255,255,.08)}
+.class-card.selected.team1{border-color:#60a5fa;background:rgba(59,130,246,.2);box-shadow:0 0 14px rgba(59,130,246,.3)}
+.class-card.selected.team2{border-color:#f87171;background:rgba(239,68,68,.2);box-shadow:0 0 14px rgba(239,68,68,.3)}
+.class-portrait{width:54px;height:54px;flex:none;border-radius:12px;background:radial-gradient(circle at 50% 35%,#3a3350,#14111d);border:1px solid #5b5275;padding:2px}
+.class-portrait svg{width:100%;height:100%;display:block}
+.cn{font-size:12px;font-weight:800;color:#fff}
+.cn .ct{font-weight:600;color:#a39cba;margin-left:4px;font-size:10px}
+.cd{font-size:10.5px;color:#a39cba;line-height:1.35;margin-top:1px}
+.power-btn{padding:12px;border-radius:16px;text-align:left;background:rgba(255,255,255,.05);border:1px solid #ffffff1c;transition:all .15s;cursor:pointer}
+.power-btn:hover{transform:translateY(-2px);background:rgba(139,92,246,.22);border-color:#a78bfa}
+
+/* Toast */
+#toast-layer{position:fixed;left:0;right:0;bottom:22px;z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.toast{padding:9px 16px;border-radius:12px;font-size:13px;font-weight:700;background:rgba(20,16,30,.95);border:1px solid #6b6384;color:#f1edfa;box-shadow:0 8px 24px rgba(0,0,0,.6);animation:toastIn .25s ease-out;transition:opacity .35s, transform .35s}
+.toast.warn{border-color:#fb7185;color:#fecdd3}
+.toast.good{border-color:#34d399;color:#a7f3d0}
+.toast.out{opacity:0;transform:translateY(8px)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Up to five teams */
+.game-token.team3{--team:#22c55e}.game-token.team4{--team:#f59e0b}.game-token.team5{--team:#a855f7}
+.player-card.team3{border-left:4px solid #22c55e}.player-card.team4{border-left:4px solid #f59e0b}.player-card.team5{border-left:4px solid #a855f7}
+.team3 .progress i{background:linear-gradient(90deg,#22c55e,#a3e635)}
+.team4 .progress i{background:linear-gradient(90deg,#f59e0b,#fde047)}
+.team5 .progress i{background:linear-gradient(90deg,#a855f7,#f472b6)}
+.log-tag.p3{background:rgba(34,197,94,.2);color:#86efac;border-color:rgba(34,197,94,.4)}
+.log-tag.p4{background:rgba(245,158,11,.2);color:#fcd34d;border-color:rgba(245,158,11,.4)}
+.log-tag.p5{background:rgba(168,85,247,.2);color:#d8b4fe;border-color:rgba(168,85,247,.4)}
+.dot.p3{background:#22c55e;box-shadow:0 0 10px #22c55e}.dot.p4{background:#f59e0b;box-shadow:0 0 10px #f59e0b}.dot.p5{background:#a855f7;box-shadow:0 0 10px #a855f7}
+.turn-glow.p3{background:radial-gradient(ellipse at 20% 0%,rgba(34,197,94,.2),transparent 60%)}
+.turn-glow.p4{background:radial-gradient(ellipse at 20% 0%,rgba(245,158,11,.2),transparent 60%)}
+.turn-glow.p5{background:radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.2),transparent 60%)}
+.roster-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:13px;color:#e7e3f1}
+.roster-tag{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:6px;background:#22d3ee33;color:#a5f3fc}
+.target-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:9px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid #ffffff22;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.target-btn:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.target-btn:disabled{opacity:.45;cursor:not-allowed}
+.target-btn small{display:block;font-weight:600;color:#a8a2bd;font-size:11px}
+/* Online play */
+input{user-select:text;-webkit-user-select:text}
+.lbl{display:block;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#9a93b2;margin:12px 0 5px}
+.field{width:100%;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.4);border:1px solid #ffffff22;color:#fff;font-size:14px;font-weight:700;outline:none;font-family:inherit}
+.field:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(139,92,246,.25)}
+.field.code{text-transform:uppercase;letter-spacing:.3em;text-align:center;font-family:'Cinzel',Georgia,serif;font-size:18px}
+.bigcode{font-family:'Cinzel',Georgia,serif;font-weight:800;font-size:clamp(40px,12vw,60px);letter-spacing:.22em;padding-left:.22em;color:#fde68a;text-shadow:0 0 24px rgba(251,191,36,.5);line-height:1.1}
+.net-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:14px;background:rgba(6,182,212,.1);border:1px solid #22d3ee44;font-size:12px;font-weight:700;color:#a5f3fc}
+.net-chip b{color:#fff}
+.net-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#64748b;margin-right:6px}
+.net-dot.up{background:#34d399;box-shadow:0 0 8px #34d399}
+.net-dot.down{background:#f87171}
+/* Meme splash screens */
+.splash{position:fixed;inset:0;z-index:75;display:flex;align-items:center;justify-content:center;padding:16px;cursor:pointer;opacity:0;transition:opacity .15s;
+  background:radial-gradient(circle at 50% 45%, color-mix(in srgb,var(--tint,#7c3aed) 55%,#0a0710) 0%, rgba(5,3,10,.93) 78%)}
+.splash.show{opacity:1}
+.splash-card{position:relative;z-index:2;width:min(92vw,520px);padding:22px 14px 12px;text-align:center;border-radius:20px;transform:rotate(-2deg);
+  background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:3px solid #fff;box-shadow:0 0 0 6px #000, 0 20px 60px rgba(0,0,0,.7);
+  animation:splashPop .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes splashPop{from{transform:rotate(6deg) scale(.2);opacity:0}to{transform:rotate(-2deg) scale(1);opacity:1}}
+.splash.shake .splash-card{animation:splashPop .45s cubic-bezier(.2,1.6,.4,1) both, shakeIt .5s .4s 2}
+@keyframes shakeIt{0%,100%{translate:0 0}20%{translate:-10px 4px}40%{translate:9px -5px}60%{translate:-7px -3px}80%{translate:6px 5px}}
+.splash-emoji{font-size:clamp(96px,26vw,170px);line-height:1.08;filter:drop-shadow(0 8px 0 rgba(0,0,0,.45));animation:emojiWobble .5s ease-in-out infinite alternate}
+@keyframes emojiWobble{from{transform:rotate(-6deg) scale(1)}to{transform:rotate(6deg) scale(1.08)}}
+.meme-text{font-family:Impact,'Anton','Arial Black',sans-serif;font-weight:900;text-transform:uppercase;color:#fff;letter-spacing:.02em;line-height:1.05;
+  -webkit-text-stroke:2px #000;paint-order:stroke fill;text-shadow:0 3px 0 #000, 0 0 18px rgba(0,0,0,.6);overflow-wrap:anywhere}
+.meme-text.top{font-size:clamp(30px,8vw,52px)}
+.meme-text.bottom{font-size:clamp(18px,5vw,28px);color:#fde047}
+.splash-hint{margin-top:10px;font-size:10px;color:#ffffffaa;letter-spacing:.06em}
+.splash-rain{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.splash-rain span{position:absolute;top:-12%;font-size:clamp(20px,5vw,34px);opacity:.9;animation:rainDown linear forwards}
+@keyframes rainDown{to{transform:translateY(125vh) rotate(var(--rot,180deg))}}
+@media (max-width:639px){.hide-sm{display:none}}
+@media (prefers-reduced-motion: reduce){
+  .splash-card,.splash.shake .splash-card,.splash-emoji,.splash-rain span{animation:none !important}
+}
+@media (prefers-reduced-motion: reduce){
+  #embers{display:none}
+  .flame,.board-light,.tile-icon,.snake-scales,.game-token.active .bobber{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="embers"></div>
+
+<!-- Header -->
+<header class="page max-w-6xl w-full mx-auto flex flex-wrap items-center justify-between gap-3 px-3 pt-4 md:pt-6">
+  <div class="flex items-center gap-3">
+    <div class="logo">🏰</div>
+    <div>
+      <h1 class="font-display text-xl md:text-3xl font-extrabold text-white leading-tight">Dungeon of Snakes &amp; Ladders</h1>
+      <p class="text-[11px] md:text-sm text-slate-400">Cash &amp; Traps Edition — outwit your rival and reach the treasure on tile 100.</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 flex-wrap">
+    <button id="meme-btn" class="btn btn-ghost" onclick="toggleMemes()" title="Toggle meme splash screens">
+      <span id="meme-icon">🤪</span><span id="meme-text" class="hide-sm">Memes On</span>
+    </button>
+    <button id="sound-btn" class="btn btn-ghost" onclick="toggleSound()" title="Toggle sound">
+      <span id="sound-icon">🔊</span><span id="sound-text" class="hide-sm">Audio On</span>
+    </button>
+    <div class="seg">
+      <button id="mode-pvc" class="on" onclick="setMode('PvC')">vs AI Bot</button>
+      <button id="mode-pvp" onclick="setMode('PvP')">2 Players</button>
+      <button id="mode-onl" onclick="openOnlineModal()">🌐 Online</button>
+    </div>
+    <button class="btn btn-ghost" onclick="openClassSelectModal()">🎭 Classes</button>
+    <button class="btn btn-danger" onclick="confirmReset()">↺ Reset</button>
+  </div>
+</header>
+
+<div id="net-chip-wrap" class="page max-w-6xl w-full mx-auto px-3 mt-3 hidden">
+  <div class="net-chip">
+    <span id="net-chip-main"></span>
+    <span class="flex items-center gap-2"><span id="net-chip-friend"></span>
+      <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="netLeaveClick()">Leave</button></span>
+  </div>
+</div>
+
+<!-- Main -->
+<main class="page max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start px-3 py-5">
+
+  <!-- Board -->
+  <section class="lg:col-span-7 flex flex-col items-center gap-3">
+    <div class="board-frame">
+      <span class="torch" style="top:-8px;left:-4px"><i class="flame"></i></span>
+      <span class="torch" style="top:-8px;right:-4px"><i class="flame"></i></span>
+      <span class="torch" style="bottom:-6px;left:-4px"><i class="flame"></i></span>
+      <span class="torch" style="bottom:-6px;right:-4px"><i class="flame"></i></span>
+      <div class="board-inner">
+        <div id="board-grid"></div>
+        <svg id="board-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+        <div id="trap-layer"></div>
+        <div class="board-light"></div>
+        <div id="tokens-layer"></div>
+        <div id="fx-layer"></div>
+      </div>
+    </div>
+    <div class="panel legend">
+      <span><b style="color:#fcd34d">▲</b> Ladder</span>
+      <span><b style="color:#fda4af">▼</b> Snake</span>
+      <span>🛡️ Shield rune</span>
+      <span>⚡ Haste +4</span>
+      <span>💰 Treasure</span>
+      <span>❄️ Frost trap</span>
+      <span>💣 Mine</span>
+    </div>
+  </section>
+
+  <!-- Side panel -->
+  <aside class="lg:col-span-5 flex flex-col gap-4 w-full">
+
+    <div class="panel p-4 relative overflow-hidden">
+      <div id="turn-glow" class="turn-glow"></div>
+      <div class="flex items-center justify-between mb-2 relative">
+        <div class="flex items-center gap-2">
+          <span id="turn-dot" class="dot"></span>
+          <h2 id="turn-title" class="font-display text-lg font-extrabold text-white">Player 1's Turn</h2>
+        </div>
+        <span id="extra-roll-badge" class="extra-badge hidden">🔥 Extra Roll!</span>
+      </div>
+
+      <div class="flex items-center justify-center gap-6 py-2 relative">
+        <div class="dice-wrap" onclick="handleRollClick()" title="Click to roll">
+          <div class="dice-scene"><div id="cube" class="cube"></div></div>
+          <div class="dice-shadow"></div>
+        </div>
+        <div class="flex flex-col gap-2" style="min-width:170px">
+          <button id="roll-btn" class="btn btn-primary" onclick="handleRollClick()"><span id="roll-label">🎲 ROLL DICE</span></button>
+          <button id="open-shop-btn" class="btn btn-gold" onclick="openShopModal()"><span id="shop-btn-label">🛒 Black Market (1/turn)</span></button>
+          <div class="text-[10px] text-slate-500 text-center">Space = roll · S = shop</div>
+        </div>
+      </div>
+      <div id="dice-result-banner" class="text-center relative min-h-[24px] mt-1"></div>
+    </div>
+
+    <div id="players-wrap" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    <div class="panel p-4 flex flex-col" style="height:215px">
+      <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-700/60">
+        <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">📜 Battle Log</h3>
+        <span id="log-count" class="text-[10px] bg-black/40 text-slate-400 px-2 py-0.5 rounded-full">0 Moves</span>
+      </div>
+      <div id="game-log" class="custom-scroll overflow-y-auto flex-1 flex flex-col gap-1.5 pr-1 text-xs"></div>
+    </div>
+  </aside>
+</main>
+
+<footer class="page text-center pb-5 text-[11px] text-slate-600">Dungeon Snakes &amp; Ladders · exact roll needed to land on 100</footer>
+
+<!-- Shop modal -->
+<div id="shop-modal" class="modal hidden" onclick="if(event.target===this)closeModal('shop-modal')">
+  <div class="modal-card panel" style="max-width:440px;border-color:#f59e0b66">
+    <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-700/60">
+      <div class="flex items-center gap-3">
+        <div class="shop-ico" style="--accent:#f59e0b">🛒</div>
+        <div>
+          <h2 class="font-display text-base font-extrabold text-white">Black Market</h2>
+          <p class="text-[11px] text-slate-400">Your purse: <b class="text-amber-300">$<span id="shop-purse">0</span></b> · <span id="shop-note">1 purchase per turn</span></p>
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeModal('shop-modal')">✕</button>
+    </div>
+    <div id="shop-items" class="flex flex-col gap-2"></div>
+  </div>
+</div>
+
+<!-- Power-up modal -->
+<div id="powerup-modal" class="modal hidden">
+  <div class="modal-card panel" style="max-width:440px;border-color:#8b5cf666">
+    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-700/60">
+      <div class="shop-ico" style="--accent:#f59e0b">⚡</div>
+      <div>
+        <h2 class="font-display text-lg font-extrabold text-white">Lucky Six Bonus!</h2>
+        <p class="text-xs text-slate-300"><span id="powerup-who">Player 1</span>, choose one reward:</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <button class="power-btn" onclick="selectPowerUp('swap')"><div class="text-sm font-bold text-white">🔁 Swap Places</div><p class="text-[11px] text-slate-400 mt-1">Trade tiles with your rival.</p></button>
+      <button class="power-btn" onclick="selectPowerUp('freeze')"><div class="text-sm font-bold text-white">❄️ Freeze Target</div><p class="text-[11px] text-slate-400 mt-1">Rival skips their next turn.</p></button>
+      <button class="power-btn" onclick="selectPowerUp('shield')"><div class="text-sm font-bold text-white">🛡️ Holy Shield</div><p class="text-[11px] text-slate-400 mt-1">Blocks the next snake bite or mine.</p></button>
+      <button class="power-btn" onclick="selectPowerUp('cash')"><div class="text-sm font-bold text-white">💰 +$250 Cash</div><p class="text-[11px] text-slate-400 mt-1">Instant gold to spend in the market.</p></button>
+    </div>
+  </div>
+</div>
+
+<!-- Target modal -->
+<div id="target-modal" class="modal hidden" onclick="if(event.target===this)closeModal('target-modal')">
+  <div class="modal-card panel" style="max-width:420px;border-color:#f59e0b66">
+    <h3 id="target-title" class="font-display text-lg font-extrabold text-white"></h3>
+    <p id="target-sub" class="text-xs text-slate-400 mb-3"></p>
+    <div id="target-list" class="flex flex-col gap-2"></div>
+    <button class="btn btn-ghost mt-3" style="width:100%" onclick="closeModal('target-modal')">Back</button>
+  </div>
+</div>
+
+<!-- Online modal -->
+<div id="online-modal" class="modal hidden">
+  <div class="modal-card panel" style="max-width:560px;border-color:#22d3ee66">
+    <div class="flex items-center justify-between mb-2 pb-3 border-b border-slate-700/60">
+      <div>
+        <h2 class="font-display text-xl font-extrabold text-white">Duel a Friend Online</h2>
+        <p class="text-xs text-slate-400">One player creates a room, everyone else joins with the 4-character code — up to 5 players.</p>
+      </div>
+      <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeOnlineModal()">✕</button>
+    </div>
+    <div id="online-setup">
+      <label class="lbl" for="net-nick">Your name</label>
+      <input id="net-nick" class="field" maxlength="12" placeholder="Hero" autocomplete="off" spellcheck="false">
+      <label class="lbl">Your champion</label>
+      <div id="net-class-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 items-stretch">
+        <button class="btn btn-primary" onclick="netCreate()">🏰 Create room</button>
+        <div class="flex gap-2">
+          <input id="net-code" class="field code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false" aria-label="Room code">
+          <button class="btn btn-gold" onclick="netJoin()">Join</button>
+        </div>
+      </div>
+    </div>
+    <div id="online-wait" class="hidden text-center py-3">
+      <p id="online-wait-label" class="text-xs font-bold uppercase tracking-wide text-slate-400">Room code</p>
+      <div id="online-code" class="bigcode my-2"></div>
+      <button id="net-copy-btn" class="btn btn-ghost" onclick="netCopyCode()">📋 Copy invite link</button>
+      <div id="online-roster" class="flex flex-col gap-1 mt-4 text-left"></div>
+      <p id="online-wait-text" class="text-sm text-slate-300 mt-3"></p>
+      <div class="flex gap-2 justify-center mt-4 flex-wrap">
+        <button id="net-start-btn" class="btn btn-primary hidden" onclick="netStartMatch()">⚔️ Start match</button>
+        <button class="btn btn-danger" onclick="netCancelWait()">Leave</button>
+      </div>
+    </div>
+    <p id="online-msg" class="text-xs mt-3 text-amber-300 text-center" style="min-height:16px"></p>
+  </div>
+</div>
+
+<!-- Class modal -->
+<div id="class-modal" class="modal hidden">
+  <div class="modal-card panel" style="max-width:700px;border-color:#8b5cf666">
+    <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-700/60">
+      <div>
+        <h2 class="font-display text-xl font-extrabold text-white">Choose Your Champions</h2>
+        <p class="text-xs text-slate-400">Each class has its own look and passive power. Applying starts a fresh match.</p>
+      </div>
+      <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeModal('class-modal')">✕</button>
+    </div>
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Opponent</span>
+      <div class="seg">
+        <button id="class-mode-pvc" onclick="setPendingMode('PvC')">AI Bot</button>
+        <button id="class-mode-pvp" onclick="setPendingMode('PvP')">Player 2</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <h3 class="text-xs font-extrabold text-blue-400 mb-2 uppercase tracking-wide">Player 1</h3>
+        <div id="class-list-1" class="flex flex-col gap-2"></div>
+      </div>
+      <div>
+        <h3 id="class-title-2" class="text-xs font-extrabold text-rose-400 mb-2 uppercase tracking-wide">AI Bot</h3>
+        <div id="class-list-2" class="flex flex-col gap-2"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary w-full" style="width:100%" onclick="applyClassSelection()">⚔️ Enter the Dungeon</button>
+  </div>
+</div>
+
+<!-- Win modal -->
+<div id="win-modal" class="modal hidden">
+  <div class="modal-card panel text-center" style="max-width:360px;padding:28px">
+    <div style="font-size:60px;animation:bounceSm .7s infinite alternate">🏆</div>
+    <h2 id="win-title" class="font-display text-2xl font-extrabold text-white mt-1">VICTORY!</h2>
+    <p id="win-subtitle" class="text-sm text-slate-300 mt-1 mb-5"></p>
+    <div class="flex flex-col gap-2">
+      <button class="btn btn-primary" style="width:100%" onclick="playAgain()">Play Again</button>
+      <button class="btn btn-ghost" style="width:100%" onclick="closeModal('win-modal')">Admire the Board</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div id="confirm-modal" class="modal hidden">
+  <div class="modal-card panel text-center" style="max-width:320px">
+    <div style="font-size:34px">❓</div>
+    <h3 class="font-display text-base font-extrabold text-white mt-1">Restart the match?</h3>
+    <p class="text-xs text-slate-300 mb-4 mt-1">The board, cash and progress will be reset.</p>
+    <div class="flex gap-2">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button class="btn btn-danger" style="flex:1" onclick="confirmResetAction()">Restart</button>
+    </div>
+  </div>
+</div>
+
+<div id="splash" class="splash hidden">
+  <div class="splash-rain" id="splash-rain"></div>
+  <div class="splash-card">
+    <div id="splash-top" class="meme-text top"></div>
+    <div id="splash-emoji" class="splash-emoji"></div>
+    <div id="splash-bottom" class="meme-text bottom"></div>
+    <div class="splash-hint">TAP OR PRESS SPACE TO SKIP</div>
+  </div>
+</div>
+
+<div id="toast-layer"></div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const LADDERS = { 4: 14, 9: 31, 20: 38, 28: 84, 40: 59, 51: 67, 63: 81, 71: 91 };
+const BASE_SNAKES = { 17: 7, 54: 34, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 99: 78 };
+let SNAKES = { ...BASE_SNAKES };
+let customSnakeOwner = {};   // tile -> player who deployed the trap (immune)
+
+const SPECIAL_TILES = {
+  12: { type: 'shield', icon: '🛡️', cls: 'rune-shield' },
+  25: { type: 'boost',  icon: '⚡',  cls: 'rune-boost' },
+  36: { type: 'cash',   icon: '💰', cls: 'rune-cash' },
+  45: { type: 'freeze', icon: '❄️', cls: 'rune-freeze' },
+  68: { type: 'shield', icon: '🛡️', cls: 'rune-shield' },
+  77: { type: 'boost',  icon: '⚡',  cls: 'rune-boost' },
+  88: { type: 'cash',   icon: '💰', cls: 'rune-cash' }
+};
+
+const CLASSES = {
+  human:  { name: 'Human',  title: 'Hard Worker',        desc: '+$50 extra salary every turn and +$100 on even rolls.' },
+  wizard: { name: 'Wizard', title: 'Arcane Affinity',    desc: '25% off the Black Market. Ladders carry you 2 tiles further.' },
+  demon:  { name: 'Demon',  title: 'Hellfire Vengeance', desc: 'Steals $50 from the rival whenever you pass them.' },
+  angel:  { name: 'Angel',  title: 'Divine Grace',       desc: 'Starts with a free Holy Shield. Immune to freeze.' }
+};
+
+const SHOP_ITEMS = {
+  swap:       { icon: '🔁', name: 'Force Position Swap',   desc: 'Instantly trade tiles with your rival.',                       cost: 200, accent: '#818cf8' },
+  bribe:      { icon: '🪙', name: 'Serpent Bribe',         desc: 'Immunity to the next snake bite.',                              cost: 150, accent: '#34d399' },
+  freeze:     { icon: '❄️', name: 'Paralyzing Frost',      desc: 'Rival skips their next turn.',                                  cost: 180, accent: '#60a5fa' },
+  checkpoint: { icon: '⚓', name: 'Checkpoint Sigil',      desc: 'Snakes and mines can never drop you below your current tile.',  cost: 300, accent: '#fbbf24' },
+  buysnake:   { icon: '🐍', name: 'Summon Serpent Trap',   desc: 'Plant a snake ~4 tiles ahead of you. It drops rivals 15 tiles; you are immune.', cost: 250, accent: '#fb7185' },
+  mine:       { icon: '💣', name: 'Powder Keg Mine',       desc: 'Plant a mine ~3 tiles ahead of your rival. Blast sends them back 6.',            cost: 200, accent: '#f97316' }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let gameMode = 'PvC';
+let currentPlayer = 1;
+let playerClasses = { 1: 'human', 2: 'demon' };
+let playerPositions = { 1: 1, 2: 1 };
+let playerCash = { 1: 200, 2: 200 };
+let playerShields = { 1: false, 2: false };
+let playerBribes = { 1: false, 2: false };
+let playerCheckpoints = { 1: 0, 2: 0 };
+let playerPoisoned = { 1: false, 2: false };   // frozen status
+let shopPurchasedThisTurn = false;
+let placedMines = {};                          // tile -> owner
+let isRolling = false;
+let gameOver = false;
+let extraRollPending = false;
+let soundEnabled = true;
+let moveHistory = [];
+let gameId = 0;                                // bumps on reset to cancel stale async work
+let botTimer = null;
+let pendingClasses = { 1: 'human', 2: 'demon' };
+let pendingMode = 'PvC';
+let spinX = 0, spinY = 0;
+const tileEls = {};
+
+const $ = id => document.getElementById(id);
+let fastMode = false;                          // true while fast-forwarding a replayed move log
+const realSleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = ms => (fastMode ? Promise.resolve() : realSleep(ms));
+const MAXP = 5;                                // most players in one match
+let NP = 2;                                    // players in the current match
+const PLAYERS = () => Array.from({ length: NP }, (_, i) => i + 1);
+const TEAM = {
+  1: { c: '#3b82f6', d: '#1e3a8a', rgb: '59,130,246' },
+  2: { c: '#ef4444', d: '#7f1d1d', rgb: '239,68,68' },
+  3: { c: '#22c55e', d: '#14532d', rgb: '34,197,94' },
+  4: { c: '#f59e0b', d: '#78350f', rgb: '245,158,11' },
+  5: { c: '#a855f7', d: '#581c87', rgb: '168,85,247' }
+};
+const other = p => (p === 1 ? 2 : 1);          // only meaningful in 2-player matches
+const rivals = p => PLAYERS().filter(q => q !== p);
+const defaultTarget = p => { const r = rivals(p); return r.length === 1 ? r[0] : null; };
+const TARGET_SHOP = new Set(['swap', 'freeze', 'mine']);
+const TARGET_PU = new Set(['swap', 'freeze']);
+const isBot = p => gameMode === 'PvC' && p === 2;
+const playerName = p => (gameMode === 'ONL' ? NET.nicks[p - 1] : (p === 1 ? 'Player 1' : (gameMode === 'PvC' ? 'AI Bot' : 'Player 2')));
+function rnd(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+/* ============================================================
+   AUDIO
+   ============================================================ */
+let polySynth = null, noiseSynth = null;
+function initAudio() {
+  if (typeof Tone === 'undefined') { return; }
+  try {
+    polySynth = new Tone.PolySynth(Tone.Synth, {
+      volume: -10,
+      oscillator: { type: 'triangle' },
+      envelope: { attack: 0.005, decay: 0.12, sustain: 0.05, release: 0.15 }
+    }).toDestination();
+    noiseSynth = new Tone.NoiseSynth({ volume: -12, noise: { type: 'brown' }, envelope: { attack: 0.005, decay: 0.35, sustain: 0 } }).toDestination();
+  } catch (e) { polySynth = null; noiseSynth = null; }
+}
+function playSound(type) {
+  if (fastMode) return;
+  if (!soundEnabled || !polySynth) return;
+  try {
+    if (Tone.context.state !== 'running') Tone.start();
+    const t = Tone.now() + 0.02;
+    const chord = (notes, d) => polySynth.triggerAttackRelease(notes, d, t);
+    switch (type) {
+      case 'roll':      chord(['C4'], '16n'); break;
+      case 'step':      chord(['G4'], '32n'); break;
+      case 'ladder':    chord(['C5', 'E5', 'G5', 'C6'], '8n'); break;
+      case 'snake':     chord(['F3', 'Eb3', 'D3', 'C3'], '8n'); break;
+      case 'powerup':   chord(['E5', 'G#5', 'B5', 'E6'], '8n'); break;
+      case 'cash':      chord(['G5', 'C6'], '8n'); break;
+      case 'explosion': if (noiseSynth) noiseSynth.triggerAttackRelease('8n', t); break;
+      case 'win':       chord(['C4', 'E4', 'G4', 'C5', 'E5', 'G5'], '2n'); break;
+    }
+  } catch (e) { /* audio is optional */ }
+}
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  $('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+  $('sound-text').textContent = soundEnabled ? 'Audio On' : 'Audio Off';
+}
+
+/* ============================================================
+   CLASS PIECES (SVG figures)
+   ============================================================ */
+function pieceSVG(cls, team) {
+  const ring = (TEAM[team] || TEAM[1]).c;
+  const ringD = (TEAM[team] || TEAM[1]).d;
+  const base =
+    `<ellipse cx="32" cy="58" rx="20" ry="5.5" fill="${ringD}"/>` +
+    `<ellipse cx="32" cy="56" rx="20" ry="5.5" fill="${ring}"/>` +
+    `<ellipse cx="32" cy="55.5" rx="15" ry="3.6" fill="#120e1c" opacity=".6"/>`;
+  let fig = '';
+  if (cls === 'human') {
+    fig =
+      `<path d="M19 32 L12 54 H52 L45 32 Z" fill="#991b1b" stroke="#450a0a" stroke-width="1.2"/>` +
+      `<path d="M21 31 H43 L46 54 H18 Z" fill="#94a3b8" stroke="#334155" stroke-width="1.5"/>` +
+      `<path d="M21 31 H43 L44 37 H20 Z" fill="#cbd5e1"/>` +
+      `<rect x="20" y="43" width="24" height="3.5" fill="#78350f"/><rect x="29" y="42" width="6" height="5.5" rx="1" fill="#fbbf24"/>` +
+      `<path d="M9 33 H24 V44 Q24 52 16.5 55 Q9 52 9 44 Z" fill="#1d4ed8" stroke="#e2e8f0" stroke-width="1.4"/>` +
+      `<path d="M16.5 36 V52 M11.5 42 H21.5" stroke="#fbbf24" stroke-width="2"/>` +
+      `<rect x="47" y="12" width="3.6" height="31" rx="1" fill="#e2e8f0" stroke="#64748b" stroke-width=".8"/>` +
+      `<rect x="43" y="41" width="11.6" height="3.6" rx="1" fill="#fbbf24" stroke="#78350f" stroke-width=".8"/>` +
+      `<path d="M21 31 C21 11 43 11 43 31 Z" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>` +
+      `<rect x="24" y="22" width="16" height="4.6" rx="1.5" fill="#0f172a"/>` +
+      `<path d="M32 12 C36 2 46 4 47 12 C42 8 38 9 32 12 Z" fill="#dc2626"/>`;
+  } else if (cls === 'wizard') {
+    fig =
+      `<rect x="46" y="16" width="2.8" height="39" rx="1.4" fill="#92400e"/>` +
+      `<circle cx="47.4" cy="14" r="8" fill="#22d3ee" opacity=".28"/>` +
+      `<circle cx="47.4" cy="14" r="4.6" fill="#67e8f9" stroke="#0e7490" stroke-width="1"/>` +
+      `<path d="M19 55 L24 31 H40 L45 55 Z" fill="#6d28d9" stroke="#2e1065" stroke-width="1.5"/>` +
+      `<path d="M23.5 44 H40.5" stroke="#fbbf24" stroke-width="3"/>` +
+      `<circle cx="32" cy="27" r="7.5" fill="#fcd9b6" stroke="#92400e" stroke-width=".8"/>` +
+      `<path d="M24.5 28 Q32 46 39.5 28 Q32 33 24.5 28Z" fill="#f1f5f9" stroke="#94a3b8" stroke-width=".8"/>` +
+      `<circle cx="29.2" cy="26" r="1" fill="#1e1b4b"/><circle cx="34.8" cy="26" r="1" fill="#1e1b4b"/>` +
+      `<ellipse cx="32" cy="21" rx="14" ry="3.6" fill="#5b21b6" stroke="#2e1065" stroke-width="1.2"/>` +
+      `<path d="M21 21 L33 1 L43 21 Z" fill="#7c3aed" stroke="#2e1065" stroke-width="1.3"/>` +
+      `<path d="M22.6 18.5 Q32 22 41.4 18.5" stroke="#fbbf24" stroke-width="2.4" fill="none"/>` +
+      `<path d="M31.4 9 l1.2 2.6 2.8.4 -2 2 .5 2.8 -2.5 -1.4 -2.5 1.4 .5 -2.8 -2 -2 2.8 -.4z" fill="#fde047"/>`;
+  } else if (cls === 'demon') {
+    fig =
+      `<path d="M22 36 L3 22 L9 38 L4 47 L19 46 Z" fill="#7f1d1d" stroke="#450a0a" stroke-width="1.2"/>` +
+      `<path d="M42 36 L61 22 L55 38 L60 47 L45 46 Z" fill="#7f1d1d" stroke="#450a0a" stroke-width="1.2"/>` +
+      `<path d="M44 53 Q58 52 56 38" stroke="#b91c1c" stroke-width="3" fill="none" stroke-linecap="round"/>` +
+      `<path d="M52.5 38 L56 31 L59.5 39 Z" fill="#b91c1c"/>` +
+      `<path d="M20 55 L24 31 H40 L44 55 Z" fill="#b91c1c" stroke="#450a0a" stroke-width="1.5"/>` +
+      `<circle cx="32" cy="43" r="3.4" fill="#f97316"/><circle cx="32" cy="43" r="1.6" fill="#fde047"/>` +
+      `<path d="M22 20 L16 3 L30 14 Z" fill="#fde68a" stroke="#78350f" stroke-width="1.2"/>` +
+      `<path d="M42 20 L48 3 L34 14 Z" fill="#fde68a" stroke="#78350f" stroke-width="1.2"/>` +
+      `<circle cx="32" cy="25" r="10.5" fill="#dc2626" stroke="#450a0a" stroke-width="1.5"/>` +
+      `<path d="M24.5 22 L30 25 L24.5 27.5 Z" fill="#fde047"/><path d="M39.5 22 L34 25 L39.5 27.5 Z" fill="#fde047"/>` +
+      `<path d="M27 31 Q32 35 37 31" stroke="#450a0a" stroke-width="1.5" fill="none"/>` +
+      `<path d="M28.6 31.8 L29.8 34.2 L31 32.4 M33 32.4 L34.2 34.2 L35.4 31.8" stroke="#f8fafc" stroke-width="1" fill="none"/>`;
+  } else { // angel
+    fig =
+      `<path d="M24 34 C10 22 2 28 3 40 C8 38 11 40 13 46 C17 42 20 44 24 48 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>` +
+      `<path d="M40 34 C54 22 62 28 61 40 C56 38 53 40 51 46 C47 42 44 44 40 48 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>` +
+      `<path d="M21 55 L25 31 H39 L43 55 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>` +
+      `<path d="M24 42 H40" stroke="#fbbf24" stroke-width="3"/>` +
+      `<circle cx="32" cy="25" r="8.5" fill="#fcd9b6" stroke="#b45309" stroke-width=".8"/>` +
+      `<path d="M23.5 24 C23.5 14 40.5 14 40.5 24 C37 19 28 19 23.5 24Z" fill="#fbbf24"/>` +
+      `<circle cx="29" cy="26" r="1.1" fill="#1e293b"/><circle cx="35" cy="26" r="1.1" fill="#1e293b"/>` +
+      `<path d="M29.5 30 Q32 32 34.5 30" stroke="#b45309" fill="none" stroke-width="1"/>` +
+      `<ellipse cx="32" cy="9" rx="10" ry="3.4" fill="none" stroke="#fde047" stroke-opacity=".35" stroke-width="6"/>` +
+      `<ellipse cx="32" cy="9" rx="10" ry="3.4" fill="none" stroke="#fde047" stroke-width="2.4"/>`;
+  }
+  return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">${base}${fig}</svg>`;
+}
+
+/* ============================================================
+   BOARD
+   ============================================================ */
+function getTileCoordinates(n) {
+  const z = Math.max(0, Math.min(99, n - 1));
+  const row = Math.floor(z / 10);
+  const c = z % 10;
+  const col = (row % 2 === 0) ? c : (9 - c);
+  return { x: col * 10 + 5, y: (9 - row) * 10 + 5 };
+}
+
+function generateBoard() {
+  const grid = $('board-grid');
+  grid.innerHTML = '';
+  for (let row = 9; row >= 0; row--) {
+    for (let col = 0; col < 10; col++) {
+      const actualCol = (row % 2 === 0) ? col : (9 - col);
+      const n = row * 10 + actualCol + 1;
+      const alt = (row + col) % 2 === 0;
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.id = 'tile-' + n;
+
+      const hue = 250 + Math.floor(rnd(n + 7) * 25);
+      const sat = 8 + Math.floor(rnd(n) * 10);
+      tile.style.backgroundColor = `hsl(${hue} ${sat}% ${alt ? 15 : 19}%)`;
+
+      let html = `<span class="tile-num">${n}</span>`;
+      const isSpecial = !!SPECIAL_TILES[n];
+      const plain = !isSpecial && !LADDERS[n] && !SNAKES[n] && n !== 1 && n !== 100;
+
+      if (plain && rnd(n + 3) > 0.84) {
+        const mx = 15 + Math.floor(rnd(n + 5) * 70), my = 15 + Math.floor(rnd(n + 6) * 70);
+        tile.style.backgroundImage = `radial-gradient(circle at ${mx}% ${my}%, rgba(74,222,128,.17), transparent 42%), var(--noise)`;
+      }
+      if (rnd(n + 9) > 0.76) {
+        const rot = Math.floor(rnd(n + 2) * 360);
+        html += `<svg class="crack" viewBox="0 0 40 40" style="transform:rotate(${rot}deg);left:15%;top:15%"><path d="M4 6 L15 18 L12 25 L24 34 M15 18 L26 15" stroke="#000" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>`;
+      }
+      if (plain && rnd(n + 11) > 0.93) {
+        html += `<span class="decor">${rnd(n + 13) > 0.5 ? '💀' : '🦴'}</span>`;
+      }
+
+      if (n === 100) {
+        tile.classList.add('finish');
+        html += `<span class="tile-icon">👑</span><span class="tile-badge badge-finish">TREASURE</span>`;
+      } else if (n === 1) {
+        tile.classList.add('start');
+        html += `<span class="tile-badge badge-start">🚪 START</span>`;
+      } else if (LADDERS[n]) {
+        html += `<span class="tile-badge badge-ladder">▲ ${LADDERS[n]}</span>`;
+      } else if (SNAKES[n]) {
+        html += `<span class="tile-badge badge-snake">▼ ${SNAKES[n]}</span>`;
+      } else if (isSpecial) {
+        tile.classList.add(SPECIAL_TILES[n].cls);
+        html += `<span class="tile-icon">${SPECIAL_TILES[n].icon}</span>`;
+      }
+      tile.innerHTML = html;
+      grid.appendChild(tile);
+      tileEls[n] = tile;
+    }
+  }
+}
+
+const SNAKE_PALETTE = [
+  { body: '#16a34a', dark: '#052e16', pat: '#bbf7d0' },
+  { body: '#7c3aed', dark: '#2e1065', pat: '#ddd6fe' },
+  { body: '#ea580c', dark: '#431407', pat: '#fed7aa' },
+  { body: '#0d9488', dark: '#042f2e', pat: '#99f6e4' }
+];
+const CUSTOM_PALETTE = { body: '#be123c', dark: '#4c0519', pat: '#fecdd3' };
+
+function drawBoardElements() {
+  const svg = $('board-svg');
+  let out = `<defs><filter id="dsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="2" dy="5" stdDeviation="3.5" flood-color="#000" flood-opacity=".65"/></filter></defs>`;
+
+  // Wooden ladders
+  for (const [startStr, end] of Object.entries(LADDERS)) {
+    const p1 = getTileCoordinates(+startStr), p2 = getTileCoordinates(end);
+    const x1 = p1.x * 10, y1 = p1.y * 10, x2 = p2.x * 10, y2 = p2.y * 10;
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+    const nx = (-dy / len) * 15, ny = (dx / len) * 15;
+    let g = '';
+    const rungs = Math.max(2, Math.floor(len / 42));
+    for (let i = 1; i < rungs; i++) {
+      const t = i / rungs, rx = x1 + dx * t, ry = y1 + dy * t;
+      g += `<line x1="${rx + nx}" y1="${ry + ny}" x2="${rx - nx}" y2="${ry - ny}" stroke="#2a1505" stroke-width="9" stroke-linecap="round"/>`;
+      g += `<line x1="${rx + nx}" y1="${ry + ny}" x2="${rx - nx}" y2="${ry - ny}" stroke="#d9a45b" stroke-width="5" stroke-linecap="round"/>`;
+    }
+    for (const s of [1, -1]) {
+      g += `<line x1="${x1 + nx * s}" y1="${y1 + ny * s}" x2="${x2 + nx * s}" y2="${y2 + ny * s}" stroke="#2a1505" stroke-width="13" stroke-linecap="round"/>`;
+      g += `<line x1="${x1 + nx * s}" y1="${y1 + ny * s}" x2="${x2 + nx * s}" y2="${y2 + ny * s}" stroke="#92501a" stroke-width="9" stroke-linecap="round"/>`;
+      g += `<line x1="${x1 + nx * s}" y1="${y1 + ny * s}" x2="${x2 + nx * s}" y2="${y2 + ny * s}" stroke="#c58b4a" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>`;
+    }
+    out += `<g filter="url(#dsh)">${g}</g>`;
+  }
+
+  // Scaly snakes
+  for (const [startStr, end] of Object.entries(SNAKES)) {
+    const s = +startStr;
+    const p1 = getTileCoordinates(s), p2 = getTileCoordinates(end);
+    const x1 = p1.x * 10, y1 = p1.y * 10, x2 = p2.x * 10, y2 = p2.y * 10;
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len, ny = dx / len;
+    const amp = Math.min(80, len * 0.3) * (s % 2 ? 1 : -1);
+    const c1x = x1 + dx * .33 + nx * amp, c1y = y1 + dy * .33 + ny * amp;
+    const c2x = x1 + dx * .68 - nx * amp, c2y = y1 + dy * .68 - ny * amp;
+    const owner = customSnakeOwner[s];
+    const pal = owner ? CUSTOM_PALETTE : SNAKE_PALETTE[s % SNAKE_PALETTE.length];
+    const d = `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+    const ang = Math.atan2(y1 - c1y, x1 - c1x) * 180 / Math.PI;
+    let g = '';
+    if (owner) g += `<path d="${d}" fill="none" stroke="${(TEAM[owner] || TEAM[1]).c}" stroke-width="32" stroke-linecap="round" opacity=".35"/>`;
+    g += `<path d="${d}" fill="none" stroke="${pal.dark}" stroke-width="25" stroke-linecap="round"/>`;
+    g += `<path d="${d}" fill="none" stroke="${pal.body}" stroke-width="19" stroke-linecap="round"/>`;
+    g += `<path d="${d}" fill="none" stroke="${pal.pat}" stroke-width="9" stroke-linecap="round" stroke-dasharray="3 9" opacity=".45" class="snake-scales"/>`;
+    g += `<path d="${d}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".18"/>`;
+    g += `<g transform="translate(${x1} ${y1}) rotate(${ang})">` +
+         `<path d="M-6 -14 Q 20 -17 28 0 Q 20 17 -6 14 Z" fill="${pal.dark}"/>` +
+         `<path d="M-5 -11.5 Q 19 -14 25 0 Q 19 14 -5 11.5 Z" fill="${pal.body}"/>` +
+         `<circle cx="11" cy="-6.5" r="4.2" fill="#fde047"/><circle cx="11" cy="6.5" r="4.2" fill="#fde047"/>` +
+         `<ellipse cx="12" cy="-6.5" rx="1.2" ry="3.2" fill="#000"/><ellipse cx="12" cy="6.5" rx="1.2" ry="3.2" fill="#000"/>` +
+         `<path d="M28 0 L40 0 M40 0 L46 -5 M40 0 L46 5" stroke="#f43f5e" stroke-width="2.6" stroke-linecap="round" fill="none"/>` +
+         `</g>`;
+    out += `<g filter="url(#dsh)">${g}</g>`;
+  }
+  svg.innerHTML = out;
+}
+
+function renderTraps() {
+  const layer = $('trap-layer');
+  layer.innerHTML = '';
+  for (const [tile, owner] of Object.entries(placedMines)) {
+    const c = getTileCoordinates(+tile);
+    const el = document.createElement('div');
+    el.className = 'mine';
+    el.style.left = c.x + '%';
+    el.style.top = c.y + '%';
+    el.textContent = '💣';
+    el.title = 'Mine planted by ' + playerName(owner);
+    layer.appendChild(el);
+  }
+}
+
+/* ============================================================
+   TOKENS & HUD
+   ============================================================ */
+function buildTokens() {
+  const layer = $('tokens-layer');
+  layer.innerHTML = '';
+  PLAYERS().forEach(p => {
+    const t = document.createElement('div');
+    t.id = 'token-' + p;
+    t.className = 'game-token team' + p;
+    t.innerHTML = `<div class="aura"></div><div class="hopper"><div class="bobber"></div></div><div class="ice">❄️</div>`;
+    layer.appendChild(t);
+  });
+  refreshClassArt();
+}
+
+function refreshClassArt() {
+  PLAYERS().forEach(p => {
+    const art = pieceSVG(playerClasses[p], p);
+    const b = document.querySelector(`#token-${p} .bobber`);
+    if (b) b.innerHTML = art;
+    const pt = $(`p${p}-portrait`);
+    if (pt) pt.innerHTML = art;
+  });
+}
+
+function buildPlayerCards() {
+  $('players-wrap').innerHTML = PLAYERS().map(p => `
+    <div id="p${p}-card" class="panel player-card team${p}">
+      <div class="portrait" id="p${p}-portrait"></div>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-2 flex-wrap"><span id="p${p}-name" class="pname"></span><span id="p${p}-class-badge" class="class-badge"></span></div>
+        <div class="stats"><span class="cash">🪙 $<b id="p${p}-cash">0</b></span><span class="tilepos">Tile <b id="p${p}-pos">1</b></span></div>
+        <div class="progress"><i id="p${p}-progress" style="width:1%"></i></div>
+        <div id="p${p}-buffs" class="buffs"></div>
+        <div id="p${p}-passive" class="passive"></div>
+      </div>
+    </div>`).join('');
+}
+
+function placeTokens(dur) {
+  const P = PLAYERS();
+  P.forEach(p => {
+    const t = $('token-' + p);
+    if (!t) return;
+    const group = P.filter(q => playerPositions[q] === playerPositions[p]);
+    const idx = group.indexOf(p), k = group.length;
+    const c = getTileCoordinates(playerPositions[p]);
+    const ox = k > 1 ? (idx - (k - 1) / 2) * 2.6 : 0;
+    const oy = k > 1 ? (idx % 2 ? 0.5 : -0.5) : 0;
+    t.style.setProperty('--dur', (dur || 0.2) + 's');
+    t.style.left = (c.x + ox) + '%';
+    t.style.top = (c.y + oy) + '%';
+    t.style.zIndex = (p === currentPlayer) ? 3 + NP : 2 + idx;
+    t.classList.toggle('shielded', !!playerShields[p]);
+    t.classList.toggle('frozen', !!playerPoisoned[p]);
+    t.classList.toggle('active', p === currentPlayer && !gameOver);
+  });
+  for (let n = 1; n <= 100; n++) {
+    const el = tileEls[n];
+    if (!el) continue;
+    const occ = P.filter(q => playerPositions[q] === n);
+    const key = occ.join('');
+    if (el._occ === key) continue;
+    el._occ = key;
+    if (!occ.length) { el.style.boxShadow = ''; continue; }
+    const parts = occ.map((q, i) => `inset 0 0 0 ${2 + i * 3}px ${TEAM[q].c}`);
+    parts.push(`inset 0 0 18px rgba(${TEAM[occ[0]].rgb},.55)`);
+    el.style.boxShadow = parts.join(',');
+  }
+}
+
+function updateHUD() {
+  PLAYERS().forEach(p => {
+    const cl = CLASSES[playerClasses[p]];
+    $(`p${p}-name`).textContent = playerName(p) + (NET.on && p === NET.seat ? ' (you)' : '');
+    $(`p${p}-class-badge`).textContent = cl.name;
+    $(`p${p}-cash`).textContent = playerCash[p];
+    $(`p${p}-pos`).textContent = playerPositions[p];
+    $(`p${p}-progress`).style.width = Math.max(1, playerPositions[p]) + '%';
+    $(`p${p}-passive`).textContent = cl.title + ' — ' + cl.desc;
+    const b = [];
+    if (playerShields[p]) b.push('<span class="buff cyan">🛡️ Shield</span>');
+    if (playerBribes[p]) b.push('<span class="buff green">🐍 Snake Immune</span>');
+    if (playerCheckpoints[p] > 0) b.push(`<span class="buff amber">⚓ CP ${playerCheckpoints[p]}</span>`);
+    if (playerPoisoned[p]) b.push('<span class="buff blue">❄️ Frozen</span>');
+    $(`p${p}-buffs`).innerHTML = b.length ? b.join('') : '<span class="buff none">No buffs</span>';
+    $(`p${p}-card`).classList.toggle('active', p === currentPlayer && !gameOver);
+  });
+}
+
+function refreshAll(dur) { placeTokens(dur); updateHUD(); }
+
+function movePlayerTo(p, pos, dur) {
+  playerPositions[p] = pos;
+  refreshAll(dur);
+}
+
+function updateTurnUI() {
+  const p = currentPlayer;
+  $('turn-title').textContent = (NET.on && p === NET.seat) ? 'Your Turn' : `${playerName(p)}'s Turn`;
+  $('turn-dot').className = 'dot' + (p > 1 ? ' p' + p : '');
+  $('turn-glow').className = 'turn-glow' + (p > 1 ? ' p' + p : '');
+  refreshAll();
+  updateControls();
+}
+
+function updateControls() {
+  const bot = isBot(currentPlayer);
+  const mine = canAct();
+  const blocked = isRolling || gameOver || bot || !mine;
+  $('roll-btn').disabled = blocked;
+  $('roll-label').textContent = gameOver ? '🏁 GAME OVER' : bot ? '🤖 Bot is plotting…' : isRolling ? '🎲 Rolling…'
+    : (!mine && NET.on) ? `⏳ ${playerName(currentPlayer)}'s turn…` : '🎲 ROLL DICE';
+  $('open-shop-btn').disabled = blocked;
+  $('shop-btn-label').textContent = shopPurchasedThisTurn ? '🛒 Market (used this turn)' : '🛒 Black Market (1/turn)';
+}
+
+function setBanner(html) { $('dice-result-banner').innerHTML = html; }
+
+/* ============================================================
+   FX helpers
+   ============================================================ */
+function floatText(tile, text, color) {
+  if (fastMode) return;
+  const c = getTileCoordinates(tile);
+  const el = document.createElement('div');
+  el.className = 'float-text';
+  el.style.left = (c.x + (Math.random() * 4 - 2)) + '%';
+  el.style.top = (c.y - 4) + '%';
+  el.style.color = color || '#fde68a';
+  el.textContent = text;
+  $('fx-layer').appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+}
+function floatAtPlayer(p, text, color) { floatText(playerPositions[p], text, color); }
+
+function burst(tile, emojis, n) {
+  if (fastMode) return;
+  const c = getTileCoordinates(tile);
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement('span');
+    el.className = 'burst';
+    el.textContent = emojis[i % emojis.length];
+    el.style.left = c.x + '%';
+    el.style.top = c.y + '%';
+    const a = Math.random() * Math.PI * 2, r = 30 + Math.random() * 55;
+    el.style.setProperty('--dx', Math.cos(a) * r + 'px');
+    el.style.setProperty('--dy', Math.sin(a) * r + 'px');
+    $('fx-layer').appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+}
+function hop(p) {
+  if (fastMode) return;
+  const h = document.querySelector(`#token-${p} .hopper`);
+  if (h && h.animate) h.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-14px) scale(1.06)' }, { transform: 'translateY(0)' }], { duration: 190, easing: 'ease-out' });
+}
+function toast(msg, kind) {
+  if (fastMode) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + (kind || '');
+  el.textContent = msg;
+  $('toast-layer').appendChild(el);
+  setTimeout(() => el.classList.add('out'), 2200);
+  setTimeout(() => el.remove(), 2700);
+}
+function buildEmbers() {
+  const c = $('embers');
+  c.innerHTML = '';
+  for (let i = 0; i < 22; i++) {
+    const e = document.createElement('span');
+    const size = 2 + Math.random() * 3;
+    e.style.left = (Math.random() * 100) + '%';
+    e.style.width = e.style.height = size + 'px';
+    e.style.animationDuration = (7 + Math.random() * 9) + 's';
+    e.style.animationDelay = (-Math.random() * 12) + 's';
+    e.style.setProperty('--sway', (Math.random() * 120 - 60) + 'px');
+    c.appendChild(e);
+  }
+}
+
+/* ============================================================
+   LOG
+   ============================================================ */
+function addLogEntry(player, text) {
+  const box = $('game-log');
+  if (moveHistory.length === 0) box.innerHTML = '';
+  moveHistory.unshift({ player, text });
+  $('log-count').textContent = `${moveHistory.length} Moves`;
+  const tag = (gameMode === 'PvC' && player === 2) ? 'AI' : 'P' + player;
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="log-tag p${player}">${tag}</span><span class="flex-1 text-slate-200">${text}</span>`;
+  box.prepend(entry);
+  while (box.children.length > 80) box.removeChild(box.lastChild);
+}
+
+/* ============================================================
+   DICE
+   ============================================================ */
+function buildDice() {
+  const pips = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+  let html = '';
+  for (let f = 1; f <= 6; f++) {
+    html += `<div class="face f${f}">` + pips[f].map(n => {
+      const r = Math.floor((n - 1) / 3) + 1, c = ((n - 1) % 3) + 1;
+      return `<span class="pip${f === 1 ? ' red' : ''}" style="grid-row:${r};grid-column:${c}"></span>`;
+    }).join('') + '</div>';
+  }
+  $('cube').innerHTML = html;
+}
+function rollDice3D(value) {
+  if (fastMode) return Promise.resolve();
+  return new Promise(resolve => {
+    playSound('roll');
+    const target = { 1: [0, 0], 6: [0, -180], 2: [0, -90], 5: [0, 90], 3: [-90, 0], 4: [90, 0] }[value];
+    spinX += (2 + Math.floor(Math.random() * 2)) * 360;
+    spinY += (2 + Math.floor(Math.random() * 2)) * 360;
+    $('cube').style.transform = `rotateX(${spinX + target[0]}deg) rotateY(${spinY + target[1]}deg)`;
+    setTimeout(resolve, 900);
+  });
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+function openModal(id) {
+  const m = $(id);
+  m.dataset.state = 'open';
+  m.classList.remove('hidden');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (m.dataset.state === 'open') m.classList.add('show');
+  }));
+}
+function closeModal(id) {
+  const m = $(id);
+  if (m.classList.contains('hidden')) return;
+  m.dataset.state = 'closed';
+  m.classList.remove('show');
+  setTimeout(() => { if (m.dataset.state === 'closed') m.classList.add('hidden'); }, 260);
+}
+function anyModalOpen() { return !!document.querySelector('.modal:not(.hidden)'); }
+
+/* ============================================================
+   MEME SPLASH SCREENS
+   ============================================================ */
+let memesOn = true;
+try { if (localStorage.getItem('sl-memes') === 'off') memesOn = false; } catch (e) {}
+const CLASS_ICON = { human: '🧑', wizard: '🧙', demon: '😈', angel: '😇' };
+const SPLASHES = {
+  mine:        { emoji: '💥', tint: '#f97316', rain: ['💥', '🔥', '💣'], shake: true, ms: 1900,
+                 top: ['BRO STEPPED ON IT', 'SKILL ISSUE', 'TASTE THE BOOM', 'NOT THE MINE!'],
+                 bottom: ['{who} flies back to tile {n}', '{who}: "it was not there before"'] },
+  mineBlocked: { emoji: '🛡️', tint: '#06b6d4', rain: ['🛡️', '✨'], ms: 1500,
+                 top: ['NOT TODAY', 'SHIELD GO BRRR', 'DENIED'],
+                 bottom: ['{who} shrugs off the blast'] },
+  snake:       { emoji: '🐍', tint: '#be123c', rain: ['🐍', '📉', '💀'], shake: true, ms: 1900,
+                 top: ['SSSSNAKE BITE', 'WELL THAT HAPPENED', 'BRUH', 'L + RATIO + SNAKE'],
+                 bottom: ['{who} slides down to tile {n}', 'Gravity wins again'] },
+  snakeDodge:  { emoji: '😎', tint: '#10b981', rain: ['😎', '🐍', '✨'], ms: 1500,
+                 top: ['UNBOTHERED', 'TOO SMOOTH', 'SNAKE: "WHO ARE YOU?"'],
+                 bottom: ['{who} walks past like nothing happened'] },
+  checkpoint:  { emoji: '⚓', tint: '#fbbf24', rain: ['⚓', '✨'], ms: 1600,
+                 top: ['CLUTCH SAVE', 'CHECKPOINT REACHED', 'SAVE POINT'],
+                 bottom: ['{who} is caught at tile {n}'] },
+  ladder:      { emoji: '🚀', tint: '#f59e0b', rain: ['🚀', '⭐', '✨'], ms: 1500,
+                 top: ["WE'RE SO BACK", 'SPEEDRUN ANY%', 'GOING UP'],
+                 bottom: ['{who} climbs to tile {n}'] },
+  swap:        { emoji: '🔁', tint: '#8b5cf6', rain: ['🔁', '🌀', '❓'], ms: 1700,
+                 top: ['PLOT TWIST', 'SWITCHEROO', 'WRONG SEAT, BUDDY'],
+                 bottom: ['{who} and {target} trade places!'] },
+  freeze:      { emoji: '🥶', tint: '#38bdf8', rain: ['❄️', '🧊', '🥶'], ms: 1600,
+                 top: ['CHILL OUT', 'STAY COOL, BRO', 'FROZEN IN PLACE'],
+                 bottom: ['{target} will skip a turn'] },
+  frozenSkip:  { emoji: '🧊', tint: '#38bdf8', rain: ['❄️', '🧊'], ms: 1500,
+                 top: ['TURN SKIPPED', 'BRB, FROZEN', 'LAG SPIKE'],
+                 bottom: ['{who} is stuck in the ice'] },
+  frostTrap:   { emoji: '🥶', tint: '#38bdf8', rain: ['❄️', '🥶'], ms: 1600,
+                 top: ['COLD BLOODED', 'OOF, FROST TRAP'],
+                 bottom: ['{who} will miss the next turn'] },
+  angelImmune: { emoji: '😇', tint: '#facc15', rain: ['😇', '✨', '☁️'], ms: 1500,
+                 top: ['NICE TRY', 'IMMUNE, SORRY'],
+                 bottom: ['{who} laughs at the cold'] },
+  shield:      { emoji: '🛡️', tint: '#22d3ee', rain: ['🛡️', '✨'], ms: 1500,
+                 top: ['PLOT ARMOR', 'SHIELD UP', 'MAIN CHARACTER ENERGY'],
+                 bottom: ['{who} is safe from the next bite'] },
+  haste:       { emoji: '⚡', tint: '#facc15', rain: ['⚡', '💨'], ms: 1400,
+                 top: ['ZOOOOOM', 'NITRO ACTIVATED', 'HASTE MODE'],
+                 bottom: ['{who} dashes to tile {n}'] },
+  treasure:    { emoji: '🤑', tint: '#eab308', rain: ['💰', '🪙', '💸'], ms: 1600,
+                 top: ['STONKS', 'MONEY PRINTER GO BRRR', "WE'RE RICH"],
+                 bottom: ['{who} grabs ${amt}'] },
+  bounty:      { emoji: '💸', tint: '#eab308', rain: ['💸', '🪙'], ms: 1500,
+                 top: ['SHEEEESH', 'CASH APP, BABY'],
+                 bottom: ['+${amt} for {who}'] },
+  steal:       { emoji: '😈', tint: '#dc2626', rain: ['😈', '💸', '🔥'], ms: 1600,
+                 top: ['STICKY FINGERS', 'GET ROBBED', 'PAY UP, BUDDY'],
+                 bottom: ['{who} snatches ${amt} from {target}'] },
+  bribe:       { emoji: '🪙', tint: '#10b981', rain: ['🪙', '🐍'], ms: 1500,
+                 top: ['MONEY TALKS', 'BRIBERY (TOTALLY LEGAL)'],
+                 bottom: ['{who} paid the snakes off'] },
+  checkpointSet:{ emoji: '⚓', tint: '#fbbf24', rain: ['⚓', '✨'], ms: 1400,
+                 top: ['SAVE POINT SET', 'ANCHORS AWEIGH'],
+                 bottom: ['{who} marks tile {n}'] },
+  sixRoll:     { emoji: '🎲', tint: '#a855f7', rain: ['🎲', '✨', '🔥'], ms: 1500,
+                 top: ["SIX! LET'S GOOO", 'LUCKY ROLL', 'JACKPOT DICE'],
+                 bottom: ['{who} earns a bonus power-up'] },
+  needExact:   { emoji: '😭', tint: '#64748b', rain: ['😭', '💧'], ms: 1500,
+                 top: ['SO CLOSE', 'NOT LIKE THIS', 'OVERSHOT IT'],
+                 bottom: ['{who} needs the exact number'] },
+  trapSet:     { emoji: '😈', tint: '#be123c', rain: ['🐍', '😈'], ms: 1600,
+                 top: ['EVIL LAUGH', 'SET THE TRAP'],
+                 bottom: ['{who} summons a snake on tile {n}'] },
+  mineSet:     { emoji: '💣', tint: '#f97316', rain: ['💣', '😏'], ms: 1500,
+                 top: ['BOOM LOADED', 'SET THE TRAP'],
+                 bottom: ['{who} plants a mine on tile {n}'] },
+  win:         { emoji: '🏆', tint: '#fbbf24', rain: ['🏆', '👑', '🎉', '🪙'], ms: 2300,
+                 top: ['GG, WELL PLAYED', 'WINNER WINNER', 'ALL HAIL THE CHAMP'],
+                 bottom: ['{who} claims the treasure!'] }
+};
+
+let splashQueue = Promise.resolve();
+let splashDepth = 0;
+let splashSkip = null;
+function splashActive() { return splashDepth > 0; }
+function splashIdle() { return splashQueue; }
+
+function toggleMemes() {
+  memesOn = !memesOn;
+  try { localStorage.setItem('sl-memes', memesOn ? 'on' : 'off'); } catch (e) {}
+  syncMemeButton();
+  if (!memesOn && splashSkip) splashSkip();
+}
+function syncMemeButton() {
+  $('meme-icon').textContent = memesOn ? '🤪' : '😐';
+  $('meme-text').textContent = memesOn ? 'Memes On' : 'Memes Off';
+}
+
+function splash(key, ctx) {
+  if (!memesOn || fastMode || !SPLASHES[key]) return Promise.resolve();
+  const gid = gameId;
+  splashDepth++;
+  const run = () => showSplash(key, ctx || {}, gid);
+  const p = splashQueue.then(run, run).catch(() => {}).then(() => { splashDepth--; });
+  splashQueue = p;
+  return p;
+}
+
+function showSplash(key, ctx, gid) {
+  return new Promise(resolve => {
+    if (gid !== gameId || !memesOn) { resolve(); return; }
+    const def = SPLASHES[key];
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const who = ctx.p ? `${CLASS_ICON[playerClasses[ctx.p]]} ${playerName(ctx.p)}` : '';
+    const target = ctx.t ? playerName(ctx.t) : 'The rival';
+    const fill = s => s.replace(/\{who\}/g, who).replace(/\{target\}/g, target)
+                       .replace(/\{n\}/g, ctx.n == null ? '' : ctx.n).replace(/\{amt\}/g, ctx.amt == null ? '' : ctx.amt);
+    const el = $('splash');
+    el.style.setProperty('--tint', def.tint);
+    el.classList.toggle('shake', !!def.shake);
+    $('splash-top').textContent = fill(pick(def.top));
+    $('splash-bottom').textContent = fill(pick(def.bottom));
+    $('splash-emoji').textContent = def.emoji;
+    const rain = $('splash-rain');
+    rain.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement('span');
+      s.textContent = def.rain[i % def.rain.length];
+      s.style.left = (Math.random() * 96) + '%';
+      s.style.animationDuration = (1.1 + Math.random() * 0.9) + 's';
+      s.style.animationDelay = (Math.random() * 0.6) + 's';
+      s.style.setProperty('--rot', (Math.random() * 540 - 270) + 'deg');
+      rain.appendChild(s);
+    }
+    el.classList.remove('hidden');
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (splashSkip) el.classList.add('show'); }));
+    let done = false;
+    const timer = setTimeout(finish, def.ms || 1500);
+    function finish() {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      splashSkip = null;
+      el.onclick = null;
+      el.classList.remove('show');
+      setTimeout(() => { if (!el.classList.contains('show')) { el.classList.add('hidden'); rain.innerHTML = ''; } resolve(); }, 160);
+    }
+    splashSkip = finish;
+    el.onclick = finish;
+  });
+}
+
+/* ============================================================
+   SHOP
+   ============================================================ */
+function getCost(p, key) {
+  const base = SHOP_ITEMS[key].cost;
+  return playerClasses[p] === 'wizard' ? Math.round(base * 0.75) : base;
+}
+function openShopModal() {
+  if (isRolling || gameOver || isBot(currentPlayer) || !canAct()) return;
+  renderShop();
+  openModal('shop-modal');
+}
+function renderShop() {
+  const p = currentPlayer;
+  $('shop-purse').textContent = playerCash[p];
+  $('shop-note').textContent = shopPurchasedThisTurn ? 'already traded this turn' : (playerClasses[p] === 'wizard' ? '1 purchase per turn · Wizard −25%' : '1 purchase per turn');
+  const list = $('shop-items');
+  list.innerHTML = '';
+  Object.entries(SHOP_ITEMS).forEach(([key, item]) => {
+    const price = getCost(p, key);
+    const poor = playerCash[p] < price;
+    const btn = document.createElement('button');
+    btn.className = 'shop-item' + ((poor || shopPurchasedThisTurn) ? ' disabled' : '');
+    btn.style.setProperty('--accent', item.accent);
+    btn.innerHTML = `
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="shop-ico">${item.icon}</div>
+        <div class="min-w-0"><div class="text-xs font-extrabold text-white">${item.name}</div><div class="text-[11px] text-slate-400 leading-snug">${item.desc}</div></div>
+      </div>
+      <span class="price${poor ? ' poor' : ''}">$${price}</span>`;
+    btn.onclick = () => uiBuy(key);
+    list.appendChild(btn);
+  });
+}
+
+function findFreeTile(base, offsets) {
+  for (const o of offsets) {
+    const t = base + o;
+    if (t <= 1 || t >= 100) continue;
+    if (LADDERS[t] || SNAKES[t] || SPECIAL_TILES[t] || placedMines[t]) continue;
+    return t;
+  }
+  return null;
+}
+
+function buyShopItem(key, target) {
+  const me = currentPlayer, opp = target || defaultTarget(me);
+  const bot = isBot(me);
+  const warn = m => { if (!bot) toast(m, 'warn'); };
+
+  if (shopPurchasedThisTurn) { warn('The merchant only trades once per turn.'); return false; }
+  const price = getCost(me, key);
+  if (playerCash[me] < price) { warn(`Not enough gold — you need $${price}.`); return false; }
+
+  let tile = null;
+  if (TARGET_SHOP.has(key) && (!opp || opp === me || !playerPositions[opp])) { warn('Pick a rival first.'); return false; }
+  if (key === 'swap' && playerPositions[me] === playerPositions[opp]) { warn('You already share a tile with your rival.'); return false; }
+  if (key === 'bribe' && playerBribes[me]) { warn('You already bribed a snake.'); return false; }
+  if (key === 'freeze') {
+    if (playerClasses[opp] === 'angel') { warn('Angels are immune to freeze — purchase cancelled.'); return false; }
+    if (playerPoisoned[opp]) { warn('Your rival is already frozen.'); return false; }
+  }
+  if (key === 'checkpoint' && playerCheckpoints[me] === playerPositions[me]) { warn('A sigil already marks this tile.'); return false; }
+  if (key === 'buysnake') {
+    tile = findFreeTile(playerPositions[me], [4, 3, 5, 2, 6, 1]);
+    if (!tile) { warn('No free tile ahead for a serpent trap.'); return false; }
+  }
+  if (key === 'mine') {
+    tile = findFreeTile(playerPositions[opp], [3, 2, 4, 1, 5, 6]);
+    if (!tile) { warn('No free tile ahead of your rival for a mine.'); return false; }
+  }
+
+  playerCash[me] -= price;
+  shopPurchasedThisTurn = true;
+  floatAtPlayer(me, `-$${price}`, '#fb7185');
+
+  if (key === 'swap') {
+    const tmp = playerPositions[me];
+    playerPositions[me] = playerPositions[opp];
+    playerPositions[opp] = tmp;
+    addLogEntry(me, `💸 Paid $${price}: <b>swapped places</b> with the rival!`);
+    playSound('powerup');
+    splash('swap', { p: me, t: opp });
+    refreshAll(0.8);
+  } else if (key === 'bribe') {
+    playerBribes[me] = true;
+    addLogEntry(me, `💸 Paid $${price}: bribed the serpents — <b>next snake bite ignored</b>.`);
+    playSound('powerup');
+    splash('bribe', { p: me });
+  } else if (key === 'freeze') {
+    playerPoisoned[opp] = true;
+    addLogEntry(me, `💸 Paid $${price}: <b>froze</b> ${playerName(opp)} — they skip their next turn!`);
+    playSound('powerup');
+    splash('freeze', { p: me, t: opp });
+  } else if (key === 'checkpoint') {
+    playerCheckpoints[me] = playerPositions[me];
+    addLogEntry(me, `💸 Paid $${price}: checkpoint sigil set on tile ${playerPositions[me]}.`);
+    playSound('powerup');
+    splash('checkpointSet', { p: me, n: playerPositions[me] });
+  } else if (key === 'buysnake') {
+    SNAKES[tile] = Math.max(1, tile - 15);
+    customSnakeOwner[tile] = me;
+    generateBoard();
+    drawBoardElements();
+    placeTokens();
+    addLogEntry(me, `💸 Paid $${price}: summoned a <b>serpent trap</b> on tile ${tile} (drops to ${SNAKES[tile]}).`);
+    playSound('snake');
+    splash('trapSet', { p: me, n: tile });
+  } else if (key === 'mine') {
+    placedMines[tile] = me;
+    renderTraps();
+    addLogEntry(me, `💸 Paid $${price}: planted a <b>mine</b> on tile ${tile}.`);
+    playSound('powerup');
+    splash('mineSet', { p: me, n: tile });
+  }
+
+  refreshAll();
+  updateControls();
+  closeModal('shop-modal');
+  return true;
+}
+
+/* ============================================================
+   POWER-UPS (roll a 6)
+   ============================================================ */
+function applyPowerUp(player, type, target) {
+  const opp = target || defaultTarget(player);
+  let key = null, ctx = { p: player };
+  if (type === 'swap') {
+    const tmp = playerPositions[player];
+    playerPositions[player] = playerPositions[opp];
+    playerPositions[opp] = tmp;
+    refreshAll(0.8);
+    addLogEntry(player, '✨ Power-up: <b>swapped places</b> with the rival!');
+    key = 'swap'; ctx.t = opp;
+    playSound('powerup');
+  } else if (type === 'freeze') {
+    if (playerClasses[opp] === 'angel') {
+      addLogEntry(player, '👼 The enemy Angel\'s Divine Grace <b>blocked</b> the freeze!');
+      floatAtPlayer(opp, 'Immune!', '#fef08a');
+      key = 'angelImmune'; ctx = { p: opp };
+    } else {
+      playerPoisoned[opp] = true;
+      addLogEntry(player, '❄️ Power-up: <b>froze</b> the rival — they skip their next turn.');
+      key = 'freeze'; ctx = { p: player, t: opp };
+    }
+    playSound('powerup');
+  } else if (type === 'shield') {
+    playerShields[player] = true;
+    addLogEntry(player, '🛡️ Power-up: <b>Holy Shield</b> activated.');
+    key = 'shield';
+    playSound('powerup');
+  } else if (type === 'cash') {
+    playerCash[player] += 250;
+    floatAtPlayer(player, '+$250', '#fde68a');
+    addLogEntry(player, '💰 Power-up: claimed a <b>+$250</b> bounty.');
+    key = 'bounty'; ctx.amt = 250;
+    playSound('cash');
+  }
+  refreshAll();
+  return key ? splash(key, ctx) : Promise.resolve();
+}
+function promptPowerUpChoice(fromLog) {
+  if (NET.on && (fromLog || currentPlayer !== NET.seat)) {
+    // Watching: the choice arrives through the move log.
+    return new Promise(resolve => {
+      NET.puWait = resolve;
+      if (!fastMode) setBanner(`<p class="text-xs font-bold text-violet-300">${playerName(currentPlayer)} is choosing a power-up…</p>`);
+      updateControls();
+    });
+  }
+  return new Promise(resolve => {
+    $('powerup-who').textContent = playerName(currentPlayer);
+    window.resolvePowerUp = resolve;
+    openModal('powerup-modal');
+  });
+}
+function selectPowerUp(type) {
+  if (NET.on && (!NET.seat || currentPlayer !== NET.seat)) return;
+  if (TARGET_PU.has(type) && rivals(currentPlayer).length > 1) { pickTarget(type, t => commitPowerUp(type, t), false); return; }
+  commitPowerUp(type, defaultTarget(currentPlayer));
+}
+function commitPowerUp(type, target) {
+  if (NET.on) netPush(PU_CODE[type] + (TARGET_PU.has(type) ? tchar(target) : ''));
+  const done = applyPowerUp(currentPlayer, type, target);
+  closeModal('powerup-modal');
+  const r = window.resolvePowerUp;
+  window.resolvePowerUp = null;
+  if (r) done.then(r);
+}
+
+/* ============================================================
+   AI
+   ============================================================ */
+async function aiPowerUp() {
+  await sleep(700);
+  const me = 2, op = 1;
+  let c;
+  if (playerPositions[op] - playerPositions[me] >= 14) c = 'swap';
+  else if (playerPositions[op] > playerPositions[me] && playerClasses[op] !== 'angel' && !playerPoisoned[op]) c = 'freeze';
+  else if (!playerShields[me]) c = 'shield';
+  else c = 'cash';
+  await applyPowerUp(me, c);
+  await sleep(600);
+}
+function aiChooseItem() {
+  const me = 2, op = 1;
+  const pos = playerPositions[me], opPos = playerPositions[op], cash = playerCash[me];
+  const can = k => cash >= getCost(me, k);
+  if (can('swap') && opPos - pos >= 18 && opPos < 95) return 'swap';
+  if (can('freeze') && playerClasses[op] !== 'angel' && !playerPoisoned[op] && opPos - pos >= 6) return 'freeze';
+  const snakeAhead = Object.keys(SNAKES).some(s => { s = +s; return s > pos && s <= pos + 6 && customSnakeOwner[s] !== me; });
+  if (can('bribe') && snakeAhead && !playerBribes[me] && !playerShields[me]) return 'bribe';
+  if (can('checkpoint') && pos >= 55 && playerCheckpoints[me] < pos - 10 && cash >= getCost(me, 'checkpoint') + 100) return 'checkpoint';
+  if (cash >= 450 && can('mine') && opPos < 92 && Math.random() < 0.5) return 'mine';
+  if (cash >= 450 && can('buysnake') && Math.random() < 0.5) return 'buysnake';
+  return null;
+}
+async function aiShop() {
+  await sleep(450);
+  if (shopPurchasedThisTurn) return;
+  const key = aiChooseItem();
+  if (key && buyShopItem(key)) await sleep(800);
+}
+function scheduleBot(ms) {
+  clearTimeout(botTimer);
+  const gid = gameId;
+  botTimer = setTimeout(() => { if (gid === gameId) executeTurn(); }, ms);
+}
+
+/* ============================================================
+   TURN FLOW
+   ============================================================ */
+function handleRollClick() {
+  if (isRolling || gameOver || isBot(currentPlayer)) return;
+  if (anyModalOpen() || splashActive()) return;
+  if (NET.on) {
+    if (!canAct()) return;
+    const v = 1 + Math.floor(Math.random() * 6);
+    netPush(String(v));            // everyone replays this exact roll
+    executeTurn(v, false);
+    return;
+  }
+  executeTurn();
+}
+
+async function executeTurn(forcedRoll, fromLog) {
+  if (gameOver || isRolling) return;
+  const gid = gameId;
+  isRolling = true;
+  updateControls();
+
+  const me = currentPlayer;
+  const name = playerName(me);
+  const wasExtra = extraRollPending;
+  extraRollPending = false;
+  $('extra-roll-badge').classList.add('hidden');
+
+  // Salary (once per turn, not on extra rolls)
+  let salary = 0;
+  if (!wasExtra) {
+    salary = playerClasses[me] === 'human' ? 100 : 50;
+    playerCash[me] += salary;
+    floatAtPlayer(me, `+$${salary}`, '#fde68a');
+    refreshAll();
+
+    if (playerPoisoned[me]) {
+      playerPoisoned[me] = false;
+      addLogEntry(me, '❄️ Frozen solid — <b>turn skipped</b>!');
+      await splash('frozenSkip', { p: me });
+      setBanner(`<p class="text-xs font-bold text-sky-300">${name} is frozen and loses this turn (+$${salary})</p>`);
+      refreshAll();
+      await sleep(1200);
+      if (gid !== gameId) return;
+      switchTurn();
+      return;
+    }
+  }
+
+  if (isBot(me) && !shopPurchasedThisTurn) {
+    await aiShop();
+    await splashIdle();
+    if (gid !== gameId) return;
+  }
+
+  const roll = forcedRoll || (1 + Math.floor(Math.random() * 6));
+  await rollDice3D(roll);
+  if (gid !== gameId) return;
+
+  setBanner(`<p class="text-xs font-bold text-white">${name} rolled <span style="padding:2px 9px;border-radius:8px;background:rgba(139,92,246,.3);border:1px solid rgba(167,139,250,.5);color:#ddd6fe;font-size:14px">${roll}</span>${salary ? ` <span class="text-amber-300">(+$${salary} salary)</span>` : ''}</p>`);
+
+  if (playerClasses[me] === 'human' && roll % 2 === 0) {
+    playerCash[me] += 100;
+    floatAtPlayer(me, '+$100', '#fde68a');
+    addLogEntry(me, `🧑 Work ethic: even roll (${roll}) earned <b>+$100</b>.`);
+    refreshAll();
+  }
+
+  if (roll === 6) {
+    extraRollPending = true;
+    $('extra-roll-badge').classList.remove('hidden');
+    playSound('powerup');
+    await splash('sixRoll', { p: me });
+    if (gid !== gameId) return;
+    if (isBot(me)) await aiPowerUp(); else await promptPowerUpChoice(fromLog);
+    if (gid !== gameId) return;
+  }
+
+  // Movement
+  const from = playerPositions[me];
+  const target = from + roll;
+  if (target > 100) {
+    addLogEntry(me, `Rolled ${roll} but needs exactly <b>${100 - from}</b> to land on 100.`);
+    floatAtPlayer(me, 'Need exact!', '#fca5a5');
+    await splash('needExact', { p: me });
+    await sleep(900);
+  } else {
+    for (let pos = from + 1; pos <= target; pos++) {
+      movePlayerTo(me, pos, 0.2);
+      hop(me);
+      playSound('step');
+      if (playerClasses[me] === 'demon') {
+        for (const q of rivals(me)) {
+          if (pos !== playerPositions[q] || playerCash[q] <= 0) continue;
+          const stolen = Math.min(50, playerCash[q]);
+          playerCash[q] -= stolen;
+          playerCash[me] += stolen;
+          floatAtPlayer(q, `-$${stolen}`, '#fb7185');
+          floatAtPlayer(me, `+$${stolen}`, '#fde68a');
+          addLogEntry(me, `😈 Hellfire: passed ${playerName(q)} and stole <b>$${stolen}</b>!`);
+          playSound('cash');
+          refreshAll();
+          await splash('steal', { p: me, t: q, amt: stolen });
+        }
+      }
+      await sleep(210);
+      if (gid !== gameId) return;
+    }
+    await resolveTile(me, gid);
+    if (gid !== gameId) return;
+    if (playerPositions[me] === 100) { showWinModal(me); return; }
+  }
+
+  if (extraRollPending) {
+    addLogEntry(me, '🔥 Rolled a 6 — <b>extra roll</b>!');
+    isRolling = false;
+    updateControls();
+    if (isBot(me)) scheduleBot(1000);
+  } else {
+    switchTurn();
+  }
+}
+
+function switchTurn() {
+  currentPlayer = currentPlayer % NP + 1;
+  shopPurchasedThisTurn = false;
+  extraRollPending = false;
+  isRolling = false;
+  updateTurnUI();
+  if (isBot(currentPlayer)) scheduleBot(900);
+}
+
+/* ---- Tile events ---- */
+async function resolveTile(p, gid) {
+  for (let guard = 0; guard < 8; guard++) {
+    if (gid !== gameId) return;
+    const moved = await resolveOnce(p);
+    if (!moved) break;
+  }
+}
+
+async function resolveOnce(p) {
+  const pos = playerPositions[p];
+  const cp = playerCheckpoints[p];
+
+  // 1. Mines (the owner is safe)
+  if (placedMines[pos] && placedMines[pos] !== p) {
+    delete placedMines[pos];
+    renderTraps();
+    if (playerShields[p]) {
+      playerShields[p] = false;
+      refreshAll();
+      addLogEntry(p, `🛡️ Holy Shield <b>blocked</b> the mine on tile ${pos}!`);
+      floatText(pos, 'Blocked!', '#67e8f9');
+      playSound('powerup');
+      await sleep(800);
+      await splash('mineBlocked', { p });
+      return false;
+    }
+    burst(pos, ['💥', '🔥', '✨'], 10);
+    playSound('explosion');
+    let back = Math.max(1, pos - 6);
+    if (cp > 0) back = Math.min(pos, Math.max(back, cp));
+    addLogEntry(p, `💥 Stepped on a <b>mine</b>! Blasted back to tile ${back}.`);
+    floatText(pos, 'BOOM!', '#fb923c');
+    movePlayerTo(p, back, 0.7);
+    await sleep(900);
+    await splash('mine', { p, n: back });
+    return back !== pos;
+  }
+
+  // 2. Ladders
+  if (LADDERS[pos]) {
+    let dest = LADDERS[pos];
+    if (playerClasses[p] === 'wizard' && dest + 2 <= 100 && !SNAKES[dest + 2]) {
+      dest += 2;
+      addLogEntry(p, `🧙‍♂️ Arcane Affinity: climbed a ladder with +2 bonus tiles to <b>${dest}</b>!`);
+    } else {
+      addLogEntry(p, `▲ Climbed a ladder to tile <b>${dest}</b>!`);
+    }
+    playSound('ladder');
+    floatText(pos, '▲ Climb!', '#fcd34d');
+    movePlayerTo(p, dest, 0.9);
+    await sleep(1000);
+    await splash('ladder', { p, n: dest });
+    return true;
+  }
+
+  // 3. Snakes
+  if (SNAKES[pos]) {
+    if (customSnakeOwner[pos] === p) {
+      addLogEntry(p, '🐍 Your own serpent trap lets you pass unharmed.');
+      await splash('snakeDodge', { p });
+      return false;
+    }
+    if (playerBribes[p]) {
+      playerBribes[p] = false;
+      refreshAll();
+      addLogEntry(p, `🐍 Bribe worked — the snake on tile ${pos} <b>ignored you</b>.`);
+      floatText(pos, 'Bribed!', '#6ee7b7');
+      playSound('powerup');
+      await sleep(800);
+      await splash('snakeDodge', { p });
+      return false;
+    }
+    if (playerShields[p]) {
+      playerShields[p] = false;
+      refreshAll();
+      addLogEntry(p, `🛡️ Holy Shield <b>protected</b> from the snake on tile ${pos}!`);
+      floatText(pos, 'Blocked!', '#67e8f9');
+      playSound('powerup');
+      await sleep(800);
+      await splash('snakeDodge', { p });
+      return false;
+    }
+    let dest = SNAKES[pos];
+    let saved = false;
+    if (cp > 0 && dest < cp) {
+      dest = Math.min(pos, cp);
+      saved = true;
+      addLogEntry(p, `⚓ Checkpoint sigil caught you at tile <b>${dest}</b> — saved from the full drop!`);
+    } else {
+      addLogEntry(p, `▼ Bitten by a snake! Slid down to tile <b>${dest}</b>.`);
+    }
+    playSound('snake');
+    floatText(pos, '🐍 Bitten!', '#fda4af');
+    movePlayerTo(p, dest, 0.9);
+    await sleep(1000);
+    await splash(saved ? 'checkpoint' : 'snake', { p, n: dest });
+    return dest !== pos;
+  }
+
+  // 4. Rune tiles
+  const st = SPECIAL_TILES[pos];
+  if (st) {
+    if (st.type === 'shield') {
+      playerShields[p] = true;
+      addLogEntry(p, '🛡️ Shield rune: <b>Holy Shield</b> gained!');
+      floatText(pos, '🛡️ Shield!', '#67e8f9');
+      playSound('powerup');
+      refreshAll();
+      await sleep(700);
+      await splash('shield', { p });
+      return false;
+    }
+    if (st.type === 'boost') {
+      const np = Math.min(100, pos + 4);
+      addLogEntry(p, `⚡ Haste rune: dashed forward <b>+4</b> to tile ${np}!`);
+      floatText(pos, '⚡ Haste!', '#fde047');
+      playSound('powerup');
+      movePlayerTo(p, np, 0.5);
+      await sleep(750);
+      await splash('haste', { p, n: np });
+      return np !== pos;
+    }
+    if (st.type === 'cash') {
+      const bonus = pos > 50 ? 300 : 200;
+      playerCash[p] += bonus;
+      addLogEntry(p, `💰 Treasure chest: collected <b>+$${bonus}</b>!`);
+      floatText(pos, `+$${bonus}`, '#fde68a');
+      burst(pos, ['🪙', '✨'], 8);
+      playSound('cash');
+      refreshAll();
+      await sleep(750);
+      await splash('treasure', { p, amt: bonus });
+      return false;
+    }
+    if (st.type === 'freeze') {
+      if (playerClasses[p] === 'angel') {
+        addLogEntry(p, '👼 Divine Grace: immune to the frost trap!');
+        floatText(pos, 'Immune!', '#fef08a');
+        await splash('angelImmune', { p });
+      } else {
+        playerPoisoned[p] = true;
+        addLogEntry(p, '❄️ Frost trap: you will <b>skip your next turn</b>!');
+        floatText(pos, '❄️ Frozen!', '#93c5fd');
+        playSound('snake');
+        refreshAll();
+        await splash('frostTrap', { p });
+      }
+      await sleep(750);
+      return false;
+    }
+  }
+  return false;
+}
+
+/* ============================================================
+   WIN / RESET
+   ============================================================ */
+function showWinModal(p) {
+  gameOver = true;
+  updateControls();
+  refreshAll();
+  playSound('win');
+  burst(100, ['🪙', '✨', '👑', '🎉'], 24);
+  addLogEntry(p, `🏆 <b>${playerName(p)}</b> reached the treasure!`);
+  $('win-title').textContent = `${playerName(p).toUpperCase()} WINS!`;
+  $('win-subtitle').textContent = `${CLASSES[playerClasses[p]].name} claimed the treasure on tile 100 with $${playerCash[p]} in the purse.`;
+  const gid = gameId;
+  splash('win', { p }).then(() => setTimeout(() => { if (gid === gameId && gameOver) openModal('win-modal'); }, 500));
+}
+
+function confirmReset() { openModal('confirm-modal'); }
+function confirmResetAction() { closeModal('confirm-modal'); if (NET.on) netNewGame(); else resetGame(); }
+function playAgain() { if (NET.on) { closeModal('win-modal'); netNewGame(); } else resetGame(); }
+
+function resetGame() {
+  gameId++;
+  if (gameMode !== 'ONL') NP = 2;
+  const P = PLAYERS();
+  const mk = f => Object.fromEntries(P.map(p => [p, typeof f === 'function' ? f(p) : f]));
+  clearTimeout(botTimer);
+  if (splashSkip) splashSkip();
+  currentPlayer = 1;
+  playerPositions = mk(1);
+  playerCash = mk(200);
+  playerShields = mk(p => playerClasses[p] === 'angel');
+  playerBribes = mk(false);
+  playerCheckpoints = mk(0);
+  playerPoisoned = mk(false);
+  shopPurchasedThisTurn = false;
+  SNAKES = { ...BASE_SNAKES };
+  customSnakeOwner = {};
+  placedMines = {};
+  moveHistory = [];
+  isRolling = false;
+  gameOver = false;
+  extraRollPending = false;
+
+  if (window.resolvePowerUp) { const r = window.resolvePowerUp; window.resolvePowerUp = null; r(); }
+  if (NET.puWait) { const r = NET.puWait; NET.puWait = null; r(); }
+  ['powerup-modal', 'shop-modal', 'target-modal', 'win-modal', 'confirm-modal'].forEach(closeModal);
+
+  $('extra-roll-badge').classList.add('hidden');
+  $('fx-layer').innerHTML = '';
+  $('game-log').innerHTML = '<div class="text-slate-500 italic text-center py-6">The dungeon awaits. Roll a 6 for a bonus power-up, and earn gold to buy traps!</div>';
+  $('log-count').textContent = '0 Moves';
+  setBanner('<p class="text-xs font-semibold text-indigo-300">Roll the dice to begin your descent!</p>');
+
+  generateBoard();
+  drawBoardElements();
+  renderTraps();
+  buildPlayerCards();
+  buildTokens();
+  syncModeButtons();
+  updateTurnUI();
+  P.forEach(p => { if (playerShields[p]) addLogEntry(p, '👼 Divine Grace: starts with a free <b>Holy Shield</b>.'); });
+}
+
+/* ============================================================
+   MODE & CLASS SELECTION
+   ============================================================ */
+function syncModeButtons() {
+  $('mode-pvc').classList.toggle('on', gameMode === 'PvC');
+  $('mode-pvp').classList.toggle('on', gameMode === 'PvP');
+  $('mode-onl').classList.toggle('on', gameMode === 'ONL');
+}
+function setMode(mode) {
+  if (NET.on) { netLeave().then(() => setMode(mode)); return; }
+  if (isRolling && !gameOver) { toast('Wait for the current turn to finish.', 'warn'); return; }
+  gameMode = mode;
+  resetGame();
+}
+function setPendingMode(mode) { pendingMode = mode; buildClassModal(); }
+
+function openClassSelectModal() {
+  if (NET.on) { toast('Champions are locked in an online match — a rematch keeps them.', 'warn'); return; }
+  if (isRolling && !gameOver) { toast('Wait for the current turn to finish.', 'warn'); return; }
+  pendingClasses = { ...playerClasses };
+  pendingMode = gameMode;
+  buildClassModal();
+  openModal('class-modal');
+}
+function buildClassModal() {
+  $('class-mode-pvc').classList.toggle('on', pendingMode === 'PvC');
+  $('class-mode-pvp').classList.toggle('on', pendingMode === 'PvP');
+  $('class-title-2').textContent = pendingMode === 'PvC' ? 'AI Bot' : 'Player 2';
+  [1, 2].forEach(p => {
+    const box = $('class-list-' + p);
+    box.innerHTML = '';
+    Object.entries(CLASSES).forEach(([key, c]) => {
+      const b = document.createElement('button');
+      b.className = 'class-card' + (pendingClasses[p] === key ? ` selected team${p}` : '');
+      b.innerHTML = `<div class="class-portrait">${pieceSVG(key, p)}</div><div><div class="cn">${c.name}<span class="ct">${c.title}</span></div><div class="cd">${c.desc}</div></div>`;
+      b.onclick = () => { pendingClasses[p] = key; buildClassModal(); };
+      box.appendChild(b);
+    });
+  });
+}
+function applyClassSelection() {
+  playerClasses = { ...pendingClasses };
+  gameMode = pendingMode;
+  closeModal('class-modal');
+  resetGame();
+}
+
+/* ============================================================
+   ONLINE PLAY — two devices, one dungeon
+   Every input (a dice roll, a market purchase, a power-up choice) is one
+   character in a shared move log carried in the room presence channel.
+   Both browsers replay the same log through the same deterministic engine,
+   so boards, gold and traps always match. Reloading replays the log fast.
+   ============================================================ */
+const SHOP_CODE = { swap: 'w', bribe: 'b', freeze: 'f', checkpoint: 'c', buysnake: 't', mine: 'm' };
+const SHOP_BY_CODE = Object.fromEntries(Object.entries(SHOP_CODE).map(([k, v]) => [v, k]));
+const PU_CODE = { swap: 'S', freeze: 'F', shield: 'H', cash: 'C' };
+const PU_BY_CODE = Object.fromEntries(Object.entries(PU_CODE).map(([k, v]) => [v, k]));
+// log grammar: a roll is 1-6; shop/power-up choices are one letter, and swap/freeze/mine add a target letter J..N (player 1..5)
+const TCHARS = 'JKLMN';
+const tchar = t => TCHARS[t - 1];
+const LOG_RE = /^(?:[1-6btcHC]|[wfmSF][JKLMN])*$/;
+const TOK_RE = /^[a-z0-9]{10}$/;
+const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+const NET = {
+  on: false, room: undefined, ch: null, ownsRoom: false, code: '', tok: '', nick: '', cls: 'human',
+  want: false, seat: 0, G: null, lobby: null, order: new Map(), applied: 0, puWait: null,
+  nicks: ['Player 1', 'Player 2'], connected: true, unsubs: [], pumpTok: 0, joinTok: 0
+};
+
+function cleanNick(s) { return String(s == null ? '' : s).replace(/[^A-Za-z0-9 _.-]/g, '').trim().slice(0, 12); }
+
+function netTok() {
+  let t = null;
+  try { t = sessionStorage.getItem('sl-tok'); } catch (e) {}
+  if (!t || !TOK_RE.test(t)) {
+    t = Array.from({ length: 10 }, () => 'abcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 36)]).join('');
+    try { sessionStorage.setItem('sl-tok', t); } catch (e) {}
+  }
+  return t;
+}
+
+function validG(g) {
+  if (!g || typeof g !== 'object') return null;
+  if (!Number.isInteger(g.gen) || g.gen < 0 || g.gen > 9999) return null;
+  if (typeof g.by !== 'string' || !TOK_RE.test(g.by)) return null;
+  const n = Array.isArray(g.seats) ? g.seats.length : 0;
+  if (n < 1 || n > MAXP || (g.gen > 0 && n < 2)) return null;
+  if (!g.seats.every(t => typeof t === 'string' && TOK_RE.test(t)) || new Set(g.seats).size !== n) return null;
+  if (!Array.isArray(g.cls) || g.cls.length !== n || !g.cls.every(c => typeof c === 'string' && CLASSES[c])) return null;
+  if (!Array.isArray(g.nicks) || g.nicks.length !== n) return null;
+  if (typeof g.log !== 'string' || g.log.length > 3000 || !LOG_RE.test(g.log)) return null;
+  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log };
+}
+function fixNicks(G) {
+  const seen = new Set();
+  G.nicks = G.nicks.map((n, i) => {
+    const base = n || ('Player ' + (i + 1));
+    let s = base, k = 2;
+    while (seen.has(s.toLowerCase())) s = base.slice(0, 10) + ' ' + (k++);
+    seen.add(s.toLowerCase());
+    return s;
+  });
+}
+// is game `a` newer than `b`? (higher generation wins; ties go to the smaller starter token)
+function netBetter(a, b) {
+  if (!b) return true;
+  if (a.gen !== b.gen) return a.gen > b.gen;
+  return a.by !== b.by && a.by < b.by;
+}
+
+function canAct() {
+  if (!NET.on) return true;
+  return NET.seat > 0 && !!NET.G && NET.G.gen > 0 && currentPlayer === NET.seat && NET.applied >= NET.G.log.length && !fastMode && !gameOver;
+}
+
+/* ---- choosing a rival (swap / freeze / mine) ---- */
+function pickTarget(kind, cb, strict) {
+  const me = currentPlayer, rs = rivals(me);
+  if (rs.length === 1) { cb(rs[0]); return; }
+  const info = {
+    swap: ['🔁 Swap places with…', 'Trade tiles with one rival.'],
+    freeze: ['❄️ Freeze…', 'They skip their next turn.'],
+    mine: ['💣 Plant a mine ahead of…', 'It lands a few tiles in front of them.']
+  }[kind];
+  $('target-title').textContent = info[0];
+  $('target-sub').textContent = info[1];
+  const list = $('target-list');
+  list.innerHTML = '';
+  rs.forEach(q => {
+    let why = '';
+    if (strict) {
+      if (kind === 'swap' && playerPositions[q] === playerPositions[me]) why = 'already on your tile';
+      if (kind === 'freeze' && playerClasses[q] === 'angel') why = 'Angels are immune';
+      if (kind === 'freeze' && !why && playerPoisoned[q]) why = 'already frozen';
+      if (kind === 'mine' && findFreeTile(playerPositions[q], [3, 2, 4, 1, 5, 6]) == null) why = 'no free tile ahead';
+    }
+    const b = document.createElement('button');
+    b.className = 'target-btn';
+    b.disabled = !!why;
+    b.style.borderColor = TEAM[q].c + '99';
+    b.innerHTML = `<span>${CLASS_ICON[playerClasses[q]]} ${playerName(q)}<small>${CLASSES[playerClasses[q]].name} · tile ${playerPositions[q]} · $${playerCash[q]}${why ? ' · ' + why : ''}</small></span><span style="color:${TEAM[q].c}">●</span>`;
+    b.onclick = () => { closeModal('target-modal'); cb(q); };
+    list.appendChild(b);
+  });
+  openModal('target-modal');
+}
+
+function uiBuy(key) {
+  if (NET.on && !canAct()) return;
+  if (TARGET_SHOP.has(key) && rivals(currentPlayer).length > 1) { pickTarget(key, t => commitBuy(key, t), true); return; }
+  commitBuy(key, defaultTarget(currentPlayer));
+}
+function commitBuy(key, target) {
+  const ok = buyShopItem(key, target);
+  if (ok && NET.on) netPush(SHOP_CODE[key] + (TARGET_SHOP.has(key) ? tchar(target) : ''));
+}
+
+/* ---- replication ---- */
+function netPeers() {
+  let ps = [];
+  try { ps = NET.ch ? NET.ch.peers() : []; } catch (e) {}
+  return ps.filter(p => p && p.kind !== 'agent' && p.presence && p.presence.app === 'sl1' && p.presence.code === NET.code);
+}
+
+function netPublish() {
+  if (!NET.on || !NET.ch) return;
+  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log } : null;
+  NET.ch.presence({ app: 'sl1', code: NET.code, tok: NET.tok, nick: NET.nick, cls: NET.cls, want: NET.want ? true : null, G }).catch(() => {});
+}
+
+function netPush(str) {
+  if (!NET.on || !NET.G) return;
+  NET.G.log += str;
+  NET.applied = NET.G.log.length;
+  netPublish();
+}
+
+function netSync() {
+  if (!NET.on) return;
+  const others = netPeers().filter(p => !p.isMe);
+
+  // The host keeps the waiting-room roster current, then starts the match on request.
+  if (NET.G && NET.G.gen === 0 && NET.G.seats[0] === NET.tok) {
+    const want = others.filter(p => p.presence.want === true && TOK_RE.test(p.presence.tok || '') && p.presence.tok !== NET.tok && CLASSES[p.presence.cls]);
+    want.forEach(p => { if (!NET.order.has(p.presence.tok)) NET.order.set(p.presence.tok, NET.order.size + 1); });
+    want.sort((a, b) => NET.order.get(a.presence.tok) - NET.order.get(b.presence.tok));
+    const sel = want.slice(0, MAXP - 1);
+    const seats = [NET.tok, ...sel.map(p => p.presence.tok)];
+    const cls = [NET.G.cls[0], ...sel.map(p => p.presence.cls)];
+    const nicks = [NET.G.nicks[0], ...sel.map(p => cleanNick(p.presence.nick))];
+    if (JSON.stringify([seats, cls, nicks]) !== JSON.stringify([NET.G.seats, NET.G.cls, NET.G.nicks])) {
+      NET.G.seats = seats; NET.G.cls = cls; NET.G.nicks = nicks;
+      netPublish();
+    }
+    netRenderLobby();
+    return;
+  }
+
+  let best = null;
+  for (const p of others) {
+    const g = validG(p.presence.G);
+    if (g && (!best || netBetter(g, best) || (g.gen === best.gen && g.by === best.by && g.log.length > best.log.length))) best = g;
+  }
+  if (best && best.gen > 0) {
+    const cur = NET.G;
+    if (!cur || netBetter(best, cur)) {
+      if (!best.seats.includes(NET.tok)) {
+        netFail(cur ? 'The room started a new match without you.' : 'That match has already started.');
+        return;
+      }
+      netStart(best);
+    } else if (best.gen === cur.gen && best.by === cur.by && best.log.length > cur.log.length) {
+      if (best.log.startsWith(cur.log)) { cur.log = best.log; netPublish(); netPump(); }   // re-announce so everyone holds the full log
+      else netStart(best);      // histories diverged: rebuild from the other player's log
+    }
+  } else if (best && best.gen === 0 && !NET.G) {
+    NET.lobby = best;
+    if (!best.seats.includes(NET.tok) && best.seats.length >= MAXP) { netFail('That room is full (' + MAXP + ' players).'); return; }
+    netRenderLobby();
+  }
+  netRenderChip();
+}
+
+function netStart(G) {
+  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log };
+  NET.seat = G.seats.indexOf(NET.tok) + 1;
+  NET.nicks = G.nicks.slice();
+  NET.applied = 0;
+  NET.want = false;
+  NET.joinTok++;
+  NP = G.seats.length;
+  playerClasses = Object.fromEntries(G.cls.map((c, i) => [i + 1, c]));
+  gameMode = 'ONL';
+  fastMode = G.log.length > 0;
+  closeModal('online-modal');
+  closeModal('class-modal');
+  resetGame();
+  netRenderChip();
+  netPublish();
+  netPump();
+}
+
+async function netPump() {
+  const tok = ++NET.pumpTok, gid = gameId;
+  const alive = () => NET.on && tok === NET.pumpTok && gid === gameId && !!NET.G;
+  while (alive() && NET.applied < NET.G.log.length) {
+    const log = NET.G.log, c = log[NET.applied];
+    const targeted = 'wfmSF'.includes(c);
+    const len = targeted ? 2 : 1;
+    if (NET.applied + len > log.length) break;          // half-written unit: wait for the rest
+    const isPU = !!PU_BY_CODE[c];
+    const ready = isPU ? () => !!NET.puWait : () => !isRolling && splashDepth === 0 && !NET.puWait;
+    while (alive() && !ready() && !gameOver) await realSleep(fastMode ? 0 : 40);
+    if (!alive() || gameOver) break;
+    const t = targeted ? TCHARS.indexOf(log[NET.applied + 1]) + 1 : 0;
+    NET.applied += len;
+    if (targeted && (t < 1 || t > NP)) continue;
+    if (c >= '1' && c <= '6') executeTurn(+c, true);
+    else if (isPU) netResolvePU(PU_BY_CODE[c], t || undefined);
+    else if (SHOP_BY_CODE[c]) buyShopItem(SHOP_BY_CODE[c], t || undefined);
+  }
+  if (tok === NET.pumpTok) { fastMode = false; updateControls(); netRenderChip(); }
+}
+
+function netResolvePU(type, target) {
+  const r = NET.puWait;
+  NET.puWait = null;
+  const done = applyPowerUp(currentPlayer, type, target);
+  if (r) done.then(r);
+}
+
+function netNewGame() {
+  if (!NET.on || !NET.G || NET.seat === 0) return;
+  const here = new Set([NET.tok, ...netPeers().filter(p => !p.isMe).map(p => p.presence.tok)]);
+  const keep = NET.G.seats.map((t, i) => i).filter(i => here.has(NET.G.seats[i]));
+  if (keep.length < 2) { toast('A rematch needs at least 2 players in the room.', 'warn'); return; }
+  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '' });
+}
+
+function netStartMatch() {
+  if (!NET.on || !NET.G || NET.G.gen !== 0 || NET.G.seats[0] !== NET.tok) return;
+  if (NET.G.seats.length < 2) { netMsg('Wait for at least one more player.'); return; }
+  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '' };
+  fixNicks(G);
+  netStart(G);
+}
+
+/* ---- Peer-to-peer transport (WebRTC through the free PeerJS broker) ----
+   Emulates the little presence channel the online layer expects: the first player
+   to open a room code becomes the hub, everyone else connects to it, and the hub
+   relays each player's presence to the others. The match itself runs in every
+   browser; the broker is only used to introduce the players to each other. */
+const P2PRoom = {
+  async join(name) {
+    const code = String(name).replace(/^sl-/, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const hubId = 'dungeon-sl-' + code;
+    const peerListeners = new Set(), connListeners = new Set();
+    const me = {};
+    let peer = null, isHub = false, connected = false, closed = false, hubConn = null;
+    let list = [];
+    const conns = new Map(), presences = new Map();
+
+    const openPeer = id => new Promise((res, rej) => {
+      const p = id ? new Peer(id) : new Peer();
+      const to = setTimeout(() => { try { p.destroy(); } catch (e) {} rej({ type: 'timeout' }); }, 10000);
+      p.on('open', () => { clearTimeout(to); res(p); });
+      p.on('error', e => { clearTimeout(to); try { p.destroy(); } catch (x) {} rej(e || { type: 'error' }); });
+    });
+    try { peer = await openPeer(hubId); isHub = true; }
+    catch (e) {
+      if (e && e.type === 'unavailable-id') peer = await openPeer(); else throw e;
+    }
+    const myId = peer.id;
+    list = [{ peer: myId, presence: me }];
+
+    const notify = () => peerListeners.forEach(f => { try { f({ peers: snapshot(), joined: [], left: [], updated: [] }); } catch (e) {} });
+    const notifyConn = () => connListeners.forEach(f => { try { f(connected); } catch (e) {} });
+    function snapshot() {
+      const seen = new Set();
+      const out = [];
+      list.forEach(x => {
+        if (seen.has(x.peer)) return;
+        seen.add(x.peer);
+        const isMe = x.peer === myId;
+        out.push({ peer: x.peer, by: null, isMe, sameTab: isMe, kind: 'viewer', guest: false, presence: Object.freeze({ ...(isMe ? me : x.presence) }), updatedAt: Date.now() });
+      });
+      if (!seen.has(myId)) out.push({ peer: myId, by: null, isMe: true, sameTab: true, kind: 'viewer', guest: false, presence: Object.freeze({ ...me }), updatedAt: Date.now() });
+      return Object.freeze(out);
+    }
+    peer.on('error', e => { if (e && e.type === 'peer-unavailable' && !isHub) { connected = false; notifyConn(); } });
+    peer.on('disconnected', () => { if (!closed) { try { peer.reconnect(); } catch (e) {} } });
+
+    if (isHub) {
+      connected = true;
+      presences.set(myId, me);
+      const broadcast = () => {
+        list = [...presences].map(([p, presence]) => ({ peer: p, presence }));
+        const msg = { t: 'l', l: list };
+        conns.forEach(c => { try { c.send(msg); } catch (e) {} });
+        notify();
+      };
+      peer.on('connection', c => {
+        const gone = () => { if (conns.get(c.peer) === c) { conns.delete(c.peer); presences.delete(c.peer); broadcast(); } };
+        c.on('open', () => { conns.set(c.peer, c); try { c.send({ t: 'l', l: list }); } catch (e) {} });
+        c.on('data', d => { if (d && d.t === 'p' && d.p && typeof d.p === 'object') { presences.set(c.peer, d.p); broadcast(); } });
+        c.on('close', gone); c.on('error', gone);
+      });
+      me.__push = () => broadcast();
+    } else {
+      hubConn = peer.connect(hubId, { reliable: true, serialization: 'json' });
+      const send = () => { if (connected) { try { hubConn.send({ t: 'p', p: JSON.parse(JSON.stringify(me)) }); } catch (e) {} } };
+      hubConn.on('open', () => { connected = true; notifyConn(); send(); });
+      hubConn.on('data', d => {
+        if (d && d.t === 'l' && Array.isArray(d.l)) {
+          list = d.l.filter(x => x && typeof x.peer === 'string' && x.presence && typeof x.presence === 'object').slice(0, 12);
+          notify();
+        }
+      });
+      const lost = () => { connected = false; list = [{ peer: myId, presence: me }]; notifyConn(); notify(); };
+      hubConn.on('close', lost); hubConn.on('error', lost);
+      me.__push = send;
+    }
+    const push = me.__push; delete me.__push;
+
+    return {
+      name,
+      presence: async patch => {
+        for (const [k, v] of Object.entries(patch)) { if (v === null) delete me[k]; else me[k] = JSON.parse(JSON.stringify(v)); }
+        push();
+        if (!isHub) notify();
+      },
+      peers: () => snapshot(),
+      onPeers: f => { peerListeners.add(f); setTimeout(() => { if (peerListeners.has(f)) f({ peers: snapshot(), joined: [], left: [], updated: [] }); }, 0); return () => peerListeners.delete(f); },
+      connected: () => connected,
+      onConnection: f => { connListeners.add(f); setTimeout(() => { if (connListeners.has(f)) f(connected); }, 0); return () => connListeners.delete(f); },
+      leave: async () => {
+        closed = true;
+        try { conns.forEach(c => c.close()); } catch (e) {}
+        try { if (hubConn) hubConn.close(); } catch (e) {}
+        try { peer.destroy(); } catch (e) {}
+      }
+    };
+  }
+};
+
+/* ---- connecting ---- */
+function netMsg(t) { $('online-msg').textContent = t || ''; }
+function netShow(view) {
+  $('online-setup').classList.toggle('hidden', view !== 'setup');
+  $('online-wait').classList.toggle('hidden', view !== 'wait');
+}
+function netFail(text) {
+  netLeave().then(() => { netShow('setup'); netMsg(text); if ($('online-modal').classList.contains('hidden')) openModal('online-modal'); });
+}
+
+function netRenderLobby() {
+  const G0 = NET.G && NET.G.gen === 0 ? NET.G : NET.lobby;
+  const box = $('online-roster'), btn = $('net-start-btn');
+  if (!G0) { box.innerHTML = ''; btn.classList.add('hidden'); return; }
+  const host = !!NET.G && NET.G.gen === 0 && NET.G.seats[0] === NET.tok;
+  box.innerHTML = G0.seats.map((t, i) => `<div class="roster-row"><span class="net-dot up"></span><b>${G0.nicks[i] || 'Player ' + (i + 1)}</b><span style="opacity:.75">${CLASS_ICON[G0.cls[i]] || ''} ${CLASSES[G0.cls[i]].name}</span>${i === 0 ? '<span class="roster-tag">host</span>' : ''}${t === NET.tok ? '<span class="roster-tag">you</span>' : ''}</div>`).join('');
+  const n = G0.seats.length;
+  btn.classList.toggle('hidden', !host);
+  btn.disabled = n < 2;
+  $('online-wait-text').textContent = host
+    ? (n < 2 ? 'Waiting for friends to join with the code… (up to ' + MAXP + ' players)' : `${n}/${MAXP} players in. Press Start when everyone is here.`)
+    : (G0.seats.includes(NET.tok) ? `You're in! ${n} player${n > 1 ? 's' : ''} so far — waiting for the host to press Start.` : 'Found the room — waiting for the host to add you…');
+}
+
+function buildNetClassList() {
+  const box = $('net-class-list');
+  box.innerHTML = '';
+  Object.entries(CLASSES).forEach(([key, c]) => {
+    const b = document.createElement('button');
+    b.className = 'class-card' + (NET.cls === key ? ' selected team1' : '');
+    b.innerHTML = `<div class="class-portrait">${pieceSVG(key, 1)}</div><div><div class="cn">${c.name}<span class="ct">${c.title}</span></div><div class="cd">${c.desc}</div></div>`;
+    b.onclick = () => { NET.cls = key; buildNetClassList(); };
+    box.appendChild(b);
+  });
+}
+
+function openOnlineModal() {
+  if (NET.on && NET.G && NET.G.gen > 0) { toast('You are already in room ' + NET.code + '.', 'warn'); return; }
+  if (isRolling && !gameOver && !NET.on) { toast('Wait for the current turn to finish.', 'warn'); return; }
+  closeModal('class-modal');
+  buildNetClassList();
+  netShow(NET.on ? 'wait' : 'setup');
+  if (NET.room === undefined) netMsg('Connecting to the online lobby…');
+  else if (!NET.room) netMsg('Online play needs an internet connection to the matchmaking service. Use "2 Players" to share one screen.');
+  else netMsg('');
+  openModal('online-modal');
+}
+function closeOnlineModal() {
+  if (NET.on && !(NET.G && NET.G.gen > 0)) { netCancelWait(); return; }
+  closeModal('online-modal');
+}
+function netCancelWait() {
+  netLeave().then(() => { netShow('setup'); netMsg(''); });
+}
+function netLeaveClick() {
+  netLeave().then(() => { gameMode = 'PvC'; resetGame(); toast('Left the online room.'); });
+}
+
+async function netOpenChannel(code) {
+  if (!NET.room) throw new Error('unavailable');
+  NET.nick = cleanNick($('net-nick').value);
+  NET.tok = netTok();
+  let ch = NET.room, owns = false;
+  if (typeof NET.room.join === 'function') {
+    ch = await NET.room.join('sl-' + code.toLowerCase()); owns = true;
+  }
+  NET.ch = ch; NET.ownsRoom = owns; NET.code = code; NET.on = true; NET.G = null; NET.lobby = null; NET.seat = 0; NET.applied = 0;
+  NET.order = new Map();
+  NET.unsubs = [];
+  try { NET.unsubs.push(ch.onPeers(() => netSync())); } catch (e) {}
+  try { NET.unsubs.push(ch.onConnection(c => { NET.connected = !!c; netRenderChip(); })); } catch (e) {}
+  try { location.hash = 'room-' + code; } catch (e) {}
+}
+
+async function netCreate() {
+  if (!NET.room) { netMsg('Online play is not available in this view.'); return; }
+  const code = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+  netMsg('Opening the room…');
+  try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach the matchmaking service. Check your connection and try again.'); NET.on = false; return; }
+  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '' };
+  NET.want = false;
+  $('online-code').textContent = code;
+  $('online-wait-label').textContent = 'Room code';
+  $('net-copy-btn').classList.remove('hidden');
+  netShow('wait'); netMsg('');
+  netRenderLobby();
+  netPublish();
+}
+
+async function netJoin() {
+  if (!NET.room) { netMsg('Online play is not available in this view.'); return; }
+  const code = $('net-code').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (code.length !== 4) { netMsg('Enter the 4-character room code.'); return; }
+  netMsg('Connecting…');
+  try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach the matchmaking service. Check your connection and try again.'); NET.on = false; return; }
+  NET.want = true;
+  $('online-code').textContent = code;
+  $('online-wait-label').textContent = 'Joining room';
+  $('online-wait-text').textContent = 'Looking for the host…';
+  $('online-roster').innerHTML = '';
+  $('net-start-btn').classList.add('hidden');
+  $('net-copy-btn').classList.add('hidden');
+  netShow('wait'); netMsg('');
+  netPublish();
+  netSync();
+  const my = ++NET.joinTok;
+  setTimeout(() => { if (NET.on && !NET.G && !NET.lobby && my === NET.joinTok) netFail('No room found with that code. Check it, and make sure the host has the page open.'); }, 12000);
+}
+
+async function netLeave() {
+  NET.pumpTok++; NET.joinTok++;
+  (NET.unsubs || []).forEach(u => { try { u(); } catch (e) {} });
+  NET.unsubs = [];
+  const ch = NET.ch, owns = NET.ownsRoom;
+  NET.on = false; NET.ch = null; NET.G = null; NET.lobby = null; NET.seat = 0; NET.want = false; NET.code = ''; NET.applied = 0; NET.nicks = ['Player 1', 'Player 2'];
+  fastMode = false;
+  if (NET.puWait) { const r = NET.puWait; NET.puWait = null; r(); }
+  try {
+    if (ch) {
+      if (owns && ch.leave) await ch.leave();
+      else await ch.presence({ app: null, code: null, tok: null, nick: null, cls: null, want: null, G: null });
+    }
+  } catch (e) {}
+  try { if (/^#room-/.test(location.hash)) location.hash = ''; } catch (e) {}
+  if (gameMode === 'ONL') gameMode = 'PvC';
+  netRenderChip();
+}
+
+function netCopyCode() {
+  const link = /^https?:$/.test(location.protocol) ? location.href.split('#')[0] + '#room-' + NET.code : '';
+  const code = link || NET.code;
+  const done = () => { $('net-copy-btn').textContent = '✅ Copied'; setTimeout(() => { $('net-copy-btn').textContent = '📋 Copy invite link'; }, 1400); };
+  try { navigator.clipboard.writeText(code).then(done, () => netMsg('Select the text and copy it by hand: ' + code)); }
+  catch (e) { netMsg('Select the code and copy it by hand: ' + code); }
+}
+
+function netRenderChip() {
+  const wrap = $('net-chip-wrap');
+  const show = NET.on && NET.G && NET.G.gen > 0;
+  wrap.classList.toggle('hidden', !show);
+  if (!show) return;
+  const here = new Set(netPeers().filter(p => !p.isMe).map(p => p.presence.tok));
+  const away = NET.G.seats.map((t, i) => ({ t, n: NET.nicks[i] })).filter(x => x.t !== NET.tok && !here.has(x.t));
+  $('net-chip-main').innerHTML = `🌐 Room <b>${NET.code}</b> · ${NP} players · You are <b>${NET.seat ? NET.nicks[NET.seat - 1] : 'a spectator'}</b>`;
+  $('net-chip-friend').innerHTML = `<span class="net-dot ${!NET.connected ? 'down' : away.length ? '' : 'up'}"></span>${!NET.connected ? 'Reconnecting…' : away.length ? away.map(x => x.n).join(', ') + ' away' : 'Everyone is here'}`;
+}
+
+function netBoot() {
+  try {
+    NET.room = (typeof Peer === 'function') ? P2PRoom : null;
+  } catch (e) { NET.room = null; }
+  const m = /^#room-([A-Za-z0-9]{4})$/.exec(location.hash || '');
+  if (m) { openOnlineModal(); $('net-code').value = m[1].toUpperCase(); netMsg('Pick a name and champion, then press Join.'); }
+}
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+window.addEventListener('keydown', e => {
+  if (splashActive()) {
+    if (e.code === 'Space' || e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); if (splashSkip) splashSkip(); }
+    return;
+  }
+  if (anyModalOpen()) {
+    if (e.key === 'Escape') ['target-modal', 'shop-modal', 'confirm-modal', 'class-modal'].forEach(closeModal);
+    return;
+  }
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    handleRollClick();
+  } else if (e.key === 's' || e.key === 'S') {
+    openShopModal();
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  initAudio();
+  syncMemeButton();
+  buildEmbers();
+  buildDice();
+  buildPlayerCards();
+  resetGame();
+  // Opening screen: pick classes before the first roll
+  pendingClasses = { ...playerClasses };
+  pendingMode = gameMode;
+  buildClassModal();
+  openModal('class-modal');
+  netBoot();
+}
+init();
+</script>
+</body>
+</html>
