@@ -60,7 +60,7 @@ Limits worth knowing:
 - Every mine, snake bite, swap, power-up and penalty triggers a full-screen meme splash (toggle with **Memes On/Off**; tap or press Space to skip).
 
 ## Party Game — Save the Princess
-Local 2–4 players (any mix of humans and bots, three bot difficulties). Pick a race (Human, Angel, Devil, Wizard — each has a one-time ability) and a mode (Classic, Chaos, Speed Rescue).
+Local **or online** 2–4 players (any mix of humans and bots, three bot difficulties). Pick a race (Human, Angel, Devil, Wizard — each has a one-time ability) and a mode (Classic, Chaos, Speed Rescue).
 
 - **Loop:** each round is a mini-game; finishing order moves you along the map and pays gold. Choose a route at the crossroads, play cards (Tornado, Curse, Swap, Bandit, Freeze, Reverse, Trap, Lucky, Shield, Double) on rivals, shop at the Magic River bazaar, survive world and personal events.
 - **Bosses:** Ice Titan, Ancient Dragon and Bandit Lord are co-op fights on the map; top damage dealer gets a bonus.
@@ -73,7 +73,16 @@ Local 2–4 players (any mix of humans and bots, three bot difficulties). Pick a
 - **Isekai cheat skills:** at the start every hero is reincarnated by the goddess with a random skill (Common → Rare → Super Rare → Legendary): Hero Awakening, Godspeed, Chaos Hex, Absolute Zero, Berserker Rage, Gravity Well, **Time Stop**, **Reality Rewrite**, plus passives (Midas Touch, Plot Armor). Press your **Power key** during a challenge (P1 `E`, P2 Right Shift, P3 `O`, P4 Num `+`, or the ⚡ button on phones) for an anime-style cut-in and the effect. Skills cost ⚡ mana (start with 2, +1 per round).
 - **Snakes & ladders on the map:** 🪜 ladder (+2), 🐍 snake (−2), 🔄 swap portal, 💣 mine (gold + frozen start), ⛩️ goddess shrine (+2 mana, may re-roll your skill), each with a full-screen splash.
 - **Animation:** shared effects engine (slash arcs, shockwaves, sparks, dust, confetti, screen shake, hit-stop). The sword arena has a proper wind-up/strike/recovery swing, parries and KO fly-offs; the slime hunt has combo multipliers, a King Slime and bombs.
-- **Not built yet:** the other 20 mini-games, rivalries/alliances, team challenges, Team Rescue / Survival / Boss Rush modes, online multiplayer.
+- **Animation (v2):** the world map is alive — drifting cloud shadows, fireflies in the forest and graveyard, river sparkles, snow in the Frozen Kingdom, birds, castle embers; tokens breathe, stretch while hopping, squash and puff dust with a landing ring; each round opens with a cinematic "ROUND n / m" splash with light rays; countdown digits pop with shock rings, **GO!** flashes the screen with a shockwave, and finishes slam in a shining ribbon with confetti cannons from both corners; the winner's result row pulses gold.
+- **Not built yet:** the other 20 mini-games, rivalries/alliances, team challenges, Team Rescue / Survival / Boss Rush modes.
+
+### Play Save the Princess online
+Press **🌐 Play online** on the setup screen. One person taps **Create room** and shares the 4-letter room code or the invite link (`party.html#room-XXXX`, opens straight into the room); the others tap **Join** and enter the code. The host sets the mode, difficulty and bots in the lobby (max 4 seats in total, empty seats can be bots) and presses **Start**. Everyone plays on their own device with their own touch/keyboard controls — every device maps its controls to its own seat.
+
+- **How it works:** no server of our own. Devices talk through free public MQTT brokers (EMQX, HiveMQ, Mosquitto, tried in that order). The host runs the adventure (map, cards, shop, events) and every device runs the mini-games in lockstep: same random seed, host relays everybody's inputs every frame. Results and the adventure state always come from the host, so a tiny floating-point difference between browsers cannot split the game.
+- **Choices:** whoever's turn it is (route at a crossroads, card to play, shop) gets the controls; everyone else sees the same screen, read-only. Shared prompts wait for all humans (20 s auto-continue).
+- **Leaving:** if a player closes the tab or loses connection, a bot takes their seat after the current round. If the host leaves, the room closes. There is no mid-match re-join.
+- **Limits:** needs internet on every device; the host's tab should stay open and in the foreground (phones may pause background tabs); public brokers are shared and can be slow or briefly unavailable, so a little input delay (about your network round-trip) is normal; rooms are public-by-code, so don't reuse a code you don't want strangers to join.
 
 ## Enable GitHub Pages
 Repository **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)`**, then save. The site appears at the URL above within a minute or two.

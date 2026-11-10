@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@500;700;800&family=Press+Start+2P&family=Silkscreen:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <style>
 :root{--gold:#fbbf24;--ink:#0a0710;--panel:#17102a;--line:#ffffff1f;--txt:#ece8f7;--dim:#a8a1c2;--vio:#8b5cf6;--pink:#f472b6}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -193,13 +194,40 @@ h2{font-size:clamp(20px,3.6vw,28px);text-shadow:0 2px 0 #000a}
 .hero .crown{filter:drop-shadow(0 0 18px #fbbf24aa) drop-shadow(0 6px 10px #0009)}
 .res .md{animation:medal .7s cubic-bezier(.2,1.8,.4,1) both}
 @keyframes medal{0%{transform:scale(0) rotate(-40deg)}100%{transform:none}}
-@media (prefers-reduced-motion:reduce){#wipe,.mjoy i,#joy::before,.race.on .e,.res .md{animation:none!important}}
+.btn{transition:transform .12s,filter .15s}.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(3px)}
+#splash .sp::before{content:'';position:absolute;left:50%;top:42%;width:min(110vw,900px);aspect-ratio:1;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c) 42%,transparent) 0 5deg,transparent 5deg 15deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 66%);mask:radial-gradient(circle,#000 0,transparent 66%);animation:spRays 1.15s linear both;z-index:-1}
+@keyframes spRays{0%{transform:translate(-50%,-50%) rotate(0) scale(.5);opacity:0}25%{opacity:.95}100%{transform:translate(-50%,-50%) rotate(55deg) scale(1.25);opacity:0}}
+.res:first-of-type{animation:itemIn .4s ease both,winGlow 2.2s ease-in-out .8s infinite}
+@keyframes winGlow{0%,100%{box-shadow:0 0 0 0 #fbbf2400}50%{box-shadow:0 0 22px 2px #fbbf2466}}
+@media (prefers-reduced-motion:reduce){#wipe,.mjoy i,#joy::before,.race.on .e,.res .md,.res:first-of-type,#splash .sp::before{animation:none!important}}
+/* ---------- online lobby ---------- */
+#netpill{position:fixed;left:8px;top:44px;z-index:29;padding:3px 10px;border-radius:999px;background:rgba(18,11,34,.7);border:1px solid #ffffff22;font-size:10.5px;font-weight:700;color:#e9d5ff;backdrop-filter:blur(6px);pointer-events:none;opacity:.85}
+#netpill b{color:#fde047;letter-spacing:.12em}
+.lobcode{margin:6px auto 4px;max-width:340px;padding:8px 14px 6px;border-radius:16px;text-align:center;cursor:pointer;background:linear-gradient(180deg,#3b2470,#241449);border:1px solid #fbbf2455;box-shadow:0 0 28px -8px #fbbf24;transition:transform .12s}
+.lobcode:active{transform:scale(.97)}
+.lobcode span{display:block;font-size:9.5px;letter-spacing:.22em;font-weight:800;color:#c4b5fd}
+.lobcode b{display:block;font-family:'Press Start 2P',monospace;font-size:clamp(26px,8vw,38px);letter-spacing:.2em;color:#fde047;text-shadow:0 3px 0 #7c2d12,0 0 22px #fbbf24aa;padding-left:.2em;animation:lobGlow 2.4s ease-in-out infinite}
+.lobcode em{display:block;font-size:10.5px;font-style:normal;color:#a8a1c2;margin-top:2px}
+@keyframes lobGlow{50%{text-shadow:0 3px 0 #7c2d12,0 0 38px #fbbf24}}
+.lobrows{display:grid;gap:6px;margin:6px 0 8px}
+.lobrow{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:14px;background:linear-gradient(90deg,#2a1b48,#1f1337);border:1px solid #ffffff12;border-left:4px solid var(--pc);animation:itemIn .35s ease both}
+.lobrow.empty{background:transparent;border-style:dashed;border-left-style:dashed}
+.lobrow .lobe{font-size:22px}.lobrow .lobn{font-weight:800;flex:1;text-align:left;font-size:14px}
+.lobrow input{flex:1;min-width:0;background:#0d0719;border:1px solid var(--line);border-radius:10px;color:#fff;font:800 14px inherit;font-family:inherit;padding:5px 9px}
+.tag.you{background:#fbbf24;color:#2a1500}
+.lobx{border:0;background:#ffffff1c;color:#fff;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:11px}
+.lobraces{margin-top:4px}.lobraces .race{padding:6px 4px}.lobraces .race .n{font-size:11px}
+.codein{width:112px;text-align:center;font:800 22px 'Press Start 2P',monospace;letter-spacing:.18em;padding:8px 6px 8px 10px;border-radius:12px;border:1px solid var(--line);background:#0d0719;color:#fde047;text-transform:uppercase}
+.ovnote{margin-top:10px;text-align:center;font-weight:800;font-size:13px;color:#fde68a;animation:itemIn .3s ease both}
+#ovcard.ovwait .btn,#ovcard.ovwait .item,#ovcard.ovsent .btn,#ovcard.ovsent .item{pointer-events:none;opacity:.45;filter:grayscale(.5)}
+#ovcard.ovwait .ovnote,#ovcard.ovsent .ovnote{opacity:1}
 </style>
 </head>
 <body>
 <div id="stage"><canvas id="cv" width="960" height="540"></canvas></div>
 <div id="rotHint"><span>📱 Rotate for a bigger view <i style="opacity:.6;font-style:normal">(optional)</i></span><button onclick="this.parentNode.style.display='none'" aria-label="Dismiss">✕</button></div>
 <div id="top"><a class="chip" href="index.html" id="home" aria-label="Back to Yutfi MiniGames">←<span class="lbl"> Yutfi MiniGames</span></a><button class="chip" id="snd" onclick="toggleAudio()" aria-label="Sound">🔊</button><button class="chip" id="mus" onclick="toggleMusic()" aria-label="Music">🎵</button><button class="chip hidden" id="quit" onclick="quitMatch()" aria-label="Quit">⏏<span class="lbl"> Quit</span></button></div>
+<div id="netpill" class="hidden"></div>
 <div id="touch" class="hidden" data-mv="joy">
   <div id="joyzone"><div id="joy"><i class="u">▲</i><i class="d">▼</i><i class="l">◀</i><i class="r">▶</i><div id="joyknob"></div></div></div>
   <div id="dpad"><span></span><button class="v" data-k="u" aria-label="Up">▲</button><span></span><button data-k="l" aria-label="Left">◀</button><span></span><button data-k="r" aria-label="Right">▶</button><span></span><button class="v" data-k="d" aria-label="Down">▼</button><span></span></div>
@@ -328,6 +356,13 @@ function drawFX(dt) {
 }
 const fmt = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
+/* ---------- online state (see Part 5) ---------- */
+const NET = { on: false, inMatch: false, host: false, seat: 0, pend: 0 };
+const NETM = () => NET.on && NET.inMatch;                 // true while an online adventure is running
+const kid = i => NET.on ? 0 : i;                           // online, every device uses the first key set
+const BIT = { l: 1, r: 2, u: 4, d: 8, a: 16, w: 32 }, BITK = ['l', 'r', 'u', 'd', 'a', 'w'];
+const LOC = { l: 0, r: 0, u: 0, d: 0, a: 0, w: 0, lp: 0, rp: 0, up: 0, dp: 0, ap: 0, wp: 0 };   // this device's physical buttons
+
 /* ---------- audio: sound effects + uplifting adventure songs (all generated live with Tone.js, no files) ---------- */
 let audioOn = true, musicOn = true, sfxSynth = null, sqS = null, bellS = null, noiseS = null, whooshS = null, kickS = null, metalS = null, mus = null, musTimer = 0, audioReady = false;
 try { if (localStorage.getItem('sl-party-audio') === 'off') audioOn = false; if (localStorage.getItem('sl-party-music') === 'off') musicOn = false; } catch (e) {}
@@ -347,6 +382,7 @@ function audioInit() {
 }
 const lastSfx = {};
 function sfx(n, x) {
+  if (NET.on && NET.host && NET.inMatch && MODE !== 'game' && !/^(click|select|tick|win|lose)$/.test(n)) toAll({ k: 'sx', n });
   if (!audioOn || !sfxSynth || Tone.context.state !== 'running') return;
   const now = performance.now(); if (now - (lastSfx[n] || 0) < 35) return; lastSfx[n] = now;
   try {
@@ -477,7 +513,7 @@ function musPlay(name) {
     Tone.Transport.stop(); Tone.Transport.position = 0;
     mus.parts.forEach(p => { try { p.dispose(); } catch (e) {} }); mus.parts = [];
     Tone.Transport.bpm.value = T.bpm;
-    const P = (cb, ev) => { const p = new Tone.Part(cb, ev); p.loop = true; p.loopEnd = '8m'; p.start(0); mus.parts.push(p); };
+    const P = (cb, ev) => { const p = new Tone.Part((t, v) => { try { cb(t, v); } catch (e) { } }, ev); p.loop = true; p.loopEnd = '8m'; p.start(0); mus.parts.push(p); };
     const D = drumsFor(T.drums);
     P((t, c) => I.pad.triggerAttackRelease(c, '1m', t), T.chords.map((c, i) => [i + ':0:0', c]));
     P((t, v) => I.bass.triggerAttackRelease(v[0], v[1], t), T.roots.flatMap((r, i) => BASS_P[T.bass].map(([tm, d]) => [bt(i, tm.slice(2)), [r, d]])));
@@ -535,25 +571,30 @@ const CODE = {};
 KEYS.forEach((k, i) => Object.entries(k).forEach(([dir, code]) => { CODE[code] = { i, dir }; }));
 let PL = [];                          // the party's players (see Part 3)
 const humanSeat = i => PL[i] && !PL[i].bot;
-function press(i, dir) { const p = INP[i]; if (!p[dir]) p[dir + 'p'] = 1; p[dir] = 1; }
-function release(i, dir) { INP[i][dir] = 0; }
+function press(i, dir) {
+  if (NETM()) { if (i !== NET.seat) return; if (!LOC[dir]) { LOC[dir + 'p'] = 1; NET.pend |= BIT[dir]; } LOC[dir] = 1; return; }   // online: inputs travel via the host
+  const p = INP[i]; if (!p[dir]) p[dir + 'p'] = 1; p[dir] = 1;
+}
+function release(i, dir) { if (NETM()) { LOC[dir] = 0; return; } INP[i][dir] = 0; }
 window.addEventListener('keydown', e => {
   const m = CODE[e.code];
   if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target || {}).tagName)) return;
   if (m && MODE === 'game') e.preventDefault();
-  if (!m || !humanSeat(m.i) || e.repeat) return;
+  if (!m || e.repeat) return;
+  if (NETM()) { press(NET.seat, m.dir); return; }
+  if (!humanSeat(m.i)) return;
   press(m.i, m.dir);
 });
-window.addEventListener('keyup', e => { const m = CODE[e.code]; if (m) release(m.i, m.dir); });
-window.addEventListener('blur', () => INP.forEach(p => { p.l = p.r = p.u = p.d = p.a = p.w = 0; }));
+window.addEventListener('keyup', e => { const m = CODE[e.code]; if (m) release(NETM() ? NET.seat : m.i, m.dir); });
+window.addEventListener('blur', () => { INP.forEach(p => { p.l = p.r = p.u = p.d = p.a = p.w = 0; }); LOC.l = LOC.r = LOC.u = LOC.d = LOC.a = LOC.w = 0; });
 function clearEdges() { INP.forEach(p => { p.lp = p.rp = p.up = p.dp = p.ap = p.wp = 0; }); }
 /* ---------- touch controls: a floating analog joystick (left) + a context-sensitive action button (right) ---------- */
 const COARSE = typeof matchMedia === 'function' && matchMedia('(pointer:coarse)').matches;
 let TOUCHSEEN = false;                                  // hybrid laptops: show the pad after the first real touch
 window.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') TOUCHSEEN = true; }, true);
-const touchSeat = () => PL.findIndex(p => p && !p.bot);
+const touchSeat = () => NETM() ? NET.seat : PL.findIndex(p => p && !p.bot);
 const TS = { joy: { l: 0, r: 0, u: 0, d: 0 }, btn: { a: 0, d: 0, w: 0, l: 0, r: 0, u: 0 } };   // two sources feed the same five buttons
-function tsApply(k) { const s = touchSeat(); if (s < 0) return; const on = (TS.joy[k] || 0) | (TS.btn[k] || 0), q = INP[s]; if (on && !q[k]) press(s, k); else if (!on && q[k]) release(s, k); }
+function tsApply(k) { const s = touchSeat(); if (s < 0) return; const on = (TS.joy[k] || 0) | (TS.btn[k] || 0), q = NETM() ? LOC : INP[s]; if (on && !q[k]) press(s, k); else if (!on && q[k]) release(s, k); }
 function tsClear() { Object.keys(TS.joy).forEach(k => TS.joy[k] = 0); Object.keys(TS.btn).forEach(k => TS.btn[k] = 0); ['l', 'r', 'u', 'd', 'a', 'w'].forEach(tsApply); document.querySelectorAll('#touch button.on').forEach(b => b.classList.remove('on')); joyReset(); }
 const joyZone = $('joyzone'), joyEl = $('joy'), knobEl = $('joyknob'), J = { id: null, cx: 0, cy: 0, R: 50 };
 function joyReset() { J.id = null; joyEl.classList.remove('on', 'l', 'r', 'u', 'd'); joyEl.style.left = joyEl.style.top = ''; knobEl.style.transform = ''; ['l', 'r', 'u', 'd'].forEach(k => { TS.joy[k] = 0; tsApply(k); }); }
@@ -606,7 +647,7 @@ const SKILL = { easy: 0.38, normal: 0.62, hard: 0.86 };
 // parts: array of party players taking part.  Returns { rank:[local idx best→worst], score:[...], extra }
 function makeCtx(def, parts, opts = {}) {
   const G = {
-    def, opts, n: parts.length, W, H, t: 0, cd: 3.2, go: 0, diff: opts.diff || 0, seed: (Math.random() * 1e9) | 0,
+    def, opts, n: parts.length, W, H, t: 0, cd: 3.2, go: 0, diff: opts.diff || 0, seed: opts.seed != null ? opts.seed : (Math.random() * 1e9) | 0,
     P: parts.map((p, i) => ({ i, pid: p.id, name: p.name, color: PCOL[p.id], race: p.race, bot: p.bot, skill: clamp(p.skill + (opts.diff || 0) * 0.1, 0.2, 0.95), gear: p.gear || {} })),
     in: parts.map(() => newInp()), stun: parts.map(() => 0), rev: parts.map(() => 0),
     buff: parts.map(() => ({ t: 0 })), slow: parts.map(() => ({ t: 0, m: 1 })),
@@ -653,54 +694,75 @@ function finishResult(R) {
   const rank = sc.map((s, i) => i).sort((a, b) => sc[b] - sc[a]);
   return { rank, score: sc, extra: R.obj.extra ? R.obj.extra() : null };
 }
+function beginRound(R, def) {
+  CUR = R; MODE = 'game'; FXP.length = FXR.length = FXS.length = 0; SHK = HSTOP = 0; CUTIN = null;
+  { const h = PL[touchSeat()]; const sh = h && h.cheat && R.G.pw.some(w => w && w.p === h); $('pow').classList.toggle('hidden', !sh); }
+  $('banner').classList.add('hidden'); clearEdges(); musSync();
+  uiSetup(def); if (COARSE || TOUCHSEEN) $('touch').classList.remove('hidden');
+}
 function runGame(def, parts, opts = {}) {
   const G = makeCtx(def, parts, opts);
-  const R = { def, G, obj: def.make(G), finished: false, endT: 0 };
+  const R = { def, G, finished: false, endT: 0, frames: 0 }; R.rng = seeded((G.seed ^ 0x5bd1e995) | 0);
+  R.obj = withRng(R, () => def.make(G));             // all game logic draws from one seeded stream, so every device can replay the same round
   const hasHuman = parts.some(p => !p.bot);
   if (!hasHuman || opts.sim) {                       // nobody to watch: play it out instantly
     let guard = 0;
     G.cd = 0;
-    while (!R.finished && guard++ < 20000) { stepGame(R, 1 / 30); clearEdges(); }
+    while (!R.finished && guard++ < 20000) { withRng(R, () => stepGame(R, 1 / 30)); clearEdges(); }
     return Promise.resolve(finishResult(R));
   }
   return new Promise(res => {
-    R.resolve = () => { CUR = null; MODE = 'map'; tsClear(); $('touch').classList.add('hidden'); musSync(); res(finishResult(R)); };
-    CUR = R; MODE = 'game'; FXP.length = FXR.length = FXS.length = 0; SHK = HSTOP = 0; CUTIN = null; { const h = PL.find(q => q && !q.bot); const sh = h && h.cheat && R.G.pw.some(w => w && w.p === h); $('pow').classList.toggle('hidden', !sh); } $('banner').classList.add('hidden'); clearEdges(); musSync();
-    uiSetup(def); if (COARSE || TOUCHSEEN) $('touch').classList.remove('hidden');
+    R.resolve = () => { if (NETM() && NET.host) netHostRoundEnd(R); if (M) M.players.forEach(p => { if (p.netLost) p.bot = true; }); CUR = null; MODE = 'map'; tsClear(); $('touch').classList.add('hidden'); musSync(); res(finishResult(R)); };
+    beginRound(R, def);
+    if (NETM() && NET.host) netHostRoundStart(R, def, parts, opts);
   });
 }
 let CUTIN = null;
-function gameFrame(dt) {
-  const R = CUR, G = R.G;
+function uiPre(R) {
   if (TOUCHSEEN && $('touch').classList.contains('hidden')) { uiSetup(R.def); $('touch').classList.remove('hidden'); }
   uiTick(R);
+}
+function logicStep(R, dt) {                                       // one tick of game logic (no drawing): identical on every device
+  const G = R.G;
   if (G.cd > 0) {
     const a = Math.ceil(G.cd - 0.2); G.cd -= dt; const b = Math.ceil(G.cd - 0.2);
     if (a !== b && b > 0) sfx('tick');
     if (G.cd <= 0) { G.cd = 0; G.go = 0.8; sfx('go'); }
-    R.obj.draw(); gameHUD(R); drawCountdown(G); clearEdges(); return;
+    return { mode: 'cd', sdt: 0 };
   }
-  if (CUTIN) {                                                  // anime-style skill cut-in: the world holds its breath
-    CUTIN.t += dt; R.obj.draw(); drawFX(0); gameHUD(R); drawCutin(); if (CUTIN.t > 1.15) CUTIN = null; clearEdges(); return;
-  }
+  if (CUTIN) { CUTIN.t += dt; if (CUTIN.t > 1.15) CUTIN = null; return { mode: 'cut', sdt: 0 }; }   // anime-style skill cut-in: the world holds its breath
   if (G.go > 0) G.go -= dt;
   let sdt = dt; if (HSTOP > 0) { HSTOP -= dt; sdt = 0; }       // hit-stop: freeze logic for a heartbeat, keep drawing
   if (sdt) { if (G.tsT > 0) G.tsT -= dt; stepGame(R, sdt); }
+  return { mode: 'play', sdt };
+}
+function drawStep(R, mode, sdt, dt) {
+  const G = R.G;
+  if (mode === 'cd') { R.obj.draw(); gameHUD(R); drawCountdown(G); drawFX(dt); return; }
+  if (mode === 'cut') { R.obj.draw(); drawFX(0); gameHUD(R); if (CUTIN) drawCutin(); return; }
   c.save(); if (SHK > 0.2) { c.translate(rr(-SHK, SHK), rr(-SHK, SHK)); SHK *= Math.pow(0.0005, dt); } else SHK = 0;
   R.obj.draw(); drawFX(sdt); c.restore();
   statusFX(R); gameHUD(R); powerHUD(R); goalPill(R);
+  if (G.go > 0 && !R.goFx) { R.goFx = 1; ring(W / 2, H / 2, '#fde047', 340, 0.7, 10); ring(W / 2, H / 2, '#fff', 210, 0.5, 5); burst(W / 2, H / 2, '#fde047', 28, 340, 0.8, 0); camShake(5); }
+  if (G.go > 0) { c.save(); c.fillStyle = `rgba(255,255,255,${Math.min(0.28, G.go * 0.35)})`; c.fillRect(0, 0, W, H); c.restore(); }
   if (G.go > 0) { const k = 1 + G.go * 0.4; c.save(); c.translate(W / 2, H / 2); c.scale(k, k); ptxt('GO!', 0, 0, 84, '#fde047', 'center', '#7c2d12'); c.restore(); }
   if (R.finished) {
     const u = Math.min(1, R.endT * 4); c.fillStyle = `rgba(8,4,20,${0.55 * u})`; c.fillRect(0, H / 2 - 62, W, 124); c.fillStyle = `rgba(251,191,36,${u})`; c.fillRect(0, H / 2 - 62, W, 3); c.fillRect(0, H / 2 + 59, W, 3);
-    c.save(); c.globalAlpha = u; ptxt((R.obj.endText ? R.obj.endText() : 'FINISH!').toUpperCase(), W / 2, H / 2, 38, '#fff', 'center', '#4c1d95'); c.restore();
-    if (R.endT < 0.1 && !R.fin) { R.fin = 1; confetti(W / 2, H / 2 + 30, 60); sfx('win'); }
+    { const shx = (R.endT * 0.8 % 1.4) * (W + 300) - 150; c.save(); c.beginPath(); c.rect(0, H / 2 - 62, W, 124); c.clip(); c.globalAlpha = 0.16 * u; c.fillStyle = '#fff'; c.beginPath(); c.moveTo(shx, H / 2 - 62); c.lineTo(shx + 90, H / 2 - 62); c.lineTo(shx + 40, H / 2 + 62); c.lineTo(shx - 50, H / 2 + 62); c.fill(); c.restore(); }
+    c.save(); c.globalAlpha = u; { const sl = Math.min(1, R.endT * 5), ks = 1 + (1 - sl) * (1 - sl) * 1.3; c.translate(W / 2, H / 2); c.scale(ks, ks); c.rotate((1 - sl) * -0.12); } ptxt((R.obj.endText ? R.obj.endText() : 'FINISH!').toUpperCase(), 0, 0, 38, '#fff', 'center', '#4c1d95'); c.restore();
+    if (R.endT < 0.1 && !R.fin) { R.fin = 1; confetti(W / 2, H / 2 + 30, 60); confetti(30, H - 20, 40); confetti(W - 30, H - 20, 40); ring(W / 2, H / 2, '#fbbf24', 300, 0.6, 8); sfx('win'); }
     if (R.endT > 2.0) R.resolve();
   }
-  clearEdges();
+}
+function gameFrame(dt) {
+  const R = CUR; uiPre(R);
+  const s = withRng(R, () => logicStep(R, dt));
+  drawStep(R, s.mode, s.sdt, dt); clearEdges();
 }
 function drawCountdown(G) {
   c.fillStyle = 'rgba(6,3,16,.66)'; c.fillRect(0, 0, W, H);
   const n = Math.ceil(G.cd - 0.2), f = (G.cd - 0.2) % 1, k = 1 + f * 0.35, d = G.def, u = gameUI(d), touch = COARSE || TOUCHSEEN;
+  if (G._cdn !== n) { G._cdn = n; const ty = H / 2 - (304 + G.P.filter(p => !p.bot && PL[p.pid] && PL[p.pid].cheat && G.pw[p.i]).length * 22) / 2 + 112; ring(W / 2, ty, n > 0 ? '#fde047' : '#fff', 150, 0.55, 7); spark(W / 2, ty, '#fde047', 12, 260, 0.4); }
   const hs = G.P.filter(p => !p.bot && PL[p.pid] && PL[p.pid].cheat && G.pw[p.i]);
   const hh = 304 + hs.length * 22, y0 = H / 2 - hh / 2;
   glass(W / 2 - 280, y0, 560, hh, 26, 'rgba(251,191,36,.45)');
@@ -710,7 +772,7 @@ function drawCountdown(G) {
   txt('🎯 ' + (d.goal || d.desc), W / 2, y0 + 195.5, 15, '#fde68a');
   const how = touch ? ((u.mv === 'joy' ? '🕹️ ' : u.mv === 'none' ? '' : '◀ ▶ ') + (u.mv === 'none' ? '' : u.mvT + '   ·   ')) + (u.act ? `${u.ai} ${u.act} = ${u.actT}` : '') + (u.alt ? `   ·   ${u.alt.icon} ${u.alt.label}` : '') : (d.controls || '');
   txt(how, W / 2, y0 + 238, 13.5, '#c4b5fd');
-  hs.forEach((p, k) => { const S = SKILLS[PL[p.pid].cheat]; txt(`${S.icon} ${p.name}: ${S.name} — press ${touch && p.pid === touchSeat() ? 'POWER' : POWLABEL[p.pid]}`, W / 2, y0 + 270 + k * 22, 12.5, '#fde68a'); });
+  hs.forEach((p, k) => { const S = SKILLS[PL[p.pid].cheat]; txt(`${S.icon} ${p.name}: ${S.name} — press ${touch && p.pid === touchSeat() ? 'POWER' : POWLABEL[kid(p.pid)]}`, W / 2, y0 + 270 + k * 22, 12.5, '#fde68a'); });
 }
 function goalPill(R) {                       // a reminder of the goal for the first few seconds of play
   const g = R.def.goal, G = R.G; if (!g || R.finished || G.t > 8) return;
@@ -786,7 +848,7 @@ function powerHUD(R) {
     c.save(); c.globalAlpha = can || pass || act ? 1 : 0.55;
     glass(x, H - 34, 220, 26, 13, can ? S.col : '#ffffff25', 'rgba(14,8,28,.78)');
     c.fillStyle = p.color; c.beginPath(); c.arc(x + 12, H - 21, 4, 0, 7); c.fill(); txt(S.icon, x + 30, H - 20, 15);
-    const label = pass ? 'passive' : act ? 'ACTIVE ' + G.buff[i].t.toFixed(1) + 's' : (w && w.used) ? 'used' : !w ? 'n/a here' : !can ? 'need ' + S.cost + ' mana' : (COARSE ? 'READY!' : 'READY ' + POWLABEL[p.pid]);
+    const label = pass ? 'passive' : act ? 'ACTIVE ' + G.buff[i].t.toFixed(1) + 's' : (w && w.used) ? 'used' : !w ? 'n/a here' : !can ? 'need ' + S.cost + ' mana' : (COARSE ? 'READY!' : 'READY ' + POWLABEL[kid(p.pid)]);
     ptxt(label.toUpperCase(), x + 46, H - 20, 8, can ? '#fde047' : '#cbd5e1', 'left', '#000');
     for (let m = 0; m < 4; m++) { c.fillStyle = m < pp.mana ? '#67e8f9' : '#ffffff26'; c.beginPath(); c.moveTo(x + 188 + m * 7, H - 25); c.lineTo(x + 192 + m * 7, H - 21); c.lineTo(x + 188 + m * 7, H - 17); c.lineTo(x + 184 + m * 7, H - 21); c.fill(); }
     c.restore(); });
@@ -1556,7 +1618,7 @@ let FAST = false;                                   // tests: no pauses
 const wait = ms => FAST ? Promise.resolve() : sleep(ms);
 // full-screen "meme splash" pop-up (like the Snake Game's) — big emoji + arcade title, non-blocking visually
 async function splash(icon, title, col = '#fde047', ms = 1000) {
-  if (FAST === true || MODE === 'game') return; const sp = $('splash'); sp.style.setProperty('--c', col);
+  if (FAST === true || MODE === 'game') return; if (NETM() && NET.host) toAll({ k: 'sp', i: icon, t: title, c: col, ms }); const sp = $('splash'); sp.style.setProperty('--c', col);
   sp.innerHTML = `<div class="sp"><div class="sp-ic">${icon}</div><div class="sp-t">${esc(title)}</div></div>`; sp.classList.remove('hidden'); void sp.offsetWidth;
   clearTimeout(splash.t); splash.t = setTimeout(() => sp.classList.add('hidden'), ms + 150); sfx('boom'); camMapShake(8); await sleep(ms * 0.7);
 }
@@ -1622,20 +1684,29 @@ let M = null;
 const who = p => `<b style="color:${p.color}">${esc(p.name)}</b>`;
 const others = p => M.players.filter(o => o !== p);
 const prog = p => p.atCastle ? 1000 + p.stage * 10 : p.trail.length;
-function wipe(icon, title) {                    // purple curtains sweep in with the game's name, then reveal the arena
-  if (FAST === true || !M.players.some(p => !p.bot)) return Promise.resolve();
+function wipe(icon, title, remote) {            // purple curtains sweep in with the game's name, then reveal the arena
+  if (FAST === true) return Promise.resolve();
+  if (!remote && !M.players.some(p => !p.bot)) return Promise.resolve();
+  if (!remote && NETM() && NET.host) toAll({ k: 'wp', i: icon, t: title });
   const w = document.createElement('div'); w.id = 'wipe'; w.innerHTML = `<div class="pn pl"></div><div class="pn pr"></div><div class="wi"><div class="wic">${icon}</div><div class="wit">${esc(title)}</div></div>`;
   document.body.appendChild(w); sfx('whoosh'); setTimeout(() => sfx('clang'), 300); setTimeout(() => w.remove(), 760);
   return new Promise(r => setTimeout(r, 470));
 }
-function banner(html, ms = 2000) { const b = $('banner'); if (MODE === 'game') return; b.innerHTML = html; b.classList.remove('hidden'); clearTimeout(banner.t); if (!FAST) banner.t = setTimeout(() => b.classList.add('hidden'), ms); }
+function banner(html, ms = 2000) { const b = $('banner'); if (MODE === 'game') return; if (NETM() && NET.host) { netSnap(); toAll({ k: 'bn', html, ms }); } b.innerHTML = html; b.classList.remove('hidden'); clearTimeout(banner.t); if (!FAST) banner.t = setTimeout(() => b.classList.add('hidden'), ms); }
 async function say(html, ms = 1400) { banner(html, ms + 400); await wait(ms); }
-function ovOpen(html, w = 640) { const cd = $('ovcard'); cd.style.setProperty('--w', w + 'px'); cd.innerHTML = html; $('ov').classList.remove('end'); $('ov').classList.remove('hidden'); $('ov').scrollTop = 0; }
-function ovClose() { $('ov').classList.add('hidden'); }
-function ask(html, w) {
-  return new Promise(res => { ovOpen(html, w); const cd = $('ovcard');
-    const h = e => { const b = e.target.closest('[data-v]'); if (!b || b.disabled) return; cd.removeEventListener('click', h); sfx('tick'); ovClose(); res(b.dataset.v); };
-    cd.addEventListener('click', h); });
+function ovOpen(html, w = 640) { const cd = $('ovcard'); cd.style.setProperty('--w', w + 'px'); cd.innerHTML = html; cd.classList.remove('ovwait', 'ovsent'); $('ov').classList.remove('end'); $('ov').classList.remove('hidden'); $('ov').scrollTop = 0; }
+function ovClose() { $('ov').classList.add('hidden'); if (NETM() && NET.host) toAll({ k: 'ovc' }); }
+let ASKID = 0, CURASK = null;
+// o: { who: seat that must answer (online), all: every online human must answer, def: answer if that player drops, end: map-less ending overlay, local: never mirror }
+function ask(html, w, o = {}) {
+  return new Promise(res => {
+    const A = { id: ++ASKID, who: o.who, all: !!o.all, got: new Map(), def: o.def !== undefined ? o.def : ((/data-v="([^"]+)"/.exec(html) || [])[1] || 'go'), done: false }, cd = $('ovcard'), net = NETM() && NET.host && !o.local;
+    CURASK = A; ovOpen(html, w); if (o.end) $('ov').classList.add('end');
+    A.finish = v => { if (A.done) return; A.done = true; clearTimeout(A.tm); cd.removeEventListener('click', h); if (CURASK === A) CURASK = null; ovClose(); res(v); };
+    const h = e => { const b = e.target.closest('[data-v]'); if (!b || b.disabled || cd.classList.contains('ovwait') || cd.classList.contains('ovsent')) return; sfx('tick'); if (!net) { A.finish(b.dataset.v); return; } askAnswer(A, NET.seat, b.dataset.v); };
+    cd.addEventListener('click', h);
+    if (net) { netSnap(true); toAll({ k: 'ov', id: A.id, html, w, who: o.who == null ? null : o.who, all: A.all, end: !!o.end }); ovWaitFor(A); askRecheck(A); }
+  });
 }
 window.addEventListener('keydown', e => {
   if ($('ov').classList.contains('hidden') || MODE === 'game') return; if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target || {}).tagName)) return;
@@ -1646,7 +1717,7 @@ function newPlayer(id, cfg) {
   const sk = SKILL[cfg.diff] || 0.62;
   return { id, name: cfg.name || ('Player ' + (id + 1)), race: cfg.race, bot: !!cfg.bot, skill: clamp(sk + (Math.random() - 0.5) * 0.14, 0.2, 0.95), color: PCOL[id],
     pos: 'V0', trail: [], gold: 20, cards: [], gear: {}, fx: { shield: false, curse: 0, freeze: false, reverse: false, lucky: false, double: false },
-    ab: false, cheat: null, mana: 2, plot: 0, treasures: 0, looted: new Set(), stage: 0, atCastle: false, secret: false, wins: 0, dx: 0, dy: 0, took: 0 };
+    net: cfg.net || null, netLost: false, ab: false, cheat: null, mana: 2, plot: 0, treasures: 0, looted: new Set(), stage: 0, atCastle: false, secret: false, wins: 0, dx: 0, dy: 0, took: 0 };
 }
 function setupMatch(cfg) {
   const mode = MODES[cfg.mode] || MODES.classic;
@@ -1696,12 +1767,12 @@ async function cardsPhase() {
       await useCard(p, o.i, tg); continue;
     }
     const items = p.cards.map((id, i) => `<button class="item" data-v="${i}"${CARDS[id].tgt && !cardTargets(p, id).length ? ' disabled' : ''}><span class="ic">${CARDS[id].icon}</span><span><div class="tt">${CARDS[id].name}</div><div class="ds">${CARDS[id].desc}</div></span></button>`).join('');
-    const v = await ask(`<h2>🃏 ${who(p)}'s cards</h2><div class="sub">Play one before the next challenge?</div><div class="list">${items}</div><div class="row"><button class="btn go" data-v="skip">Skip</button></div>`, 560);
+    const v = await ask(`<h2>🃏 ${who(p)}'s cards</h2><div class="sub">Play one before the next challenge?</div><div class="list">${items}</div><div class="row"><button class="btn go" data-v="skip">Skip</button></div>`, 560, { who: p.id, def: 'skip' });
     if (v === 'skip') continue;
     const idx = +v, id = p.cards[idx]; let tg = null;
     if (CARDS[id].tgt) {
       const ts = cardTargets(p, id);
-      const tv = await ask(`<h2>${CARDS[id].icon} ${CARDS[id].name}</h2><div class="sub">Who is the target?</div><div class="list">${ts.map(o => `<button class="item" data-v="${o.id}"><span class="ic">${RACES[o.race].emoji}</span><span><div class="tt" style="color:${o.color}">${esc(o.name)}</div><div class="ds">${o.atCastle ? 'at the castle' : o.trail.length + ' steps along'} · 🪙${o.gold}</div></span></button>`).join('')}</div><div class="row"><button class="btn dim" data-v="no">Back</button></div>`, 520);
+      const tv = await ask(`<h2>${CARDS[id].icon} ${CARDS[id].name}</h2><div class="sub">Who is the target?</div><div class="list">${ts.map(o => `<button class="item" data-v="${o.id}"><span class="ic">${RACES[o.race].emoji}</span><span><div class="tt" style="color:${o.color}">${esc(o.name)}</div><div class="ds">${o.atCastle ? 'at the castle' : o.trail.length + ' steps along'} · 🪙${o.gold}</div></span></button>`).join('')}</div><div class="row"><button class="btn dim" data-v="no">Back</button></div>`, 520, { who: p.id, def: 'no' });
       if (tv === 'no') continue; tg = M.players[+tv];
     }
     await useCard(p, idx, tg);
@@ -1719,9 +1790,9 @@ async function chooseRoute(p) {
     const tot = keys.filter(k => w[k]).reduce((a, k) => a + w[k], 0); let r = Math.random() * tot; for (const k of keys) { if (!w[k]) continue; r -= w[k]; if (r <= 0) return k; } return keys[0];
   }
   const items = keys.map(k => { const R = ROUTES[k]; return `<button class="item" data-v="${k}"><span class="ic">${R.icon}</span><span><div class="tt">${R.name} <span class="tag">${R.diff}</span></div><div class="ds">${R.desc}</div><div class="ds">${R.len} spaces · wins ${R.mv[0] > 0 ? '+' + R.mv[0] : R.mv[0]} · last place ${R.mv[3]}</div></span></button>`; }).join('');
-  return ask(`<h2>🧭 ${who(p)} — choose your route</h2><div class="sub">Dangerous roads are shorter and pay more. Safer roads take longer.</div><div class="list">${items}</div>`, 620);
+  return ask(`<h2>🧭 ${who(p)} — choose your route</h2><div class="sub">Dangerous roads are shorter and pay more. Safer roads take longer.</div><div class="list">${items}</div>`, 620, { who: p.id, def: keys[0] });
 }
-async function hop(p, id) { const nd = NODES[id]; p.pos = id; sfx('step'); await wait(300); }
+async function hop(p, id) { const nd = NODES[id]; p.pos = id; sfx('step'); netSnap(); await wait(300); }
 async function moveBy(p, steps) {
   if (p.atCastle || !steps) return;
   if (steps < 0) {
@@ -1780,7 +1851,7 @@ async function shop(p) {
   const stock = pool.slice();
   for (;;) {
     const items = stock.map((o, i) => { const d = o.g ? GEAR[o.k] : CARDS[o.k], off = o.sold || price(o) > p.gold || (!o.g && p.cards.length >= 3); return `<button class="item" data-v="${i}"${off ? ' disabled' : ''}><span class="ic">${d.icon}</span><span><div class="tt">${d.name} <span class="tag">${o.g ? 'gear' : 'card'}</span></div><div class="ds">${d.desc}</div></span><span class="rt">${o.sold ? 'SOLD' : '🪙' + price(o)}</span></button>`; }).join('');
-    const v = await ask(`<h2>🛒 Magic River Bazaar</h2><div class="sub">${who(p)} · you have <b class="gd">🪙${p.gold}</b> · cards ${p.cards.length}/3</div><div class="list">${items}</div><div class="row"><button class="btn go" data-v="leave">Leave the shop</button></div>`, 600);
+    const v = await ask(`<h2>🛒 Magic River Bazaar</h2><div class="sub">${who(p)} · you have <b class="gd">🪙${p.gold}</b> · cards ${p.cards.length}/3</div><div class="list">${items}</div><div class="row"><button class="btn go" data-v="leave">Leave the shop</button></div>`, 600, { who: p.id, def: 'leave' });
     if (v === 'leave') return; const o = stock[+v]; p.gold -= price(o); o.sold = true; if (o.g) p.gear[o.k] = true; else giveCard(p, o.k); sfx('coin');
   }
 }
@@ -1816,11 +1887,11 @@ function pickGame() {
 }
 
 /* ---------- one round ---------- */
-function keyHint(parts) { return parts.filter(p => !p.bot).map(p => `<div><span class="dot" style="display:inline-block;background:${p.color}"></span> <b>${esc(p.name)}</b>: <kbd>${KEYLABEL[p.id]}</kbd>${p.cheat && !SKILLS[p.cheat].passive ? ` · ${SKILLS[p.cheat].icon} Power: <kbd>${POWLABEL[p.id]}</kbd> <span style="color:var(--dim)">(${p.mana}⚡)</span>` : ''}</div>`).join('') || '<div>🤖 All bots — sit back and watch!</div>'; }
+function keyHint(parts) { return parts.filter(p => !p.bot).map(p => `<div><span class="dot" style="display:inline-block;background:${p.color}"></span> <b>${esc(p.name)}</b>: <kbd>${KEYLABEL[kid(p.id)]}</kbd>${p.cheat && !SKILLS[p.cheat].passive ? ` · ${SKILLS[p.cheat].icon} Power: <kbd>${POWLABEL[kid(p.id)]}</kbd> <span style="color:var(--dim)">(${p.mana}⚡)</span>` : ''}</div>`).join('') || '<div>🤖 All bots — sit back and watch!</div>'; }
 const MV_ICON = { joy: '<span class="mjoy"><i></i></span>', lr: '<b style="font-size:20px">◀ ▶</b>', dpad: '<b style="font-size:26px">✥</b>' };
 async function intro(def, parts, boss) {
   if (!parts.some(p => !p.bot)) return;
-  const u = gameUI(def), touch = COARSE || TOUCHSEEN, spect = M.players.filter(p => !parts.includes(p));
+  const u = gameUI(def), touch = (COARSE || TOUCHSEEN) && !NET.on, spect = M.players.filter(p => !parts.includes(p));
   const tile = (ic, t, d) => `<div class="hw"><span class="hi">${ic}</span><div><div class="ht">${t}</div><div class="hd">${d}</div></div></div>`;
   const tiles = tile('🎯', 'Goal', def.goal || def.desc)
     + (MV_ICON[u.mv] ? tile(MV_ICON[u.mv], 'Move', u.mvT) : '')
@@ -1830,8 +1901,8 @@ async function intro(def, parts, boss) {
   await ask(`<div class="big">${boss ? BOSSES[boss].emoji : def.icon}</div><h2>${esc(boss ? BOSSES[boss].name : def.name)}</h2><div class="sub"><span class="tag">${boss ? 'co-op boss battle' : def.cat}</span> <span class="tag">${parts.length} players</span></div>
     ${boss ? `<div class="sub" style="color:#e7e3f1">${BOSSES[boss].line}</div>` : ''}<div class="how">${tiles}</div>
     ${touch && ts >= 0 && parts.some(p => p.id === ts) ? '<div class="tipline">👍 Left thumb: joystick · Right thumb: the big button</div>' : ''}
-    ${kb.length ? `<div class="keys">${keyHint(kb)}</div>` : ''}${spect.length ? `<div class="keys">Watching: ${spect.map(p => esc(p.name)).join(', ')}</div>` : ''}
-    <div class="row sticky"><button class="btn go" data-v="go">Ready!</button></div>`, 600);
+    ${NET.on ? '<div class="keys">⌨️ <kbd>WASD</kbd> / <kbd>arrows</kbd> + <kbd>Space</kbd> / <kbd>Enter</kbd> &nbsp;·&nbsp; 📱 joystick + big button</div>' : kb.length ? `<div class="keys">${keyHint(kb)}</div>` : ''}${spect.length ? `<div class="keys">Watching: ${spect.map(p => esc(p.name)).join(', ')}</div>` : ''}
+    <div class="row sticky"><button class="btn go" data-v="go">Ready!</button></div>`, 600, { all: true });
 }
 async function playRound() {
   const boss = pendingBoss();
@@ -1895,7 +1966,7 @@ async function showResults(def, rows, title, res, parts, coop) {
   const spect = M.players.filter(p => !parts.includes(p));
   const hasHuman = M.players.some(p => !p.bot);
   if (hasHuman) {
-    const pr = ask(`<h2>${def.icon} ${esc(title)}</h2><div class="sub">${coop ? 'Everyone shares the glory — but the top contributor earns a bonus.' : 'Moves follow the finishing order.'}</div>${body}${spect.length ? `<div class="keys">Spectators: ${spect.map(p => esc(p.name)).join(', ')} (no change)</div>` : ''}<div class="row sticky"><button class="btn go" data-v="go">Continue</button></div>`, 600);
+    const pr = ask(`<h2>${def.icon} ${esc(title)}</h2><div class="sub">${coop ? 'Everyone shares the glory — but the top contributor earns a bonus.' : 'Moves follow the finishing order.'}</div>${body}${spect.length ? `<div class="keys">Spectators: ${spect.map(p => esc(p.name)).join(', ')} (no change)</div>` : ''}<div class="row sticky"><button class="btn go" data-v="go">Continue</button></div>`, 600, { all: true });
     sfx('fanfare');
     rows.forEach((rw, i) => setTimeout(() => sfx(i === 0 ? 'crown' : 'coin'), 380 + i * 160));
     const t0 = performance.now(), tick = () => { const k = Math.min(1, (performance.now() - t0) / 1100); document.querySelectorAll('#ovcard .cnt').forEach(e => { e.textContent = Math.round(+e.dataset.to * (1 - Math.pow(1 - k, 3))); }); if (k < 1 && !$('ov').classList.contains('hidden')) requestAnimationFrame(tick); };
@@ -1911,12 +1982,12 @@ async function showResults(def, rows, title, res, parts, coop) {
 async function summonPhase() {
   if (!M.players.some(p => p.cheat) || FAST === true) return;
   if (M.players.some(p => !p.bot)) {
-    await ask(`<div class="gacha-hd"><div class="circle"><span>✨</span></div></div><h2>🌌 Reincarnation Summoning</h2><div class="sub" style="color:#e7e3f1">The goddess is about to send you to a fantasy world. Each hero receives one <b>cheat skill</b> — use it with the <b>Power key</b> during a challenge. Skills cost ⚡ mana (you start with 2 and gain 1 every round).</div><div class="row"><button class="btn go" data-v="go">✨ Summon!</button></div>`, 560);
+    await ask(`<div class="gacha-hd"><div class="circle"><span>✨</span></div></div><h2>🌌 Reincarnation Summoning</h2><div class="sub" style="color:#e7e3f1">The goddess is about to send you to a fantasy world. Each hero receives one <b>cheat skill</b> — use it with the <b>Power key</b> during a challenge. Skills cost ⚡ mana (you start with 2 and gain 1 every round).</div><div class="row"><button class="btn go" data-v="go">✨ Summon!</button></div>`, 560, { all: true });
     sfx('win');
   }
   const cards = M.players.map((p, i) => { const S = SKILLS[p.cheat], R = RARITY[S.rar];
     return `<div class="skc ${S.rar === 'SSR' ? 'ssr' : ''}" style="--rc:${R.col};--d:${(0.15 + i * 0.35).toFixed(2)}s"><div class="who" style="color:${p.color}">${RACES[p.race].emoji} ${esc(p.name)}</div><div class="rar">${R.name.toUpperCase()}</div><div class="ico">${S.icon}</div><div class="nm">${S.name}</div><div class="ds">${S.desc}</div><div class="ds" style="color:#67e8f9;font-weight:800">${S.passive ? 'PASSIVE' : '⚡ ' + S.cost + ' mana'}</div></div>`; }).join('');
-  if (M.players.some(p => !p.bot)) await ask(`<h2>🌌 Cheat skills awakened!</h2><div class="gacha">${cards}</div><div class="keys">${M.players.filter(p => !p.bot && p.cheat && !SKILLS[p.cheat].passive).map(p => `<div><span class="dot" style="display:inline-block;background:${p.color}"></span> <b>${esc(p.name)}</b> Power key: <kbd>${POWLABEL[p.id]}</kbd>${COARSE && p.id === M.players.findIndex(q => !q.bot) ? ' (or the ⚡ button)' : ''}</div>`).join('') || '<div>Passive skills work automatically.</div>'}</div><div class="row"><button class="btn go" data-v="go">Begin the adventure!</button></div>`, 720);
+  if (M.players.some(p => !p.bot)) await ask(`<h2>🌌 Cheat skills awakened!</h2><div class="gacha">${cards}</div><div class="keys">${M.players.filter(p => !p.bot && p.cheat && !SKILLS[p.cheat].passive).map(p => `<div><span class="dot" style="display:inline-block;background:${p.color}"></span> <b>${esc(p.name)}</b> Power key: <kbd>${POWLABEL[kid(p.id)]}</kbd>${COARSE && p.id === M.players.findIndex(q => !q.bot) ? ' (or the ⚡ button)' : ''}</div>`).join('') || '<div>Passive skills work automatically.</div>'}</div><div class="row"><button class="btn go" data-v="go">Begin the adventure!</button></div>`, 720, { all: true });
 }
 
 async function playMatch() {
@@ -1926,7 +1997,7 @@ async function playMatch() {
   while (!M.over) {
     M.round++;
     if (M.round > M.max) { M.over = true; M.ending = 'dragon'; break; }
-    banner(`🗺️ Round <b>${M.round}</b> / ${M.max}`, 1500); await wait(500);
+    await splash(['🗺️', '⚔️', '🔥', '🐉'][Math.min(3, Math.floor((M.round - 1) / M.max * 4))], `ROUND ${M.round} / ${M.max}`, '#fbbf24', 1300);
     await worldEvent();
     await cardsPhase();
     const r = await playRound();
@@ -1965,6 +2036,23 @@ function drawCastle(t) {
   c.fillStyle = '#1a1020'; c.beginPath(); c.roundRect(x - 13, y - 30, 26, 30, [13, 13, 0, 0]); c.fill();
   const fl = Math.sin(t * 5) * 3; c.fillStyle = '#ef4444'; c.beginPath(); c.moveTo(x, y - 128); c.lineTo(x + 22 + fl, y - 122); c.lineTo(x, y - 116); c.fill(); c.fillStyle = '#fff'; c.fillRect(x - 1, y - 130, 2, 18);
   emo('👸', x + 4, y - 150 + Math.sin(t * 3) * 2, 24); c.restore();
+}
+
+const TKS = {};                              // per-token animation state (kept off the mirrored player objects)
+function drawAmbient(t, dt) {
+  c.save();
+  for (let k = 0; k < 3; k++) { const x = ((t * (8 + k * 3) + k * 410) % (W + 460)) - 230, y = 110 + k * 150 + Math.sin(t * 0.3 + k) * 12; c.globalAlpha = 0.07; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, y, 170, 48, 0, 0, 7); c.fill(); }
+  c.globalCompositeOperation = 'lighter';
+  for (let k = 0; k < 16; k++) { const f = [Math.sin(k * 12.9) * 0.5 + 0.5, Math.sin(k * 7.3) * 0.5 + 0.5], inG = k < 9, cx = inG ? 482 : 826, cy = inG ? 294 : 190, rx = inG ? 190 : 64, ry = inG ? 36 : 38;
+    const x = cx + (f[0] * 2 - 1) * rx + Math.sin(t * 0.7 + k * 2.1) * 14, y = cy + (f[1] * 2 - 1) * ry + Math.cos(t * 0.9 + k) * 10, a = 0.35 + 0.6 * Math.max(0, Math.sin(t * 1.6 + k * 1.7));
+    c.globalAlpha = a * 0.8; c.fillStyle = inG ? '#fde047' : '#c084fc'; c.beginPath(); c.arc(x, y, 2.1, 0, 7); c.fill(); c.globalAlpha = a * 0.25; c.beginPath(); c.arc(x, y, 6.5, 0, 7); c.fill(); }
+  for (let k = 0; k < 9; k++) { const x = 752 + (Math.sin(k * 5.1) * 0.5) * 100, y = 285 + (Math.sin(k * 3.7 + 1) * 0.5) * 140, a = Math.max(0, Math.sin(t * 2.2 + k * 2.4)); if (a < 0.05) continue; c.globalAlpha = a * 0.85; c.strokeStyle = '#e0f2fe'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(x - 4, y); c.lineTo(x + 4, y); c.moveTo(x, y - 4); c.lineTo(x, y + 4); c.stroke(); }
+  c.globalCompositeOperation = 'source-over'; c.fillStyle = '#fff';
+  for (let k = 0; k < 18; k++) { const ph = (t * (14 + (k % 4) * 4) + k * 57) % 130, x = 270 + ((k * 61) % 400) + Math.sin(t * 0.8 + k) * 9, y = 52 + ph; c.globalAlpha = 0.65 * Math.min(1, ph / 10) * Math.min(1, (130 - ph) / 20); c.beginPath(); c.arc(x, y, 1.7 + (k % 3) * 0.5, 0, 7); c.fill(); }
+  c.globalAlpha = 0.85; c.strokeStyle = '#1e1b3a'; c.lineWidth = 1.6; c.lineCap = 'round';
+  for (let k = 0; k < 3; k++) { const x = ((t * (26 + k * 5) + k * 330) % (W + 140)) - 70, y = 70 + k * 92 + Math.sin(t * 1.3 + k * 2) * 14, fl = Math.sin(t * 9 + k * 1.7) * 4; c.beginPath(); c.moveTo(x - 7, y - 2 + fl); c.quadraticCurveTo(x - 3, y - 4, x, y); c.quadraticCurveTo(x + 3, y - 4, x + 7, y - 2 + fl); c.stroke(); }
+  c.restore();
+  if (Math.random() < dt * 5) ember(898 + rr(-26, 26), 150, 1, '#f97316');
 }
 function drawMap(dt) {
   mapT += dt; const t = mapT;
@@ -2009,6 +2097,7 @@ function drawMap(dt) {
     if (['snake', 'ladder', 'swap', 'mine', 'shrine'].includes(nd.t)) { c.strokeStyle = TCOL[nd.t] + (80 + Math.floor(60 * Math.sin(t * 3 + nd.y))).toString(16).slice(0, 2); c.lineWidth = 2; c.beginPath(); c.arc(nd.x, nd.y, r + 3 + Math.sin(t * 3 + nd.x) * 1.5, 0, 7); c.stroke(); }
     if (nd.t === 'boss' && M && M.bossDone.has(nd.id)) emo('❌', nd.x, nd.y, 20); });
   // region labels (ribbons)
+  drawAmbient(t, dt);
   REGIONS.forEach(r => { c.font = "800 10.5px 'Plus Jakarta Sans',sans-serif"; const w = c.measureText(r.n).width + 20; rrect(r.x - w / 2, r.ly - 10, w, 20, 10, 'rgba(10,5,22,.72)', 'rgba(255,255,255,.22)', 1); txt(r.n.toUpperCase(), r.x, r.ly, 9.5, '#fde68a'); });
   if (!M) { drawFX(dt); c.fillStyle = 'rgba(8,4,16,.5)'; c.fillRect(0, 0, W, H); vignette(); return; }
   // tokens
@@ -2016,13 +2105,15 @@ function drawMap(dt) {
   M.players.forEach(p => { (groups[p.pos] = groups[p.pos] || []).push(p); });
   M.players.forEach(p => { const nd = NODES[p.pos], grp = groups[p.pos], k = grp.indexOf(p), n = grp.length; const ang = n > 1 ? (k / n) * 6.283 - 1.2 : 0, off = n > 1 ? 16 : 0;
     const tx = nd.x + Math.cos(ang) * off, ty = nd.y - 24 + Math.sin(ang) * off * 0.7; const f = Math.min(1, dt * 12), mvd = Math.hypot(tx - p.dx, ty - p.dy); p.dx += (tx - p.dx) * f; p.dy += (ty - p.dy) * f; p.hop = mvd > 5 ? Math.abs(Math.sin(mapT * 14)) * Math.min(14, mvd * 0.4) : p.hop * 0.8 || 0;
+    { const T = TKS[p.id] || (TKS[p.id] = { mv: false, land: 0 }); if (T.mv && mvd <= 5) { ring(p.dx, p.dy + 20, p.color, 36, 0.45, 3); dust(p.dx, p.dy + 20, 7); camMapShake(1.8); T.land = 0.2; } T.mv = mvd > 5; T.land *= Math.pow(0.002, dt); }
     if (mvd > 6 && Math.random() < 0.7) FXP.push({ x: p.dx + rr(-5, 5), y: p.dy + 16, vx: rr(-20, 20), vy: rr(-30, -5), col: p.color, life: 0.55, max: 0.55, s: 4, g: 0, add: 1, circ: 1 }); });
   M.players.slice().sort((a, b) => a.dy - b.dy).forEach(p => { const bob = Math.sin(mapT * 4 + p.id) * 2 - (p.hop || 0);
     if (M.fog) { emo('❓', p.dx, p.dy + bob, 26); return; }
-    shadow(p.dx, p.dy + 20, 13); c.fillStyle = p.color; c.beginPath(); c.moveTo(p.dx - 6, p.dy + 14 + bob); c.lineTo(p.dx, p.dy + 23 + bob); c.lineTo(p.dx + 6, p.dy + 14 + bob); c.fill();
+    { const hp = p.hop || 0; shadow(p.dx, p.dy + 20, 13 * (1 - Math.min(0.5, hp / 30)), 4, 0.3 * (1 - Math.min(0.6, hp / 24))); } c.fillStyle = p.color; c.beginPath(); c.moveTo(p.dx - 6, p.dy + 14 + bob); c.lineTo(p.dx, p.dy + 23 + bob); c.lineTo(p.dx + 6, p.dy + 14 + bob); c.fill();
     const ld = LEADV > 0 && M.players.length > 1 && prog(p) === LEADV;
     if (ld) { c.save(); c.globalAlpha = 0.3 + 0.18 * Math.sin(mapT * 4); circle(p.dx, p.dy + bob, 25, '#fbbf24'); c.restore(); }
-    circle(p.dx, p.dy + bob, 18, '#1a1030'); circle(p.dx, p.dy + bob, 16, p.color); circle(p.dx, p.dy + bob, 13, '#2b1d4d'); emo(RACES[p.race].emoji, p.dx, p.dy + bob + 1, 22);
+    { const T = TKS[p.id] || { land: 0 }, sy = Math.max(0.7, Math.min(1.3, 1 + 0.035 * Math.sin(mapT * 4 + p.id) + (p.hop || 0) * 0.02 - T.land * 0.9)), sx = 1 / sy, fy = p.dy + bob + 15; c.save(); c.translate(p.dx, fy); c.scale(sx, sy); c.translate(-p.dx, -fy);
+    circle(p.dx, p.dy + bob, 18, '#1a1030'); circle(p.dx, p.dy + bob, 16, p.color); circle(p.dx, p.dy + bob, 13, '#2b1d4d'); emo(RACES[p.race].emoji, p.dx, p.dy + bob + 1, 22); c.restore(); }
     if (ld) emo('👑', p.dx + 1, p.dy + bob - 25 + Math.sin(mapT * 3) * 1.5, 15);
     { c.font = "800 9px 'Plus Jakarta Sans',sans-serif"; const nm = p.name.slice(0, 9), nw = c.measureText(nm).width + 12; rrect(p.dx - nw / 2, p.dy + 26, nw, 13, 6.5, 'rgba(10,5,22,.82)', p.color, 1); txt(nm, p.dx, p.dy + 32.8, 8.5, '#fff'); }
     if (p.atCastle) ptxt(p.stage + '/' + M.stages.length, p.dx, p.dy + bob - (ld ? 41 : 28), 9, '#fde047'); });
@@ -2088,16 +2179,15 @@ function drawEnd(dt) {
   const a = clamp(t / 0.8, 0, 1); c.save(); c.globalAlpha = a; txt(ed.title.toUpperCase(), W / 2, 62 + (1 - a) * -20, 44, '#fde047', 'center', '#000'); c.restore();
 }
 async function finale() {
-  MODE = 'end'; $('quit').classList.add('hidden'); startEndScene(); musSync(); sfx(M.ending === 'dragon' ? 'lose' : 'win');
+  MODE = 'end'; if (!NET.on) $('quit').classList.add('hidden'); if (NETM() && NET.host) { netSnap(true); toAll({ k: 'fin' }); } startEndScene(); musSync(); sfx(M.ending === 'dragon' ? 'lose' : 'win');
   await wait(4300);
   const ed = ENDINGS[M.ending], w = M.winner;
   const chips = M.players.map(p => `<span class="chip" style="border-color:${p.color}">${RACES[p.race].emoji} ${esc(p.name)}${p === w ? ' 👑' : ''} · 🪙${p.gold} · 🏆${p.wins}</span>`).join('');
-  const pr = ask(`<h2>${ed.title}</h2><div class="sub" style="color:#e7e3f1;margin-bottom:8px">${ed.text(w ? esc(w.name) : '')}</div><div class="chips">${chips}</div><div class="row"><button class="btn go" data-v="again">⚔️ Another adventure</button><button class="btn" data-v="setup">Change players</button><button class="btn dim" data-v="hub">← Yutfi MiniGames</button></div>`, 620);
-  $('ov').classList.add('end');
+  const pr = ask(`<h2>${ed.title}</h2><div class="sub" style="color:#e7e3f1;margin-bottom:8px">${ed.text(w ? esc(w.name) : '')}</div><div class="chips">${chips}</div><div class="row"><button class="btn go" data-v="again">⚔️ Another adventure</button><button class="btn" data-v="setup">Change players</button><button class="btn dim" data-v="hub">← Yutfi MiniGames</button></div>`, 620, { who: 0, end: true, def: 'hub' });
   const v = await pr;
-  if (v === 'again') { $('ov').classList.remove('end'); await startMatch(M.cfg); }
-  else if (v === 'setup') { $('ov').classList.remove('end'); M = null; END = null; showSetup(); }
-  else location.href = 'index.html';
+  if (v === 'again') { $('ov').classList.remove('end'); if (NET.on) M.cfg.slots.forEach((s, i) => { if (M.players[i].bot) { s.bot = true; s.net = null; } }); await startMatch(M.cfg); }
+  else if (v === 'setup') { $('ov').classList.remove('end'); if (NET.on) { netToLobby(); return; } M = null; END = null; showSetup(); }
+  else { if (NET.on) netReset(false); location.href = 'index.html'; }
 }
 
 /* ---------- setup screen ---------- */
@@ -2119,7 +2209,7 @@ function renderSetup() {
     ${slots}
     <div class="modes">${Object.entries(MODES).map(([k, m]) => `<button class="mode ${CFG.mode === k ? 'on' : ''}" onclick="cfgMode('${k}')"><div class="mi">${MI[k] || '🎲'}</div><div class="mn">${m.name}</div></button>`).join('')}</div><div class="sub" style="margin:8px 0 0">${MODES[CFG.mode].desc}</div>
     <div class="keys">${hum || '🤖 All bots — sit back and watch them race for the princess!'}${COARSE ? '<div>📱 Touch: Player 1 uses the on-screen pad.</div>' : ''}</div>
-    <div class="row sticky"><button class="btn go" onclick="startMatch()">⚔️ Start the adventure</button><button class="btn dim" onclick="howTo()">How to play</button></div>`, 700);
+    <div class="row sticky"><button class="btn go" onclick="startMatch()">⚔️ Start the adventure</button><button class="btn" onclick="renderOnline()">🌐 Play online</button><button class="btn dim" onclick="howTo()">How to play</button></div>`, 700);
 }
 function cfgN(v) { CFG.n = +v; saveCfg(); renderSetup(); }
 function cfgDiff(v) { CFG.diff = v; saveCfg(); renderSetup(); }
@@ -2145,27 +2235,374 @@ async function startMatch(cfg) {
   cfg = cfg || CFG; if (!cfg.slots.slice(0, cfg.n).length) return;
   cfg.slots.forEach((s, i) => { if (!String(s.name).trim()) s.name = s.bot ? BOT_NAMES[i] : 'Player ' + (i + 1); });
   saveCfg(); ovClose(); $('ov').classList.remove('end'); audioInit();
-  setupMatch(JSON.parse(JSON.stringify(cfg))); await playMatch();
+  setupMatch(JSON.parse(JSON.stringify(cfg))); if (NET.on && NET.host) netBroadcastStart(); await playMatch();
 }
 async function quitMatch() {
   if (MODE === 'game' && CUR) { /* keep playing under the dialog */ }
-  const v = await ask(`<h2>Quit this adventure?</h2><div class="sub">Your progress will be lost.</div><div class="row"><button class="btn dim" data-v="no">Keep playing</button><button class="btn go" data-v="yes">Quit</button></div>`, 420);
-  if (v === 'yes') location.reload(); else if (MODE === 'setup') renderSetup();
+  const v = await ask(`<h2>Quit this adventure?</h2><div class="sub">Your progress will be lost.</div><div class="row"><button class="btn dim" data-v="no">Keep playing</button><button class="btn go" data-v="yes">Quit</button></div>`, 420, { local: true });
+  if (v === 'yes') { if (NET.on) { netReset(false); try { history.replaceState(null, '', location.pathname); } catch (e) {} setTimeout(() => location.reload(), 250); } else location.reload(); } else if (MODE === 'setup') renderSetup();
 }
+
+/* ============================================================
+   Part 5: online play (2–4 players, each on their own device)
+   Host-driven lockstep over a free public MQTT broker (WebSocket, no accounts, no servers of ours):
+   · every device runs the same mini-game with the same seed; the host relays every player's button presses as frame records
+   · the host owns the adventure (map, cards, gold…) and mirrors its menus, banners and a state snapshot to the others
+   · the host's result for each round is the one that counts; if a phone drops out its hero is taken over by a bot
+   ============================================================ */
+const BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt', 'wss://test.mosquitto.org:8081'];
+const NETSTEP = 1 / 60, LOBBY_MAX = 4, NET_V = 1;
+let NETR = null;                                  // the online mini-game round in progress
+const NETSAVE = (() => { try { return JSON.parse(localStorage.getItem('sl-party-net') || 'null') || {}; } catch (e) { return {}; } })();
+Object.assign(NET, { on: false, host: false, inMatch: false, id: 'p' + Math.random().toString(36).slice(2, 9), code: '', seat: 0, cl: null, tH: '', tC: '', sq: 0, lastS: 0, rid: 0,
+  lob: null, lobby: null, seen: {}, tHb: 0, tChk: 0, tLob: 0, tSnap: 0, tIn: 0, lastM: 0, hostSeen: 0, gone: false, dbg: { rounds: 0, desync: 0, resend: 0 }, name: NETSAVE.name || '', race: NETSAVE.race || 'human' });
+const netSaveProf = () => { try { localStorage.setItem('sl-party-net', JSON.stringify({ name: NET.name, race: NET.race })); } catch (e) {} };
+const holdMask = () => (LOC.l ? 1 : 0) | (LOC.r ? 2 : 0) | (LOC.u ? 4 : 0) | (LOC.d ? 8 : 0) | (LOC.a ? 16 : 0) | (LOC.w ? 32 : 0);
+function withRng(R, fn) { const o = Math.random; Math.random = R.rng; try { return fn(); } finally { Math.random = o; } }   // game logic runs on the shared seeded stream; visuals keep real randomness
+const NETCODE = () => { const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s = ''; for (let i = 0; i < 4; i++) s += a[Math.floor(Math.random() * a.length)]; return s; };
+function cleanHTML(html) {                         // mirrored menus come from the network: strip anything active
+  const t = document.createElement('template'); t.innerHTML = String(html).slice(0, 60000);
+  t.content.querySelectorAll('script,iframe,object,embed,link,meta,style,form,base').forEach(e => e.remove());
+  t.content.querySelectorAll('*').forEach(e => [...e.attributes].forEach(a => { if (/^on/i.test(a.name) || /^\s*javascript:/i.test(a.value) || (a.name === 'src' || a.name === 'href')) e.removeAttribute(a.name); }));
+  return t.innerHTML;
+}
+
+/* ---------- transport ---------- */
+function netStatus(t) { const e = $('netmsg'); if (e) e.textContent = t || ''; }
+async function netConnect(code) {
+  if (typeof mqtt !== 'object' || !mqtt || typeof mqtt.connect !== 'function') throw new Error('The online library did not load — check your internet connection and reload.');
+  for (const url of BROKERS) {
+    netStatus('Connecting to ' + url.replace(/^wss:\/\//, '').replace(/[:/].*$/, '') + '…');
+    try {
+      const c = await new Promise((res, rej) => {
+        let done = false, k; const fail = e => { if (done) return; done = true; clearTimeout(to); try { k && k.end(true); } catch (x) {} rej(e || new Error('failed')); };
+        const to = setTimeout(() => fail(new Error('timeout')), 8000);
+        try { k = mqtt.connect(url, { clientId: 'slp_' + NET.id, keepalive: 20, reconnectPeriod: 3000, connectTimeout: 7000, clean: true, resubscribe: true }); } catch (e) { fail(e); return; }
+        k.once('connect', () => { if (done) return; done = true; clearTimeout(to); res(k); }); k.on('error', fail);
+      });
+      NET.cl = c; NET.via = url; NET.code = code; NET.tH = 'sl-party-v1/' + code.toLowerCase() + '/h'; NET.tC = 'sl-party-v1/' + code.toLowerCase() + '/c';
+      c.on('message', (topic, payload) => { let m = null; try { const s = payload.toString(); if (s.length > 80000) return; m = JSON.parse(s); } catch (e) { return; } if (m && typeof m === 'object' && !Array.isArray(m)) { try { netOnMsg(topic, m); } catch (e) { console.error(e); } } });
+      c.on('close', () => { NET.offline = true; netPill(); }); c.on('connect', () => { NET.offline = false; netPill(); });
+      c.subscribe(NET.host ? NET.tC : NET.tH, { qos: 1 });
+      netStatus('Connected.'); return c;
+    } catch (e) { /* next broker */ }
+  }
+  throw new Error('Could not reach an online server. Try another network (some school/work Wi-Fi blocks it).');
+}
+function netPub(topic, obj, qos) { if (!NET.cl) return; try { NET.cl.publish(topic, JSON.stringify(obj), { qos }); } catch (e) {} }
+function toAll(m) { if (!NET.on || !NET.host) return; if (m.k !== 'f' && m.k !== 'hb') m.s = ++NET.sq; netPub(NET.tH, m, (m.k === 'f' || m.k === 'hb') ? 0 : 1); }
+function toHost(m, reliable) { if (!NET.on || NET.host) return; netPub(NET.tC, m, reliable === false ? 0 : 1); }
+function netPill() {
+  const e = $('netpill'); if (!e) return; if (!NET.on) { e.classList.add('hidden'); return; }
+  const n = NET.host ? (M ? M.players.filter(p => !p.bot).length : (NET.lob ? NET.lob.hum.length : 1)) : (NET.lobby ? NET.lobby.hum.length : 1);
+  e.innerHTML = `🌐 <b>${NET.code}</b> · ${n} online${NET.offline ? ' · <span style="color:#fca5a5">reconnecting…</span>' : ''}`; e.classList.remove('hidden');
+}
+function netReset(toSetup) {
+  try { if (NET.cl) { if (NET.host) toAll({ k: 'end' }); else toHost({ k: 'leave', id: NET.id }); const k = NET.cl; setTimeout(() => { try { k.end(); } catch (e) {} }, 200); } } catch (e) {}
+  Object.assign(NET, { on: false, host: false, inMatch: false, cl: null, lob: null, lobby: null, seen: {}, gone: false, sq: 0, lastS: 0 }); NETR = null; netPill();
+  CURASK = null; if (toSetup) { $('ov').classList.remove('end'); showSetup(); }
+}
+
+/* ---------- messages ---------- */
+function netOnMsg(topic, m) {
+  if (!NET.on) return;
+  if (NET.host) { if (topic === NET.tC) hostOnMsg(m); return; }
+  if (topic !== NET.tH) return;
+  if (m.to && m.to !== NET.id) return;
+  NET.hostSeen = performance.now(); if (NET.gone) { NET.gone = false; }
+  if (m.k === 'hb') return;
+  if (m.k === 'f') return clientFrames(m);
+  if (m.s != null) { if (m.s <= NET.lastS) return; NET.lastS = m.s; }
+  if (NETR && !NETR.over && m.k !== 're') { NETR.later.push(m); return; }       // finish watching the round before touching menus / state
+  clientCtl(m);
+}
+function hostOnMsg(m) {
+  const id = String(m.id || ''); if (!id) return; const now = performance.now();
+  if (m.k === 'join') { hostJoin(m, id); return; }
+  if (!NET.seen[id]) return;                       // not seated
+  NET.seen[id] = now;
+  if (m.k === 'hb') return;
+  if (m.k === 'leave') { hostDrop(id, 'left'); return; }
+  if (m.k === 'prof' && NET.lob && !NET.inMatch) { const h = NET.lob.hum.find(x => x.id === id); if (h) { h.n = String(m.n || h.n).slice(0, 12); if (RACES[m.r]) h.r = m.r; lobPush(); lobRender(); } return; }
+  const seat = NET.inMatch && M ? M.cfg.slots.findIndex(s => s.net === id) : -1;
+  if (m.k === 'in' && seat >= 0 && NETR) { const r = NETR.rin[seat]; r.m = (m.m | 0) & 63; r.e |= (m.e | 0) & 63; return; }
+  if (m.k === 'ans' && CURASK && CURASK.id === m.a && seat >= 0) { askAnswer(CURASK, seat, String(m.v)); return; }
+  if (m.k === 'need' && NETR && NETR.recs) { hostResend(m); return; }
+}
+function clientCtl(m) {
+  switch (m.k) {
+    case 'lobby': if (NET.inMatch) netLeaveMatch(); NET.lobby = m; NET.joined = true; lobRender(); netPill(); break;
+    case 'full': netStatus(m.why === 'started' ? 'That game has already started.' : 'That room is full.'); NET.rejected = true; break;
+    case 'end': netReset(true); $('ov').classList.remove('hidden'); ovOpen(`<h2>🌐 Room closed</h2><div class="sub">The host left, so the room ended.</div><div class="row"><button class="btn go" onclick="renderSetup()">OK</button></div>`, 440); break;
+    case 'start': netOnStart(m); break;
+    case 'snap': if (M) applySnap(m.m); netPill(); break;
+    case 'ov': netOnOv(m); break;
+    case 'ovc': $('ov').classList.add('hidden'); NET.ask = null; break;
+    case 'ovp': { const n = $('ovnote'); if (n && NET.ask && NET.ask.id === m.id) n.innerHTML = m.t || ''; break; }
+    case 'bn': { const b = $('banner'); if (MODE !== 'game') { b.innerHTML = cleanHTML(m.html); b.classList.remove('hidden'); clearTimeout(banner.t); banner.t = setTimeout(() => b.classList.add('hidden'), (m.ms || 1600)); } break; }
+    case 'sp': splash(String(m.i).slice(0, 8), String(m.t).slice(0, 40), /^#[0-9a-f]{3,8}$/i.test(m.c) ? m.c : '#fde047', m.ms || 1000); break;
+    case 'wp': wipe(String(m.i).slice(0, 8), String(m.t).slice(0, 40), true); break;
+    case 'sx': sfx(String(m.n).slice(0, 12)); break;
+    case 'rs': netClientRound(m); break;
+    case 're': netClientEnd(m); break;
+    case 'fin': MODE = 'end'; $('quit').classList.add('hidden'); startEndScene(); musSync(); sfx(M && M.ending === 'dragon' ? 'lose' : 'win'); break;
+  }
+}
+function netLeaveMatch() { NET.inMatch = false; NETR = null; CUR = null; M = null; PL = []; END = null; MODE = 'setup'; tsClear(); $('touch').classList.add('hidden'); $('quit').classList.add('hidden'); $('ov').classList.remove('end'); musSync(); }
+function netHostGone() { NET.gone = true; netReset(true); ovOpen(`<h2>🌐 Lost the host</h2><div class="sub">We haven't heard from the host for a while, so the game ended.</div><div class="row"><button class="btn go" onclick="renderSetup()">OK</button></div>`, 440); }
+
+/* ---------- snapshots of the adventure (host → everyone) ---------- */
+function snapM() {
+  const o = { winner: M.winner ? M.winner.id : -1, bossDone: [...M.bossDone], ev: M.ev ? { id: M.ev.id, icon: M.ev.icon, name: M.ev.name, txt: M.ev.txt } : null };
+  ['round', 'max', 'recent', 'recentCat', 'traps', 'over', 'ending', 'doubleGold', 'festival', 'fog', 'closed'].forEach(k => { o[k] = M[k]; });
+  o.players = M.players.map(p => { const q = {}; for (const k in p) { if (k === 'dx' || k === 'dy' || k === 'hop') continue; const v = p[k]; q[k] = v instanceof Set ? { __s: [...v] } : v; } return q; });
+  return o;
+}
+function applySnap(o) {
+  ['round', 'max', 'recent', 'recentCat', 'traps', 'over', 'ending', 'doubleGold', 'festival', 'fog', 'closed'].forEach(k => { if (o[k] !== undefined) M[k] = o[k]; });
+  M.bossDone = new Set(o.bossDone || []); M.ev = o.ev || null;
+  (o.players || []).forEach((q, i) => { const p = M.players[i]; if (!p) return; for (const k in q) { const v = q[k]; p[k] = v && typeof v === 'object' && v.__s ? new Set(v.__s) : v; } });
+  M.winner = o.winner >= 0 ? M.players[o.winner] : null;
+}
+function netSnap(force) { if (!NETM() || !NET.host || !M) return; const now = performance.now(); if (!force && now - NET.tSnap < 120) return; NET.tSnap = now; toAll({ k: 'snap', m: snapM() }); }
+function netBroadcastStart() { NET.tSnap = 0; toAll({ k: 'start', cfg: M.cfg, snap: snapM() }); netPill(); }
+function netOnStart(m) {
+  NET.inMatch = true; NETR = null; END = null; M = null; setupMatch(JSON.parse(JSON.stringify(m.cfg))); applySnap(m.snap); PL = M.players;
+  NET.seat = Math.max(0, M.cfg.slots.findIndex(s => s.net === NET.id)); MODE = 'map'; ovClose(); $('ov').classList.remove('end'); $('quit').classList.remove('hidden'); audioInit(); musSync(); netPill();
+}
+
+/* ---------- mirrored menus: host shows them to everyone, the right player answers ---------- */
+function ovNote(html) { const cd = $('ovcard'); let n = $('ovnote'); if (!n) { cd.insertAdjacentHTML('beforeend', '<div class="ovnote" id="ovnote"></div>'); n = $('ovnote'); } n.innerHTML = html || ''; n.style.display = html ? '' : 'none'; }
+function ovWaitFor(A) {                            // my overlay is read-only when it is somebody else's decision
+  const wait = A.who != null && A.who !== NET.seat, cd = $('ovcard'); cd.classList.toggle('ovwait', wait); cd.classList.remove('ovsent');
+  ovNote(wait && M && M.players[A.who] ? `⏳ Waiting for <b style="color:${M.players[A.who].color}">${esc(M.players[A.who].name)}</b>…` : '');
+}
+function netOnOv(m) {
+  ovOpen(cleanHTML(m.html), m.w || 600); if (m.end) $('ov').classList.add('end');
+  NET.ask = { id: m.id, who: m.who == null ? null : m.who, all: !!m.all }; ovWaitFor({ who: NET.ask.who });
+}
+$('ovcard').addEventListener('click', e => {       // clients answer through the host
+  if (!NET.on || NET.host || !NET.inMatch || !NET.ask) return;
+  const b = e.target.closest('[data-v]'); if (!b || b.disabled || $('ovcard').classList.contains('ovwait') || $('ovcard').classList.contains('ovsent')) return;
+  sfx('tick'); toHost({ k: 'ans', id: NET.id, a: NET.ask.id, v: b.dataset.v });
+  $('ovcard').classList.add('ovsent'); ovNote('✓ Sent — waiting for the others…');
+});
+function connectedSeats() { return M ? M.players.filter(p => !p.bot && !p.netLost).map(p => p.id) : []; }
+function askAnswer(A, seat, v) {
+  if (A.done) return; if (A.who != null && seat !== A.who) return;
+  if (!A.all) { A.finish(v); return; }
+  A.got.set(seat, v); if (seat === NET.seat) { $('ovcard').classList.add('ovsent'); }
+  askRecheck(A, v);
+}
+function askRecheck(A, v) {
+  A = A || CURASK; if (!A || A.done) return;
+  if (A.who != null && M && M.players[A.who] && (M.players[A.who].netLost || M.players[A.who].bot)) { A.finish(A.def); return; }
+  if (!A.all) return; if (v === undefined) v = [...A.got.values()][0]; if (v === undefined) return;
+  const need = connectedSeats(), left = need.filter(s => !A.got.has(s));
+  const names = left.map(s => esc(M.players[s].name)).join(', ');
+  if (!left.length) { A.finish(v); return; }
+  if (!A.tm) A.tm = setTimeout(() => A.finish(v), 20000);
+  ovNote(`✓ Ready — waiting for ${names}…`); toAll({ k: 'ovp', id: A.id, t: `✓ Ready — waiting for ${names}…` });
+}
+
+/* ---------- lobby ---------- */
+function onlineSeats() { const L = NET.host ? NET.lob : NET.lobby; if (!L) return []; return [...L.hum.map(h => ({ id: h.id, name: h.n, race: h.r, bot: false })), ...L.bots.map(b => ({ id: null, name: b.n, race: b.r, bot: true }))]; }
+function lobPush() {
+  if (!NET.host || !NET.lob) return; const L = NET.lob;
+  toAll({ k: 'lobby', v: NET_V, code: NET.code, hum: L.hum.map(h => ({ id: h.id, n: h.n, r: h.r })), bots: L.bots, mode: L.mode, diff: L.diff, skills: L.skills });
+}
+function hostJoin(m, id) {
+  if (m.v !== undefined && m.v !== NET_V) { toAll({ k: 'full', to: id, why: 'version' }); return; }
+  if (NET.inMatch) { if (!NET.seen[id]) toAll({ k: 'full', to: id, why: 'started' }); return; }
+  const L = NET.lob; if (!L) return; NET.seen[id] = performance.now();
+  const ex = L.hum.find(h => h.id === id); if (ex) { lobPush(); return; }
+  if (L.hum.length + L.bots.length >= LOBBY_MAX) { if (L.bots.length) L.bots.pop(); else { delete NET.seen[id]; toAll({ k: 'full', to: id, why: 'full' }); return; } }
+  L.hum.push({ id, n: String(m.n || 'Player').slice(0, 12), r: RACES[m.r] ? m.r : 'human' }); sfx('select'); lobPush(); lobRender();
+}
+function hostDrop(id, why) {
+  const L = NET.lob, was = NET.seen[id]; delete NET.seen[id];
+  if (NET.inMatch && M) { const p = M.players.find(q => q.net === id); if (p && !p.netLost) { p.netLost = true; if (MODE !== 'game') p.bot = true; banner(`🔌 ${who(p)} ${why === 'left' ? 'left' : 'lost connection'} — a bot takes over`, 2400); sfx('bad'); askRecheck(); netPill(); } return; }
+  if (L && was) { const i = L.hum.findIndex(h => h.id === id); if (i > 0) { L.hum.splice(i, 1); lobPush(); lobRender(); } }
+}
+function netCheckPlayers(now) { Object.keys(NET.seen).forEach(id => { if (now - NET.seen[id] > 15000) hostDrop(id, 'timeout'); }); }
+let lobSig = '';
+function lobRender(force) {
+  if (!NET.on || NET.inMatch || MODE !== 'setup') return;
+  const L = NET.host ? NET.lob : NET.lobby; if (!L) return;
+  const sig = JSON.stringify([L.hum.map(h => [h.id, h.id === NET.id ? '' : h.n, h.r]), L.bots, L.mode, L.diff, L.skills]); if (!force && sig === lobSig && !$('ov').classList.contains('hidden') && $('lobroot')) { return; } lobSig = sig;
+  const seats = onlineSeats(), me = L.hum.find(h => h.id === NET.id) || { n: NET.name, r: NET.race };
+  const ae = document.activeElement, keep = ae && ae.id === 'lobname' ? ae.selectionStart : -1;
+  const rows = [0, 1, 2, 3].map(i => { const s = seats[i], col = PCOL[i];
+    if (!s) return `<div class="lobrow empty" style="--pc:${col}"><span class="dot" style="background:${col}44"></span><span class="lobn" style="opacity:.55">${NET.host ? 'Open seat — waiting for a friend or add a bot' : 'Open seat'}</span></div>`;
+    const mine = s.id === NET.id, host = i === 0;
+    return `<div class="lobrow" style="--pc:${col}"><span class="dot" style="background:${col};color:${col}"></span><span class="lobe">${RACES[s.race].emoji}</span>
+      ${mine ? `<input id="lobname" type="text" maxlength="12" value="${esc(s.name)}" oninput="lobName(this.value)" aria-label="Your name">` : `<span class="lobn">${esc(s.name)}${s.bot ? ' 🤖' : ''}</span>`}
+      ${host ? '<span class="tag">host</span>' : ''}${mine ? '<span class="tag you">you</span>' : ''}${s.bot ? '<span class="tag">bot</span>' : ''}${NET.host && s.bot ? `<button class="lobx" onclick="lobRmBot(${i - L.hum.length})" aria-label="Remove bot">✕</button>` : ''}</div>`; }).join('');
+  const seg = (items, cur, fn) => `<span class="seg">${items.map(([v, l]) => `<button class="${String(v) === String(cur) ? 'on' : ''}" ${NET.host ? `onclick="${fn}('${v}')"` : 'disabled'}>${l}</button>`).join('')}</span>`;
+  const link = location.href.replace(/#.*$/, '') + '#room-' + NET.code;
+  ovOpen(`<div id="lobroot"><h2>🌐 Online lobby</h2><div class="lobcode" onclick="lobCopy()" title="Tap to copy the invite link"><span>ROOM CODE</span><b>${NET.code}</b><em id="lobcp">📋 tap to copy invite link</em></div>
+    <div class="sub" style="margin:2px 0 8px">Friends open <b>party.html</b>, press <b>Play online → Join</b> and type the code${NET.host ? '' : ' — you are in!'}. Up to 4 heroes; add bots to fill empty seats.</div>
+    <div class="lobrows">${rows}</div>
+    <div class="races lobraces">${Object.entries(RACES).map(([k, r]) => `<button class="race ${me.r === k ? 'on' : ''}" onclick="lobRace('${k}')"><div class="e">${r.emoji}</div><div class="n">${r.name}</div></button>`).join('')}</div>
+    <div class="abil" style="margin-top:6px"><b>${RACES[me.r].ab}</b> — ${RACES[me.r].abd}</div>
+    <div class="row" style="margin-top:10px;align-items:center"><span class="lab">Mode</span>${seg(Object.entries(MODES).map(([k, m]) => [k, m.name]), L.mode, 'lobMode')}<span class="lab" style="margin-left:8px">Bots</span>${seg([['easy', 'Easy'], ['normal', 'Normal'], ['hard', 'Hard']], L.diff, 'lobDiff')}<span class="lab" style="margin-left:8px">Skills</span>${seg([['on', '🌌 On'], ['off', 'Off']], L.skills === false ? 'off' : 'on', 'lobSkills')}</div>
+    <div class="sub" style="margin:6px 0 0">${MODES[L.mode] ? MODES[L.mode].desc : ''}</div>
+    <div class="tipline">${NET.host ? '' : '⏳ Waiting for the host to start…'}</div>
+    <div class="row sticky">${NET.host ? `<button class="btn" onclick="lobAddBot()" ${seats.length >= LOBBY_MAX ? 'disabled' : ''}>🤖 Add bot</button><button class="btn go" onclick="lobStart()" ${seats.length < 2 ? 'disabled' : ''}>⚔️ Start the adventure</button>` : ''}<button class="btn dim" onclick="lobLeave()">${NET.host ? 'Close room' : 'Leave'}</button></div></div>`, 680);
+  if (keep >= 0) { const i = $('lobname'); if (i) { i.focus(); try { i.setSelectionRange(keep, keep); } catch (e) {} } }
+}
+function lobName(v) { NET.name = v; netSaveProf(); if (NET.host) { const h = NET.lob.hum[0]; h.n = v.slice(0, 12) || 'Host'; lobPush(); } else toHost({ k: 'prof', id: NET.id, n: v, r: NET.race }); }
+function lobRace(r) { NET.race = r; netSaveProf(); sfx('select'); if (NET.host) { NET.lob.hum[0].r = r; lobPush(); lobRender(true); } else { toHost({ k: 'prof', id: NET.id, n: NET.name, r }); const h = NET.lobby && NET.lobby.hum.find(x => x.id === NET.id); if (h) h.r = r; lobRender(true); } }
+function lobMode(v) { if (!NET.host) return; NET.lob.mode = v; lobPush(); lobRender(true); }
+function lobDiff(v) { if (!NET.host) return; NET.lob.diff = v; lobPush(); lobRender(true); }
+function lobSkills(v) { if (!NET.host) return; NET.lob.skills = v === 'on'; lobPush(); lobRender(true); }
+function lobAddBot() { const L = NET.lob; if (!NET.host || L.hum.length + L.bots.length >= LOBBY_MAX) return; const used = new Set([...L.hum.map(h => h.n), ...L.bots.map(b => b.n)]); const nm = BOT_NAMES.find(n => !used.has(n)) || 'Bot' + L.bots.length; const rs = Object.keys(RACES); L.bots.push({ n: nm, r: rs[(L.hum.length + L.bots.length + 1) % rs.length] }); sfx('select'); lobPush(); lobRender(true); }
+function lobRmBot(i) { if (!NET.host) return; NET.lob.bots.splice(i, 1); lobPush(); lobRender(true); }
+function lobCopy() { const link = location.href.replace(/#.*$/, '') + '#room-' + NET.code; const done = () => { const e = $('lobcp'); if (e) e.textContent = '✅ link copied!'; sfx('coin'); }; try { navigator.clipboard.writeText(link).then(done, () => prompt('Copy this invite link:', link)); } catch (e) { try { prompt('Copy this invite link:', link); } catch (x) {} } }
+function lobLeave() { netReset(true); }
+function lobStart() {
+  if (!NET.host) return; const L = NET.lob, seats = onlineSeats(); if (seats.length < 2) return;
+  const cfg = { n: seats.length, mode: L.mode, diff: L.diff, skills: L.skills !== false, slots: seats.map(s => ({ name: s.name, race: s.race, bot: s.bot, net: s.id || null })) };
+  NET.seat = 0; ovClose(); NET.inMatch = true; startMatch(cfg);
+}
+function netToLobby() { if (!NET.host) return; NET.inMatch = false; NETR = null; M = null; PL = []; END = null; MODE = 'setup'; $('ov').classList.remove('end'); $('quit').classList.add('hidden'); $('touch').classList.add('hidden');
+  const L = NET.lob; L.hum = L.hum.filter(h => h.id === NET.id || NET.seen[h.id]); lobPush(); lobSig = ''; musSync(); lobRender(true); }
+
+/* ---------- entry screens ---------- */
+function renderOnline(code) {
+  NET.on = false; const rc = Object.entries(RACES).map(([k, r]) => `<button class="race ${NET.race === k ? 'on' : ''}" onclick="onRace('${k}')"><div class="e">${r.emoji}</div><div class="n">${r.name}</div><div class="tg">${r.tag}</div></button>`).join('');
+  ovOpen(`<div class="hero"><div class="crown">🌐</div><h2>Play online</h2></div><div class="sub">Each friend plays on their own phone or computer. No account needed — one person creates a room, the others type its 4-letter code.</div>
+    <div class="slot" style="--pc:#a78bfa"><div class="hd"><span class="lab" style="margin-right:6px">Your name</span><input id="onname" type="text" maxlength="12" value="${esc(NET.name || '')}" placeholder="Hero" oninput="NET.name=this.value;netSaveProf()" aria-label="Your name"></div><div class="races">${rc}</div></div>
+    <div class="row" style="margin-top:12px"><button class="btn go" onclick="onlineCreate()">🏰 Create a room</button></div>
+    <div class="row" style="align-items:center;margin-top:8px"><input id="oncode" class="codein" type="text" maxlength="4" value="${esc(code || '')}" placeholder="CODE" autocapitalize="characters" autocomplete="off" aria-label="Room code" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')" onkeydown="if(event.key==='Enter')onlineJoin()"><button class="btn" onclick="onlineJoin()">🚪 Join room</button></div>
+    <div class="sub" id="netmsg" style="min-height:1.4em;margin-top:8px;color:#fde68a"></div>
+    <div class="row"><button class="btn dim" onclick="renderSetup()">← Back</button></div>
+    <div class="sub" style="font-size:11px">Needs internet · the host's device runs the game, so the host should keep this tab open and in front · if someone drops out a bot takes their place.</div>`, 600);
+  if (code) setTimeout(() => { const i = $('oncode'); if (i) i.focus(); }, 50);
+}
+function onRace(r) { NET.race = r; netSaveProf(); renderOnline($('oncode') ? $('oncode').value : ''); }
+async function onlineCreate() {
+  const code = NETCODE(); NET.name = ($('onname').value || '').trim() || 'Host'; netSaveProf(); netStatus('Creating room…');
+  Object.assign(NET, { on: true, host: true, lob: { hum: [{ id: NET.id, n: NET.name.slice(0, 12), r: NET.race }], bots: [], mode: CFG.mode || 'classic', diff: CFG.diff || 'normal', skills: CFG.skills !== false }, seen: {}, sq: 0, inMatch: false });
+  try { await netConnect(code); } catch (e) { NET.on = false; NET.host = false; netStatus(e.message); return; }
+  MODE = 'setup'; lobSig = ''; netPill(); lobPush(); lobRender(true);
+}
+async function onlineJoin() {
+  const code = ($('oncode').value || '').trim().toUpperCase(); if (code.length !== 4) { netStatus('Type the 4-character room code.'); return; }
+  NET.name = ($('onname').value || '').trim() || 'Hero'; netSaveProf(); netStatus('Connecting…');
+  Object.assign(NET, { on: true, host: false, lobby: null, joined: false, rejected: false, lastS: 0, inMatch: false, hostSeen: performance.now() });
+  try { await netConnect(code); } catch (e) { NET.on = false; netStatus(e.message); return; }
+  netStatus('Looking for the room…'); const t0 = performance.now();
+  const ask = () => { if (!NET.on || NET.host || NET.joined || NET.rejected) return; if (performance.now() - t0 > 9000) { netStatus('No room "' + code + '" found — check the code (and that the host is still waiting).'); netReset(false); return; } toHost({ k: 'join', id: NET.id, n: NET.name, r: NET.race, v: NET_V }); setTimeout(ask, 1000); };
+  ask();
+}
+
+/* ---------- a mini-game round, host side ---------- */
+function netHostRoundStart(R, def, parts, opts) {
+  NET.pend = 0; const rid = ++NET.rid; NETR = { rid, rin: [0, 1, 2, 3].map(() => ({ m: 0, e: 0 })), recs: [], out: 0, flushT: 0, acc: 0, over: false, later: [] };
+  R.frames = 0; toAll({ k: 'snap', m: snapM() });
+  toAll({ k: 'rs', rid, gid: def.id, boss: opts.boss || null, diff: opts.diff || 0, fx: opts.effects || [], parts: parts.map(p => p.id), seed: R.G.seed });
+}
+function hostRecord() {
+  const rec = [0, 0, 0, 0];
+  for (let s = 0; s < 4; s++) { if (s === NET.seat) { rec[s] = holdMask() | (NET.pend << 6); NET.pend = 0; } else if (NETR.rin[s]) { const r = NETR.rin[s]; const lost = M && M.players[s] && M.players[s].netLost; rec[s] = lost ? 0 : (r.m | (r.e << 6)); r.e = 0; } }
+  return rec;
+}
+function applyRec(R, rec) {
+  R.G.P.forEach(p => { if (p.bot) return; const v = rec[p.pid] | 0, q = INP[p.pid], m = v & 63, e = (v >> 6) & 63;
+    BITK.forEach(k => { q[k] = (m & BIT[k]) ? 1 : 0; q[k + 'p'] = (e & BIT[k]) ? 1 : 0; }); });
+}
+function hostResend(m) {
+  const a = Math.max(0, m.from | 0), b = Math.min(NETR.recs.length, a + 150); if (a >= b) return; NET.dbg.resend++;
+  toAll({ k: 'f', rid: NETR.rid, n: a, r: NETR.recs.slice(a, b) });
+}
+function netFlush(force) {
+  const N = NETR; if (!N || !N.recs) return; const now = performance.now();
+  if (N.out < N.recs.length && (force || now - N.flushT > 30)) { toAll({ k: 'f', rid: N.rid, n: N.out, r: N.recs.slice(N.out) }); N.out = N.recs.length; N.flushT = now; }
+}
+function netHostRoundEnd(R) {
+  if (!NETR) return; netFlush(true); const h = R.obj.score().map(x => Math.round(x * 100)).join(',');
+  toAll({ k: 're', rid: NETR.rid, last: R.frames, h }); NETR = null; NET.dbg.rounds++;
+}
+
+/* ---------- a mini-game round, client side ---------- */
+function clientFrames(m) {
+  const N = NETR; if (!N || m.rid !== N.rid || !Array.isArray(m.r)) return;
+  let n = m.n | 0;
+  if (n > N.next) { if (performance.now() - N.needT > 250) { N.needT = performance.now(); toHost({ k: 'need', id: NET.id, from: N.next }); } return; }
+  for (let i = 0; i < m.r.length; i++, n++) { if (n < N.next) continue; const r = m.r[i]; if (!Array.isArray(r)) return; N.q.push([r[0] | 0, r[1] | 0, r[2] | 0, r[3] | 0]); N.next++; }
+}
+function netClientRound(m) {
+  const def = m.gid === 'boss' ? BOSS_DEF : GAMES.find(g => g.id === m.gid); if (!def || !M) return;
+  const parts = (m.parts || []).map(i => PL[i]).filter(Boolean);
+  const G = makeCtx(def, parts, { diff: +m.diff || 0, boss: m.boss || undefined, effects: Array.isArray(m.fx) ? m.fx : [], seed: m.seed | 0 });
+  const R = { def, G, finished: false, endT: 0, frames: 0 }; R.rng = seeded((G.seed ^ 0x5bd1e995) | 0); R.obj = withRng(R, () => def.make(G));
+  R.resolve = () => { if (NETR) { NETR.simEnd = true; netTryEnd(); } };
+  NETR = { rid: m.rid, q: [], next: 0, acc: 0, needT: 0, over: false, later: [], simEnd: false, last: -1, started: false, t0: performance.now() };
+  NET.pend = 0; beginRound(R, def); NET.dbg.rounds++;
+  setTimeout(() => { if (NETR && NETR.rid === m.rid && !NETR.next) toHost({ k: 'need', id: NET.id, from: 0 }); }, 600);
+}
+function netClientEnd(m) { if (!NETR || NETR.rid !== m.rid) return; NETR.last = m.last | 0; NETR.h = m.h; netTryEnd(); }
+function netTryEnd() {
+  const N = NETR, R = CUR; if (!N || !R || N.over) return;
+  if (N.last < 0 || R.frames < N.last || N.q.length) return;                    // still replaying the host's last frames
+  N.over = true; const mine = R.obj.score().map(x => Math.round(x * 100)).join(','); if (N.h !== undefined && N.h !== mine) NET.dbg.desync++;
+  const later = N.later; NETR = null; CUR = null; MODE = 'map'; tsClear(); $('touch').classList.add('hidden'); musSync();
+  later.forEach(m => { try { clientCtl(m); } catch (e) { console.error(e); } });
+}
+
+/* ---------- per-frame online round driver (host and clients) ---------- */
+function netGameFrame(dt) {
+  const R = CUR, N = NETR; if (!R) return;
+  if (!N) { gameFrame(dt); return; }
+  uiPre(R);
+  const host = NET.host; let sdt = 0, last = null, steps = 0; N.acc += dt;
+  if (!host && N.q.length > 8) N.acc = Math.max(N.acc, NETSTEP);
+  while (N.acc >= NETSTEP && steps < 6) {
+    let rec;
+    if (host) { if (R.endT > 2.0) break; rec = hostRecord(); N.recs.push(rec); }
+    else { if (N.q.length < (N.started ? 1 : 3)) { if (N.acc > NETSTEP * 4) N.acc = NETSTEP * 4; break; } N.started = true; rec = N.q.shift(); }
+    N.acc -= NETSTEP; steps++; applyRec(R, rec);
+    last = withRng(R, () => logicStep(R, NETSTEP)); clearEdges(); sdt += last.sdt; R.frames++;
+    if (!host && N.q.length > 8 && steps < 6) N.acc = Math.max(N.acc, NETSTEP);
+  }
+  if (N.acc > NETSTEP * 10) N.acc = NETSTEP * 2;
+  if (host) netFlush();
+  drawStep(R, last ? last.mode : R.G.cd > 0 ? 'cd' : 'play', sdt, dt);
+  if (!host && N.simEnd) netTryEnd();
+  if (!host && NETR && NETR.last >= 0 && performance.now() - (NETR.endWait || (NETR.endWait = performance.now())) > 6000) { NETR.over = false; NETR.q.length = 0; NETR.last = R.frames; netTryEnd(); }   // never get stuck
+}
+
+/* ---------- housekeeping each frame ---------- */
+function netPump() {
+  if (!NET.on) return; const now = performance.now();
+  if (NET.host) {
+    if (now - NET.tHb > 1000) { NET.tHb = now; toAll({ k: 'hb' }); }
+    if (now - NET.tChk > 1500) { NET.tChk = now; netCheckPlayers(now); }
+    if (!NET.inMatch && now - NET.tLob > 2500) { NET.tLob = now; lobPush(); }
+    if (NET.inMatch && MODE !== 'game' && now - NET.tSnap > 600) netSnap(true);
+  } else {
+    if (now - NET.tHb > 2000) { NET.tHb = now; toHost({ k: 'hb', id: NET.id }, false); }
+    if (NET.hostSeen && now - NET.hostSeen > 15000 && !NET.gone) netHostGone();
+    if (NET.inMatch && MODE === 'game' && NETR) { const m = holdMask(); if (m !== NET.lastM || NET.pend || now - NET.tIn > 400) { toHost({ k: 'in', id: NET.id, m, e: NET.pend }, !!NET.pend); NET.lastM = m; NET.pend = 0; NET.tIn = now; } }
+  }
+}
+window.addEventListener('beforeunload', () => { try { if (NET.on) { if (NET.host) toAll({ k: 'end' }); else toHost({ k: 'leave', id: NET.id }); } } catch (e) {} });
 
 /* ---------- boot ---------- */
 let lastT = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
   c.setTransform(SC, 0, 0, SC, 0, 0); c.clearRect(0, 0, W, H);
-  try { if (MODE === 'game' && CUR) gameFrame(dt); else if (MODE === 'end' && END) drawEnd(dt); else { c.save(); if (MSHK > 0.2) { c.translate(rr(-MSHK, MSHK), rr(-MSHK, MSHK)); MSHK *= Math.pow(0.001, dt); } else MSHK = 0; drawMap(dt); c.restore(); } } catch (e) { console.error(e); }
+  netPump(); try { if (MODE === 'game' && CUR) { if (NETM()) netGameFrame(dt); else gameFrame(dt); } else if (MODE === 'end' && END) drawEnd(dt); else { c.save(); if (MSHK > 0.2) { c.translate(rr(-MSHK, MSHK), rr(-MSHK, MSHK)); MSHK *= Math.pow(0.001, dt); } else MSHK = 0; drawMap(dt); c.restore(); } } catch (e) { console.error(e); }
   requestAnimationFrame(frame);
 }
 fitCanvas();
 try { ['16px "Press Start 2P"', '700 14px "Silkscreen"', '800 14px "Plus Jakarta Sans"'].forEach(f => document.fonts.load(f)); } catch (e) {}
 syncAudioChips();
-window.__party = { get M() { return M; }, get CFG() { return CFG; }, GAMES, BOSS_DEF, NODES, runGame, makeCtx, stepGame, finishResult, clearEdges, startMatch, showSetup, setFast(v) { FAST = v; }, wipe, uiSetup, uiTick, tsClear, TS, UIX, get MODE() { return MODE; }, get CUR() { return CUR; }, INP, drawMap, SKILLS, rollSkill, usePower, summonPhase, splash };
+window.__party = { get M() { return M; }, get CFG() { return CFG; }, GAMES, BOSS_DEF, NODES, runGame, makeCtx, stepGame, finishResult, clearEdges, startMatch, showSetup, setFast(v) { FAST = v; }, NET, LOC, get NETR() { return NETR; }, renderOnline, onlineCreate, onlineJoin, lobAddBot, lobStart, askAnswer, get CURASK() { return CURASK; }, applySnap, snapM, wipe, uiSetup, uiTick, tsClear, TS, UIX, get MODE() { return MODE; }, get CUR() { return CUR; }, INP, drawMap, SKILLS, rollSkill, usePower, summonPhase, splash };
 showSetup();
+{ const hm = /room-([A-Za-z0-9]{4})/.exec(location.hash || ''); if (hm) renderOnline(hm[1].toUpperCase()); }
 requestAnimationFrame(frame);
 
 </script>
