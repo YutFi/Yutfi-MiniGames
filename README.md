@@ -67,6 +67,8 @@ Local 2–4 players (any mix of humans and bots, three bot difficulties). Pick a
 - **Finale:** reach the Dark Castle and clear its 5 trials (3 in Speed Rescue). First to finish rescues the princess — the ending depends on who wins (Hero, Devil, Angel, Wizard, a secret-path ending, or the Dragon takes the kingdom if time runs out).
 - **Mini-games (10):** Archery Target Challenge, Fantasy Horse Race, Sword Fighting Arena, Penguin Platform Push, Arrow Reaction Challenge, Magical Chess (duel), Archer vs Obstacle Runner (duel), Dragon Egg Delivery, Magical Potion Mixing, Treasure Hunting Race — plus a Dragon boss arena.
 - **Controls:** four direction keys + one action key per player — P1 `A D W S` + `Space`, P2 arrows + `Enter`, P3 `J L I K` + `U`, P4 numpad `4 6 8 5` + `0`. On phones/tablets Player 1 gets an on-screen pad; chess is click/tap.
+- **Magical Chess:** full rules — castling, en passant, promotion, check/checkmate/stalemate — against a friend or a bot (click/tap a piece, then a square).
+- **Look & feel:** crisp HiDPI canvas, glass-style UI with retro pixel-font accents, redesigned boards and map. Works on PC and phones (landscape; a rotate hint shows in portrait, with an on-screen pad for touch).
 - **Not built yet:** the other 20 mini-games, rivalries/alliances, team challenges, Team Rescue / Survival / Boss Rush modes, online multiplayer.
 
 ## Enable GitHub Pages
