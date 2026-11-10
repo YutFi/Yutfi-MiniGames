@@ -69,6 +69,9 @@ Local 2–4 players (any mix of humans and bots, three bot difficulties). Pick a
 - **Controls:** four direction keys + one action key per player — P1 `A D W S` + `Space`, P2 arrows + `Enter`, P3 `J L I K` + `U`, P4 numpad `4 6 8 5` + `0`. On phones/tablets Player 1 gets an on-screen pad; chess is click/tap.
 - **Magical Chess:** full rules — castling, en passant, promotion, check/checkmate/stalemate — against a friend or a bot (click/tap a piece, then a square).
 - **Look & feel:** crisp HiDPI canvas, glass-style UI with retro pixel-font accents, redesigned boards and map. Works on PC and phones (landscape; a rotate hint shows in portrait, with an on-screen pad for touch).
+- **Isekai cheat skills:** at the start every hero is reincarnated by the goddess with a random skill (Common → Rare → Super Rare → Legendary): Hero Awakening, Godspeed, Chaos Hex, Absolute Zero, Berserker Rage, Gravity Well, **Time Stop**, **Reality Rewrite**, plus passives (Midas Touch, Plot Armor). Press your **Power key** during a challenge (P1 `E`, P2 Right Shift, P3 `O`, P4 Num `+`, or the ⚡ button on phones) for an anime-style cut-in and the effect. Skills cost ⚡ mana (start with 2, +1 per round).
+- **Snakes & ladders on the map:** 🪜 ladder (+2), 🐍 snake (−2), 🔄 swap portal, 💣 mine (gold + frozen start), ⛩️ goddess shrine (+2 mana, may re-roll your skill), each with a full-screen splash.
+- **Animation:** shared effects engine (slash arcs, shockwaves, sparks, dust, confetti, screen shake, hit-stop). The sword arena has a proper wind-up/strike/recovery swing, parries and KO fly-offs; Dragon Egg Delivery has telegraphed fire jets, "nice jump" speed boosts and on-screen prompts.
 - **Not built yet:** the other 20 mini-games, rivalries/alliances, team challenges, Team Rescue / Survival / Boss Rush modes, online multiplayer.
 
 ## Enable GitHub Pages
