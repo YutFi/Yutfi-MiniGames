@@ -1,0 +1,10 @@
+{
+  "name": "dungeon-sl-tests",
+  "private": true,
+  "scripts": {
+    "test": "node online-sync.test.js && node menu-chat.test.js",
+    "test:sync": "node online-sync.test.js",
+    "test:menu": "node menu-chat.test.js"
+  },
+  "dependencies": { "jsdom": "^31.0.0" }
+}
