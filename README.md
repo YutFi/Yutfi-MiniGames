@@ -13,11 +13,11 @@ A dungeon-themed Snakes & Ladders with cash, traps and class powers. Single-file
 2. Everyone else opens the same link, presses **Online**, enters the code (or opens the **invite link** the host copies) and joins.
 3. The host presses **Start match** once 2–5 players are in.
 
-How it works: players connect directly to each other over WebRTC, using the free public [PeerJS](https://peerjs.com) broker only to introduce them. Every move (a dice roll, a market purchase, a power-up choice) is added to a shared move log and replayed identically in every browser, so everyone sees the same board. Reloading the page rejoins your seat and replays the log.
+How it works: players don't need to be on the same Wi-Fi or network. Each browser makes an ordinary outbound WebSocket connection to a free public [MQTT](https://mqtt.org) broker (EMQX, then HiveMQ, then Mosquitto as fallbacks) which relays only the tiny presence/move messages for your 4-letter room code. Every move (a dice roll, a market purchase, a power-up choice) is added to a shared move log and replayed identically in every browser, so everyone sees the same board. Reloading the page rejoins your seat and replays the log.
 
 Limits worth knowing:
 - The room lives in the players' browsers. If the **host** (the player who created the room) closes the page, the room ends.
-- It depends on the public PeerJS broker. If that service is down, or a network blocks WebRTC, online rooms won't connect. Offline modes still work.
+- It depends on free public MQTT brokers. If all three are down, or a network blocks outbound WebSocket ports (some school/work networks do), online rooms won't connect; try mobile data. Room codes are not secret, so share them only with friends. Offline modes still work.
 - Matches can't be joined after the host presses Start.
 
 ## Rules in brief
@@ -31,4 +31,4 @@ Limits worth knowing:
 Repository **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)`**, then save. The site appears at the URL above within a minute or two.
 
 ## Run locally
-Open `index.html` in a browser. It loads Tailwind, Tone.js, PeerJS and Google Fonts from CDNs, so it needs an internet connection.
+Open `index.html` in a browser. It loads Tailwind, Tone.js, MQTT.js and Google Fonts from CDNs, so it needs an internet connection.

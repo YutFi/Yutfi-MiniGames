@@ -6,7 +6,7 @@
 <title>Dungeon of Snakes &amp; Ladders</title>
 <meta name="description" content="A dungeon-themed Snakes &amp; Ladders with classes, a black market, meme splash screens and online rooms for up to 5 players.">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2158,99 +2158,104 @@ function netStartMatch() {
   netStart(G);
 }
 
-/* ---- Peer-to-peer transport (WebRTC through the free PeerJS broker) ----
-   Emulates the little presence channel the online layer expects: the first player
-   to open a room code becomes the hub, everyone else connects to it, and the hub
-   relays each player's presence to the others. The match itself runs in every
-   browser; the broker is only used to introduce the players to each other. */
-const P2PRoom = {
+/* ---- Online transport: a tiny relay over public MQTT-over-WebSocket brokers ----
+   Emulates the presence channel the online layer expects. Each player publishes a
+   retained "presence" message on  dungeon-sl-v1/<room>/<id>  (cleared by an MQTT
+   last-will if they drop) and listens to everyone else's. Plain outbound WebSocket,
+   so it needs no peer-to-peer connection and works across mobile networks and NATs.
+   Brokers are tried in order until one connects. Nothing but the game moves
+   (dice values, purchases, names) is sent, and a room is only a 4-character code. */
+const BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt', 'wss://test.mosquitto.org:8081'];
+const MQTTRoom = {
   async join(name) {
     const code = String(name).replace(/^sl-/, '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const hubId = 'dungeon-sl-' + code;
-    const peerListeners = new Set(), connListeners = new Set();
+    const base = 'dungeon-sl-v1/' + code + '/';
+    const myId = 'p' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+    const myTopic = base + myId;
     const me = {};
-    let peer = null, isHub = false, connected = false, closed = false, hubConn = null;
-    let list = [];
-    const conns = new Map(), presences = new Map();
+    const others = new Map();                 // id -> { presence, json, seen }
+    const peerListeners = new Set(), connListeners = new Set();
+    let client = null, connected = false, closed = false, pubTimer = null;
+    const STALE_MS = 90000;
 
-    const openPeer = id => new Promise((res, rej) => {
-      const p = id ? new Peer(id) : new Peer();
-      const to = setTimeout(() => { try { p.destroy(); } catch (e) {} rej({ type: 'timeout' }); }, 10000);
-      p.on('open', () => { clearTimeout(to); res(p); });
-      p.on('error', e => { clearTimeout(to); try { p.destroy(); } catch (x) {} rej(e || { type: 'error' }); });
+    const status = t => { try { if (typeof MQTTRoom.onStatus === 'function') MQTTRoom.onStatus(t); } catch (e) {} };
+    const tryBroker = url => new Promise((res, rej) => {
+      let settled = false, c;
+      const fail = e => { if (settled) return; settled = true; clearTimeout(to); try { c && c.end(true); } catch (x) {} rej(e || new Error('failed')); };
+      const to = setTimeout(() => fail(new Error('timeout')), 8000);
+      try {
+        c = mqtt.connect(url, { clientId: 'dsl_' + myId, keepalive: 20, reconnectPeriod: 3000, connectTimeout: 7000, clean: true, resubscribe: true,
+          will: { topic: myTopic, payload: '', qos: 0, retain: true } });
+      } catch (e) { fail(e); return; }
+      c.once('connect', () => { if (settled) return; settled = true; clearTimeout(to); res(c); });
+      c.on('error', fail);
     });
-    try { peer = await openPeer(hubId); isHub = true; }
-    catch (e) {
-      if (e && e.type === 'unavailable-id') peer = await openPeer(); else throw e;
+    let via = '';
+    for (const url of BROKERS) {
+      status('Connecting to ' + url.replace(/^wss:\/\//, '').replace(/[:/].*$/, '') + '…');
+      try { client = await tryBroker(url); via = url; break; } catch (e) { /* try the next broker */ }
     }
-    const myId = peer.id;
-    list = [{ peer: myId, presence: me }];
+    if (!client) throw new Error('no broker reachable');
+    connected = true;
+    status('Connected.');
 
+    const snapshot = () => {
+      const now = Date.now();
+      const out = [{ peer: myId, by: null, isMe: true, sameTab: true, kind: 'viewer', guest: false, presence: Object.freeze({ ...me }), updatedAt: now }];
+      [...others.keys()].sort().forEach(id => {
+        const o = others.get(id);
+        if (now - o.seen > STALE_MS) { others.delete(id); return; }
+        out.push({ peer: id, by: null, isMe: false, sameTab: false, kind: 'viewer', guest: false, presence: o.presence, updatedAt: o.seen });
+      });
+      return Object.freeze(out);
+    };
     const notify = () => peerListeners.forEach(f => { try { f({ peers: snapshot(), joined: [], left: [], updated: [] }); } catch (e) {} });
     const notifyConn = () => connListeners.forEach(f => { try { f(connected); } catch (e) {} });
-    function snapshot() {
-      const seen = new Set();
-      const out = [];
-      list.forEach(x => {
-        if (seen.has(x.peer)) return;
-        seen.add(x.peer);
-        const isMe = x.peer === myId;
-        out.push({ peer: x.peer, by: null, isMe, sameTab: isMe, kind: 'viewer', guest: false, presence: Object.freeze({ ...(isMe ? me : x.presence) }), updatedAt: Date.now() });
-      });
-      if (!seen.has(myId)) out.push({ peer: myId, by: null, isMe: true, sameTab: true, kind: 'viewer', guest: false, presence: Object.freeze({ ...me }), updatedAt: Date.now() });
-      return Object.freeze(out);
-    }
-    peer.on('error', e => { if (e && e.type === 'peer-unavailable' && !isHub) { connected = false; notifyConn(); } });
-    peer.on('disconnected', () => { if (!closed) { try { peer.reconnect(); } catch (e) {} } });
+    const publishNow = () => {
+      pubTimer = null;
+      if (!connected || closed) return;
+      try { client.publish(myTopic, JSON.stringify({ p: me }), { qos: 1, retain: true }); } catch (e) {}
+    };
+    const schedulePublish = () => { if (!pubTimer) pubTimer = setTimeout(publishNow, 60); };
 
-    if (isHub) {
-      connected = true;
-      presences.set(myId, me);
-      const broadcast = () => {
-        list = [...presences].map(([p, presence]) => ({ peer: p, presence }));
-        const msg = { t: 'l', l: list };
-        conns.forEach(c => { try { c.send(msg); } catch (e) {} });
-        notify();
-      };
-      peer.on('connection', c => {
-        const gone = () => { if (conns.get(c.peer) === c) { conns.delete(c.peer); presences.delete(c.peer); broadcast(); } };
-        c.on('open', () => { conns.set(c.peer, c); try { c.send({ t: 'l', l: list }); } catch (e) {} });
-        c.on('data', d => { if (d && d.t === 'p' && d.p && typeof d.p === 'object') { presences.set(c.peer, d.p); broadcast(); } });
-        c.on('close', gone); c.on('error', gone);
-      });
-      me.__push = () => broadcast();
-    } else {
-      hubConn = peer.connect(hubId, { reliable: true, serialization: 'json' });
-      const send = () => { if (connected) { try { hubConn.send({ t: 'p', p: JSON.parse(JSON.stringify(me)) }); } catch (e) {} } };
-      hubConn.on('open', () => { connected = true; notifyConn(); send(); });
-      hubConn.on('data', d => {
-        if (d && d.t === 'l' && Array.isArray(d.l)) {
-          list = d.l.filter(x => x && typeof x.peer === 'string' && x.presence && typeof x.presence === 'object').slice(0, 12);
-          notify();
-        }
-      });
-      const lost = () => { connected = false; list = [{ peer: myId, presence: me }]; notifyConn(); notify(); };
-      hubConn.on('close', lost); hubConn.on('error', lost);
-      me.__push = send;
-    }
-    const push = me.__push; delete me.__push;
+    client.on('message', (topic, payload) => {
+      if (closed || typeof topic !== 'string' || topic.indexOf(base) !== 0) return;
+      const id = topic.slice(base.length);
+      if (!id || id === myId || id.indexOf('/') >= 0) return;
+      const text = payload ? payload.toString() : '';
+      if (!text) { if (others.delete(id)) notify(); return; }
+      if (text.length > 12000) return;
+      let obj = null;
+      try { obj = JSON.parse(text); } catch (e) { return; }
+      if (!obj || typeof obj.p !== 'object' || !obj.p || Array.isArray(obj.p)) return;
+      const prev = others.get(id);
+      const json = JSON.stringify(obj.p);
+      others.set(id, { presence: Object.freeze(obj.p), json, seen: Date.now() });
+      if (!prev || prev.json !== json) notify();
+    });
+    client.on('close', () => { if (connected) { connected = false; notifyConn(); } });
+    client.on('offline', () => { if (connected) { connected = false; notifyConn(); } });
+    client.on('connect', () => { if (!connected) { connected = true; notifyConn(); } publishNow(); });   // also fires after a reconnect
+    client.on('error', () => {});
+    client.subscribe(base + '+', { qos: 0 });
+    const beat = setInterval(() => { if (closed) { clearInterval(beat); return; } publishNow(); notify(); }, 20000);
 
     return {
-      name,
+      name, via,
       presence: async patch => {
         for (const [k, v] of Object.entries(patch)) { if (v === null) delete me[k]; else me[k] = JSON.parse(JSON.stringify(v)); }
-        push();
-        if (!isHub) notify();
+        schedulePublish();
+        notify();
       },
       peers: () => snapshot(),
       onPeers: f => { peerListeners.add(f); setTimeout(() => { if (peerListeners.has(f)) f({ peers: snapshot(), joined: [], left: [], updated: [] }); }, 0); return () => peerListeners.delete(f); },
       connected: () => connected,
       onConnection: f => { connListeners.add(f); setTimeout(() => { if (connListeners.has(f)) f(connected); }, 0); return () => connListeners.delete(f); },
       leave: async () => {
-        closed = true;
-        try { conns.forEach(c => c.close()); } catch (e) {}
-        try { if (hubConn) hubConn.close(); } catch (e) {}
-        try { peer.destroy(); } catch (e) {}
+        if (closed) return;
+        try { if (connected) client.publish(myTopic, '', { qos: 0, retain: true }); } catch (e) {}
+        closed = true; clearInterval(beat); clearTimeout(pubTimer);
+        setTimeout(() => { try { client.end(); } catch (e) {} }, 150);
       }
     };
   }
@@ -2299,7 +2304,7 @@ function openOnlineModal() {
   buildNetClassList();
   netShow(NET.on ? 'wait' : 'setup');
   if (NET.room === undefined) netMsg('Connecting to the online lobby…');
-  else if (!NET.room) netMsg('Online play needs an internet connection to the matchmaking service. Use "2 Players" to share one screen.');
+  else if (!NET.room) netMsg('Online play could not load its networking library (check your connection). Use "2 Players" to share one screen.');
   else netMsg('');
   openModal('online-modal');
 }
@@ -2320,6 +2325,7 @@ async function netOpenChannel(code) {
   NET.tok = netTok();
   let ch = NET.room, owns = false;
   if (typeof NET.room.join === 'function') {
+    MQTTRoom.onStatus = netMsg;
     ch = await NET.room.join('sl-' + code.toLowerCase()); owns = true;
   }
   NET.ch = ch; NET.ownsRoom = owns; NET.code = code; NET.on = true; NET.G = null; NET.lobby = null; NET.seat = 0; NET.applied = 0;
@@ -2334,7 +2340,7 @@ async function netCreate() {
   if (!NET.room) { netMsg('Online play is not available in this view.'); return; }
   const code = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
   netMsg('Opening the room…');
-  try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach the matchmaking service. Check your connection and try again.'); NET.on = false; return; }
+  try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach any matchmaking server. Some school/work networks block the WebSocket ports it uses — try another network or mobile data, then try again.'); NET.on = false; return; }
   NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '' };
   NET.want = false;
   $('online-code').textContent = code;
@@ -2350,7 +2356,7 @@ async function netJoin() {
   const code = $('net-code').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (code.length !== 4) { netMsg('Enter the 4-character room code.'); return; }
   netMsg('Connecting…');
-  try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach the matchmaking service. Check your connection and try again.'); NET.on = false; return; }
+  try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach any matchmaking server. Some school/work networks block the WebSocket ports it uses — try another network or mobile data, then try again.'); NET.on = false; return; }
   NET.want = true;
   $('online-code').textContent = code;
   $('online-wait-label').textContent = 'Joining room';
@@ -2362,7 +2368,7 @@ async function netJoin() {
   netPublish();
   netSync();
   const my = ++NET.joinTok;
-  setTimeout(() => { if (NET.on && !NET.G && !NET.lobby && my === NET.joinTok) netFail('No room found with that code. Check it, and make sure the host has the page open.'); }, 12000);
+  setTimeout(() => { if (NET.on && !NET.G && !NET.lobby && my === NET.joinTok) netFail('Connected, but no room with that code was found. Check the code, and make sure the host still has the room open.'); }, 15000);
 }
 
 async function netLeave() {
@@ -2405,7 +2411,7 @@ function netRenderChip() {
 
 function netBoot() {
   try {
-    NET.room = (typeof Peer === 'function') ? P2PRoom : null;
+    NET.room = (typeof mqtt === 'object' && mqtt && typeof mqtt.connect === 'function') ? MQTTRoom : null;
   } catch (e) { NET.room = null; }
   const m = /^#room-([A-Za-z0-9]{4})$/.exec(location.hash || '');
   if (m) { openOnlineModal(); $('net-code').value = m[1].toUpperCase(); netMsg('Pick a name and champion, then press Join.'); }
