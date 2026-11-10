@@ -318,6 +318,47 @@ input{user-select:text;-webkit-user-select:text}
   box-shadow:0 0 10px 2px rgba(251,146,60,.8);animation:sparkUp var(--d) var(--w) linear infinite}
 @keyframes sparkUp{0%{transform:translate(0,0);opacity:0}12%{opacity:.9}100%{transform:translate(var(--dx),-108vh);opacity:0}}
 @media (prefers-reduced-motion: reduce){.intro-crest,.intro-start{animation:none}.intro-welcome,.intro-title,.intro-tag,.intro-note{animation:none}.intro-sparks{display:none}.intro{transition:opacity .01s}}
+/* splash v2: aurora, god-rays, twinkling stars, drifting game icons, orbiting crest, shimmering title, castle silhouette */
+.intro::before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 0deg at 50% 42%,transparent 0 8%,rgba(251,191,36,.10) 10% 12%,transparent 14% 24%,rgba(168,85,247,.14) 26% 29%,transparent 31% 44%,rgba(251,146,60,.10) 46% 48%,transparent 50% 64%,rgba(96,165,250,.10) 66% 69%,transparent 71% 84%,rgba(251,191,36,.10) 86% 88%,transparent 90%);animation:introRays 40s linear infinite;pointer-events:none;mask-image:radial-gradient(circle at 50% 42%,#000 0,transparent 70%);-webkit-mask-image:radial-gradient(circle at 50% 42%,#000 0,transparent 70%)}
+.intro::after{content:"";position:absolute;left:-20%;right:-20%;top:-10%;height:60%;background:radial-gradient(ellipse at 30% 50%,rgba(139,92,246,.35),transparent 60%),radial-gradient(ellipse at 75% 40%,rgba(236,72,153,.22),transparent 60%);filter:blur(30px);animation:introAurora 9s ease-in-out infinite alternate;pointer-events:none}
+@keyframes introRays{to{transform:rotate(360deg)}}
+@keyframes introAurora{from{transform:translateX(-6%) scale(1)}to{transform:translateX(6%) scale(1.12)}}
+.intro-stars{position:absolute;inset:0;pointer-events:none}
+.intro-stars i{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#fff;opacity:.2;animation:introTwinkle var(--d) var(--w) ease-in-out infinite}
+@keyframes introTwinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.4)}}
+.intro-floaters{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.intro-floaters b{position:absolute;left:var(--x);top:var(--y);font-size:var(--s);opacity:.0;filter:drop-shadow(0 6px 12px #000a);animation:introDrift var(--d) var(--w) ease-in-out infinite alternate,introFade 1.6s var(--fd) both}
+@keyframes introDrift{from{transform:translate(0,0) rotate(var(--r0))}to{transform:translate(var(--dx),var(--dy)) rotate(var(--r1))}}
+@keyframes introFade{to{opacity:.55}}
+.intro-castle{position:absolute;left:0;right:0;bottom:0;height:22vh;min-height:110px;pointer-events:none;background:linear-gradient(0deg,#07040d 8%,transparent),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 120' preserveAspectRatio='none'%3E%3Cpath fill='%23150b26' d='M0 120V78h30V60h14V78h26V50h18V30h8V14h6v16h8v20h18v28h30V64h16V46h10V30h8V14h6v16h8v16h12v18h40V70h24V54h12V70h24V40h14V22h8V8h6v14h8v18h14v30h30V66h20V50h12V66h28V80h40V58h16V40h8V24h6v16h8v18h14v22h40V70h30V52h14V70h30V84h40V66h20V48h14V30h8V16h6v14h8v18h16v22h26V74h30V58h14V74h34v46z'/%3E%3C/svg%3E") bottom/100% 100% no-repeat;opacity:.95}
+.intro-torch{position:absolute;bottom:calc(11vh + 6px);width:10px;height:18px;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff7c2,#fb923c 55%,#dc2626);box-shadow:0 0 22px 8px rgba(251,146,60,.55);animation:introFlame .35s ease-in-out infinite alternate;pointer-events:none}
+.intro-torch.l{left:9%}.intro-torch.r{right:9%}
+@keyframes introFlame{from{transform:scale(1,.9) translateY(0);opacity:.85}to{transform:scale(.85,1.15) translateY(-2px);opacity:1}}
+.intro-crest{position:relative;animation:introFloat 3.4s ease-in-out infinite alternate,introCrestIn 1s cubic-bezier(.2,1.6,.4,1) both}
+.intro-crest::before{content:"";position:absolute;inset:-14px;border-radius:38px;border:2px dashed rgba(251,191,36,.45);animation:introSpin 14s linear infinite}
+.intro-crest::after{content:"";position:absolute;inset:-26px;border-radius:50%;background:radial-gradient(circle,rgba(251,146,60,.35),transparent 65%);z-index:-1;animation:introGlow 2.6s ease-in-out infinite}
+.intro-orbit{position:absolute;inset:-34px;animation:introSpin 7s linear infinite;pointer-events:none}
+.intro-orbit i{position:absolute;left:50%;top:0;font-style:normal;font-size:18px;margin-left:-9px;transform-origin:9px 86px}
+.intro-orbit i:nth-child(2){transform:rotate(120deg)}.intro-orbit i:nth-child(3){transform:rotate(240deg)}
+@keyframes introCrestIn{from{opacity:0;transform:scale(.2) rotate(-25deg)}to{opacity:1}}
+@keyframes introSpin{to{transform:rotate(360deg)}}
+@keyframes introGlow{0%,100%{opacity:.6;transform:scale(.95)}50%{opacity:1;transform:scale(1.12)}}
+.intro-title{animation:introTitle 1.1s .35s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes introTitle{from{opacity:0;transform:translateY(22px) scale(.85);letter-spacing:.2em}to{opacity:1;transform:none;letter-spacing:0}}
+.intro-title span{background-size:100% 100%;position:relative}
+.intro-title span::after{content:"MiniGames";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%) -150% 0/250% 100% no-repeat;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:none;animation:introShine 3.6s 1.6s ease-in-out infinite}
+@keyframes introShine{0%{background-position:-150% 0}45%,100%{background-position:150% 0}}
+.intro-title{margin:4px 0 0}.intro-tag{min-height:1.4em;margin:2px 0 0}.intro-welcome{margin-top:14px}
+.intro-start{position:relative;overflow:hidden}
+.intro-start::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);animation:introBtnShine 2.8s 2s ease-in-out infinite}
+@keyframes introBtnShine{0%{left:-60%}50%,100%{left:130%}}
+.intro-ring{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px;border-radius:50%;border:3px solid rgba(251,191,36,.8);opacity:0;pointer-events:none;z-index:3}
+.intro.leaving .intro-ring{animation:introRing .65s ease-out}
+.intro.leaving .intro-card{animation:introOut .6s ease-in forwards}
+@keyframes introRing{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(70)}}
+@keyframes introOut{to{transform:scale(1.12);opacity:0;filter:blur(4px)}}
+@media (max-height:520px){.intro-castle,.intro-torch{display:none}.intro-crest{width:76px;height:76px;font-size:42px}.intro-orbit{display:none}}
+@media (prefers-reduced-motion: reduce){.intro::before,.intro::after,.intro-floaters b,.intro-stars i,.intro-torch,.intro-orbit,.intro-crest::before,.intro-crest::after,.intro-title span::after,.intro-start::after{animation:none!important}.intro-floaters b{opacity:.4}}
 /* Main menu */
 .menu-screen{position:fixed;inset:0;z-index:55;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:18px 14px 28px;
   background:radial-gradient(ellipse 80% 55% at 50% -10%, rgba(59,35,88,.95) 0%, transparent 62%),radial-gradient(ellipse 70% 40% at 50% 115%, rgba(58,34,18,.9) 0%, transparent 60%),rgba(8,5,14,.96);
@@ -512,9 +553,13 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
 
 <!-- Welcome splash (also gives the browser the tap it needs before it will play music) -->
 <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Welcome to Yutfi MiniGames" onclick="introStart()">
+  <div class="intro-stars" id="intro-stars" aria-hidden="true"></div>
+  <div class="intro-floaters" id="intro-floaters" aria-hidden="true"></div>
+  <div class="intro-castle" aria-hidden="true"></div><span class="intro-torch l" aria-hidden="true"></span><span class="intro-torch r" aria-hidden="true"></span>
   <div class="intro-sparks" id="intro-sparks" aria-hidden="true"></div>
+  <span class="intro-ring" aria-hidden="true"></span>
   <div class="intro-card">
-    <div class="intro-crest" aria-hidden="true">🏰</div>
+    <div class="intro-crest" aria-hidden="true">🏰<span class="intro-orbit"><i>🎲</i><i>🐍</i><i>🪙</i></span></div>
     <p class="intro-welcome">Welcome to</p>
     <h1 class="intro-title">Yutfi <span>MiniGames</span></h1>
     <p class="intro-tag">Snakes, ladders &amp; dungeon mischief</p>
@@ -3163,6 +3208,10 @@ function introBuild() {
     h += `<i style="--x:${(r(1) * 100).toFixed(1)}%;--s:${(2 + r(2) * 4).toFixed(1)}px;--d:${(6 + r(3) * 7).toFixed(1)}s;--w:${(-r(4) * 12).toFixed(1)}s;--dx:${((r(5) - 0.5) * 120).toFixed(0)}px"></i>`;
   }
   box.innerHTML = h;
+  const st = $('intro-stars'), fl = $('intro-floaters');
+  if (st) { let q = ''; for (let i = 0; i < 46; i++) { const r = k => rnd(i * 11 + k + 300); q += `<i style="--x:${(r(1) * 100).toFixed(1)}%;--y:${(r(2) * 78).toFixed(1)}%;--s:${(1 + r(3) * 2.4).toFixed(1)}px;--d:${(2 + r(4) * 3).toFixed(1)}s;--w:${(-r(5) * 5).toFixed(1)}s"></i>`; } st.innerHTML = q; }
+  if (fl) { const ic = ['🎲', '🐍', '🪜', '👑', '⚔️', '🐉', '🪙', '🏹', '🧪', '🛡️']; let q = ''; ic.forEach((e, i) => { const r = k => rnd(i * 13 + k + 700), left = i % 2 === 0;
+      q += `<b style="--x:${(left ? 3 + r(1) * 18 : 79 + r(1) * 16).toFixed(1)}%;--y:${(6 + (i >> 1) * 15 + r(2) * 8).toFixed(1)}%;--s:${(22 + r(3) * 18).toFixed(0)}px;--d:${(4 + r(4) * 4).toFixed(1)}s;--w:${(-r(5) * 4).toFixed(1)}s;--dx:${((r(6) - 0.5) * 36).toFixed(0)}px;--dy:${((r(7) - 0.5) * 40).toFixed(0)}px;--r0:${(-12 + r(8) * 10).toFixed(0)}deg;--r1:${(2 + r(9) * 14).toFixed(0)}deg;--fd:${(0.3 + i * 0.12).toFixed(2)}s">${e}</b>`; }); fl.innerHTML = q; }
   const b = $('intro-start');
   if (b && b.focus) try { b.focus({ preventScroll: true }); } catch (e) {}
 }
