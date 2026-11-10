@@ -89,11 +89,11 @@ async function until(fn, ms = 3000) { for (let t = 0; t < ms / 10; t++) { if (fn
   const party = A.d.getElementById('menu-mode-party');
   check('Party Game is a labelled Coming-soon placeholder that does not navigate', vis(A, 'menu-modes') && party.getAttribute('aria-disabled') === 'true' && party.textContent.includes('Coming soon'));
   check('...and tapping it shows a coming-soon message', A.d.getElementById('toast-layer').textContent.includes('coming soon'));
-  click(A, '#menu-mode-snack');
-  check('Snack Game opens its menu with Solo / Online / How to Play', vis(A, 'menu-home') && !vis(A, 'menu-modes') && vis(A, 'menu-solo') && vis(A, 'menu-online'));
+  click(A, '#menu-mode-snake');
+  check('Snake Game opens its menu with Solo / Online / How to Play', vis(A, 'menu-home') && !vis(A, 'menu-modes') && vis(A, 'menu-solo') && vis(A, 'menu-online'));
   A.w.dispatchEvent(new A.w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-  check('Esc on the Snack Game menu goes back to the mode screen', vis(A, 'menu-modes') && !vis(A, 'menu-home'));
-  click(A, '#menu-mode-snack');
+  check('Esc on the Snake Game menu goes back to the mode screen', vis(A, 'menu-modes') && !vis(A, 'menu-home'));
+  click(A, '#menu-mode-snake');
   click(A, '#menu-solo');
   check('Play Solo opens the solo pane', vis(A, 'menu-solo-pane') && !vis(A, 'menu-home'));
   A.w.dispatchEvent(new A.w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
@@ -119,7 +119,7 @@ async function until(fn, ms = 3000) { for (let t = 0; t < ms / 10; t++) { if (fn
   check('the first roll works after starting from the menu', moved);
   await until(() => !ev(A, 'isRolling') && ev(A, 'currentPlayer') === 1 || ev(A, 'gameOver'), 8000);
   click(A, '#menu-btn'); await sleep(30);
-  check('header Menu button opens the Snack Game menu (not the mode picker) and offers Resume', vis(A, 'main-menu') && vis(A, 'menu-home') && !vis(A, 'menu-modes') && vis(A, 'menu-resume'));
+  check('header Menu button opens the Snake Game menu (not the mode picker) and offers Resume', vis(A, 'main-menu') && vis(A, 'menu-home') && !vis(A, 'menu-modes') && vis(A, 'menu-resume'));
   click(A, '#menu-resume'); await sleep(30);
   check('Resume closes the menu and keeps the board', !vis(A, 'main-menu') && ev(A, 'playerPositions[1]') > 1);
   click(A, '#menu-btn'); await sleep(30);
@@ -132,7 +132,7 @@ async function until(fn, ms = 3000) { for (let t = 0; t < ms / 10; t++) { if (fn
   /* ---------------- main menu: online ---------------- */
   console.log('\nMain menu — online');
   const B = boot(); await sleep(60);
-  click(B, '#menu-mode-snack');
+  click(B, '#menu-mode-snake');
   click(B, '#menu-online'); await sleep(40);
   check('Play Online opens the online dialog on the Create tab', vis(B, 'online-modal') && !vis(B, 'main-menu') && vis(B, 'net-pane-create') && !vis(B, 'net-pane-join'));
   click(B, '#net-tab-join');

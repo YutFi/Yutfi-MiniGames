@@ -6,7 +6,7 @@ A small collection of browser mini-games by Yutfi. Single-file site (`index.html
 
 | Game | Status |
 |------|--------|
-| 🐍 **Snack Game** — *Dungeon of Snakes & Ladders*: a dungeon-themed Snakes & Ladders with cash, traps and class powers. Solo, 2 players on one screen, or online with up to 5. | Playable |
+| 🐍 **Snake Game** — *Dungeon of Snakes & Ladders*: a dungeon-themed Snakes & Ladders with cash, traps and class powers. Solo, 2 players on one screen, or online with up to 5. | Playable |
 | 👑 **Party Game — Save the Princess**: mini-game contests, sabotage and a race to the castle. | Coming soon |
 
 ## Welcome splash and music
@@ -21,10 +21,10 @@ The soundtrack is a slow, heroic D-minor adventure theme generated live with Ton
 
 ### Main menu
 After the splash you land on the **Yutfi MiniGames** screen with two game modes:
-- **🐍 Snack Game** — this game (Snakes & Ladders in the dungeon). Opens the menu below.
+- **🐍 Snake Game** — this game (Snakes & Ladders in the dungeon). Opens the menu below.
 - **👑 Party Game — Save the Princess** — *coming soon*; shown as a placeholder card for now.
 
-Inside **Snack Game**:
+Inside **Snake Game**:
 - **▶ Resume match** — appears when you reopen the menu (☰ **Menu**, top right) during a match
 - **⚔️ Play Solo** → **vs AI Bot** or **2 Players** on one screen, then pick your champions
 - **🌐 Play Online** — rooms for **2–5 players**, no account or sign-in needed
