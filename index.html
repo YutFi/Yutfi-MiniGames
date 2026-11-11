@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Yutfi MiniGames</title>
 <meta name="description" content="A dungeon-themed Snakes &amp; Ladders with classes, a black market, meme splash screens and online rooms for up to 5 players.">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -432,7 +432,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
 .seg.wide button{flex:1;padding:9px 11px;font-size:13px}
 .online-card{margin-top:12px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid #ffffff14}
 /* Table talk (online chat) */
-.chat-fab{position:fixed;right:14px;bottom:14px;z-index:50;display:flex;align-items:center;gap:7px;padding:11px 16px;border-radius:999px;font-weight:800;font-size:13px;color:#fff;cursor:pointer;
+.chat-fab{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px) + var(--vv-bottom,0px));z-index:50;display:flex;-webkit-transform:translateZ(0);will-change:transform;touch-action:manipulation;align-items:center;gap:7px;padding:11px 16px;border-radius:999px;font-weight:800;font-size:13px;color:#fff;cursor:pointer;
   background:linear-gradient(180deg,#0e7490,#155e75);border:1px solid #22d3ee88;box-shadow:0 8px 22px rgba(0,0,0,.55), 0 0 18px rgba(34,211,238,.25), inset 0 1px 0 rgba(255,255,255,.25);transition:transform .12s, filter .15s}
 .chat-fab:hover{filter:brightness(1.12);transform:translateY(-2px)}
 .chat-fab:active{transform:scale(.97)}
@@ -440,7 +440,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
 .chat-fab-ico{font-size:18px;line-height:1}
 .chat-badge{position:absolute;top:-6px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;font-size:11px;font-weight:800;line-height:20px;text-align:center;color:#fff;background:#e11d48;border:2px solid #0a0710;animation:badgePop .3s cubic-bezier(.2,1.6,.4,1)}
 @keyframes badgePop{from{transform:scale(.3)}to{transform:scale(1)}}
-.chat-drawer{position:fixed;right:14px;bottom:68px;z-index:50;width:min(380px,calc(100vw - 28px));max-height:calc(100vh - 88px);overflow-y:auto;border-color:#22d3ee55;animation:toastIn .18s ease-out;
+.chat-drawer{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(68px + env(safe-area-inset-bottom,0px) + var(--vv-bottom,0px));z-index:50;width:min(380px,calc(100vw - 28px));max-height:calc(100vh - 88px - var(--vv-bottom,0px));max-height:calc(100dvh - 88px - var(--vv-bottom,0px));overflow-y:auto;border-color:#22d3ee55;animation:toastIn .18s ease-out;
   background:linear-gradient(180deg,#2a243a,#16131f)}   /* opaque, so the board and cards behind never bleed through the text */
 .chat-log{display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex:1;min-height:0;padding-right:4px;font-size:12px}
 .chat-line{display:flex;gap:6px;align-items:baseline;line-height:1.35;animation:toastIn .2s ease-out}
@@ -4190,6 +4190,17 @@ function chatToggleMute() {
   chatSyncMute();
   chatLine('', '', chatMuted ? 'You muted other players. You can still send messages.' : 'Chat from other players is back on.', true);
 }
+
+/* Keep the button floating on phones: when the browser toolbar or the keyboard shrinks the visible screen, lift it by the hidden strip so it never slips below the fold. */
+function chatDock() {
+  const v = window.visualViewport;
+  let off = 0;
+  if (v) off = Math.max(0, Math.round(window.innerHeight - v.height - v.offsetTop));
+  document.documentElement.style.setProperty('--vv-bottom', off + 'px');
+}
+chatDock();
+if (window.visualViewport) { window.visualViewport.addEventListener('resize', chatDock); window.visualViewport.addEventListener('scroll', chatDock); }
+window.addEventListener('resize', chatDock); window.addEventListener('orientationchange', chatDock);
 
 function chatRefreshUi() {
   const live = inOnlineMatch();
