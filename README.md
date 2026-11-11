@@ -38,6 +38,8 @@ Esc (or **← Game modes**) goes back one step. Your online name and champion ar
 3. The host presses **Start match** once 2–5 players are in.
 
 #### Table Talk (chat and taunts)
+The host can set a **move clock** in the lobby (Off / 30 / 60 / 90 / 120 s, default 60 s). It gives everyone time to read a power-up or think; you can add 30 s twice per move, and if time runs out a safe default is played (a normal roll, a Shield, or "decline"). On phones the game starts in **Smooth mode** (fewer heavy effects); change it any time in the settings.
+
 During an online match a **💬 Chat** button appears bottom-right (with an unread badge). It opens a drawer with:
 - **Quick chat** phrases ("Good luck!", "Is that all you've got?", "Watch your step…")
 - **Emoji taunts** 😂 😈 🐍 💣 🤡 😎 😭 👏 🥶 🔥 — they pop up over your token on everyone's board

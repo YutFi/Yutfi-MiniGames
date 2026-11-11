@@ -1,0 +1,7 @@
+{
+  "name": "dungeon-sl-tools",
+  "private": true,
+  "description": "Build helpers for the Yutfi MiniGames page (not needed to play).",
+  "scripts": { "css": "node build-tailwind.js" },
+  "devDependencies": { "tailwindcss": "3.4.17" }
+}

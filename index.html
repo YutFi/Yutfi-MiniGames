@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Yutfi MiniGames</title>
 <meta name="description" content="A dungeon-themed Snakes &amp; Ladders with classes, a black market, meme splash screens and online rooms for up to 5 players.">
-<script src="https://cdn.tailwindcss.com/3.4.17"></script>
-<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<!-- Utilities are prebuilt (tools/build-tailwind.js) instead of compiled in the browser by the Tailwind CDN: same look, no runtime work on phones. -->
+<style id="tw-static">/*TW-START*/*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.mx-auto{margin-left:auto;margin-right:auto}.my-2{margin-top:.5rem;margin-bottom:.5rem}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.flex{display:flex}.table{display:table}.grid{display:grid}.hidden{display:none}.min-h-\[24px\]{min-height:24px}.w-full{width:100%}.min-w-0{min-width:0}.max-w-6xl{max-width:72rem}.flex-1{flex:1 1 0%}.grow{flex-grow:1}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:9999px}.border-b{border-bottom-width:1px}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85/var(--tw-border-opacity,1))}.border-slate-700\/60{border-color:rgba(51,65,85,.6)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-black\/40{background-color:rgba(0,0,0,.4)}.p-4{padding:1rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.py-0{padding-top:0;padding-bottom:0}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-2{padding-bottom:.5rem}.pb-3{padding-bottom:.75rem}.pb-5{padding-bottom:1.25rem}.pr-1{padding-right:.25rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-amber-200{--tw-text-opacity:1;color:rgb(253 230 138/var(--tw-text-opacity,1))}.text-amber-200\/80{color:hsla(48,97%,77%,.8)}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250/var(--tw-text-opacity,1))}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249/var(--tw-text-opacity,1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252/var(--tw-text-opacity,1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175/var(--tw-text-opacity,1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133/var(--tw-text-opacity,1))}.text-sky-300{--tw-text-opacity:1;color:rgb(125 211 252/var(--tw-text-opacity,1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-violet-300{--tw-text-opacity:1;color:rgb(196 181 253/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.blur{--tw-blur:blur(8px)}.blur,.drop-shadow{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow{--tw-drop-shadow:drop-shadow(0 1px 2px rgba(0,0,0,.1)) drop-shadow(0 1px 1px rgba(0,0,0,.06))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:pt-6{padding-top:1.5rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-sm{font-size:.875rem;line-height:1.25rem}}@media (min-width:1024px){.lg\:col-span-5{grid-column:span 5/span 5}.lg\:col-span-7{grid-column:span 7/span 7}.lg\:grid-cols-12{grid-template-columns:repeat(12,minmax(0,1fr))}.lg\:gap-6{gap:1.5rem}}/*TW-END*/</style>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -84,7 +83,7 @@ body::before{
 .torch::before{content:'';position:absolute;bottom:0;left:6px;width:6px;height:15px;background:linear-gradient(#92400e,#431407);border-radius:2px;box-shadow:0 0 0 1px #00000088}
 .flame{position:absolute;left:1px;top:0;width:16px;height:24px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
   background:radial-gradient(ellipse at 50% 75%,#fff7c2 0%,#fbbf24 30%,#f97316 60%,transparent 72%);
-  animation:flicker .18s infinite alternate;filter:blur(.4px);box-shadow:0 0 18px 6px rgba(249,115,22,.55)}
+  animation:flicker .18s infinite alternate;box-shadow:0 0 18px 6px rgba(249,115,22,.55)}
 @keyframes flicker{from{transform:scale(1,1) rotate(-3deg);opacity:.9}to{transform:scale(.9,1.12) rotate(3deg);opacity:1}}
 
 /* Stone tiles */
@@ -118,8 +117,9 @@ body::before{
 @keyframes scales{to{stroke-dashoffset:-48}}
 
 /* Tokens */
-.game-token{position:absolute;width:10.5%;aspect-ratio:1/1;transform:translate(-50%,-82%);
-  transition:left var(--dur,.2s) ease-in-out, top var(--dur,.2s) ease-in-out;pointer-events:none}
+.game-token{position:absolute;width:10.5%;aspect-ratio:1/1;transform:translate(-50%,-82%);will-change:transform;pointer-events:none}
+/* Tokens glide with a compositor-driven transform animation (see placeTokens). Only browsers without the Web Animations API fall back to animating left/top. */
+body.no-waapi .game-token{transition:left var(--dur,.2s) ease-in-out, top var(--dur,.2s) ease-in-out}
 .game-token svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 3px rgba(0,0,0,.75))}
 .game-token.team1{--team:#3b82f6}
 .game-token.team2{--team:#ef4444}
@@ -524,7 +524,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
    MODERN LAYER (additive): aurora, glass panels, shine buttons
    ============================================================ */
 #aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-#aurora i{position:absolute;width:55vmax;height:55vmax;border-radius:50%;filter:blur(70px);opacity:.38;will-change:transform;animation:auroraDrift 26s ease-in-out infinite alternate}
+#aurora i{position:absolute;width:55vmax;height:55vmax;border-radius:50%;opacity:.38;will-change:transform;animation:auroraDrift 26s ease-in-out infinite alternate}   /* the radial gradient already fades to transparent: a 70px blur on top only cost GPU time */
 #aurora i:nth-child(1){left:-18vmax;top:-22vmax;background:radial-gradient(circle,#7c3aed,transparent 65%)}
 #aurora i:nth-child(2){right:-20vmax;top:10vmax;background:radial-gradient(circle,#0891b2,transparent 65%);animation-duration:32s;animation-delay:-8s}
 #aurora i:nth-child(3){left:10vmax;bottom:-30vmax;background:radial-gradient(circle,#be185d,transparent 65%);animation-duration:38s;animation-delay:-15s;opacity:.28}
@@ -547,7 +547,10 @@ h1.font-display{background:linear-gradient(90deg,#fff,#fde68a,#c4b5fd,#fff);back
 .btn-guide{background:linear-gradient(180deg,#22d3ee22,#0e749022);border-color:#22d3ee77;color:#a5f3fc}
 .dice-wrap.ready .dice-scene{animation:diceReady 1.6s ease-in-out infinite}
 @keyframes diceReady{50%{transform:translateY(-5px);filter:drop-shadow(0 8px 14px rgba(251,191,36,.55))}}
-.player-card.active{background:linear-gradient(180deg,rgba(62,50,92,.95),rgba(26,21,40,.97));animation:cardGlow 2.2s ease-in-out infinite alternate}
+.player-card.active{background:linear-gradient(180deg,rgba(62,50,92,.95),rgba(26,21,40,.97))}
+/* the pulsing glow fades a pseudo-element's opacity (compositor only) instead of re-painting a 30px box-shadow every frame */
+.player-card.active::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 30px rgba(251,191,36,.45);animation:cardGlowOp 2.2s ease-in-out infinite alternate}
+@keyframes cardGlowOp{from{opacity:.25}to{opacity:1}}
 @keyframes cardGlow{from{box-shadow:0 12px 30px rgba(0,0,0,.55), 0 0 12px rgba(251,191,36,.1)}to{box-shadow:0 12px 30px rgba(0,0,0,.55), 0 0 30px rgba(251,191,36,.3)}}
 .cash-pop{animation:cashPop .5s ease-out}
 @keyframes cashPop{40%{transform:scale(1.35);color:#fff}}
@@ -565,6 +568,36 @@ h1.font-display{background:linear-gradient(90deg,#fff,#fde68a,#c4b5fd,#fff);back
 .fx-low #aurora i:nth-child(n+2){display:none}
 .fx-low .panel{backdrop-filter:none;-webkit-backdrop-filter:none}
 .fx-low main > section, .fx-low main > aside > *{animation:none}
+
+/* ---- Smooth mode (on by default on phones; the ✨ button switches it) ----
+   Keeps the look, drops what makes phone GPUs/CPUs repaint every frame: infinite shadow/filter animations,
+   the SVG drop-shadow filter that re-rendered under the animated snake scales, blurred backdrops and decorative loops on the board. */
+.fx-low #aurora i{animation:none}
+.fx-low .board-light{animation:none}
+.fx-low .tile *,.fx-low .tile *::before,.fx-low .tile *::after,.fx-low .tile-icon,.fx-low .snake-scales,.fx-low .flame{animation:none !important}
+.fx-low .tile.finish{animation:none;box-shadow:inset 0 0 20px rgba(251,191,36,.75)}
+.fx-low #board-svg g{filter:none}
+.fx-low .game-token.active{filter:none}
+.fx-low .btn-primary:not(:disabled),.fx-low .dice-wrap.ready .dice-scene,.fx-low .chip.evt,.fx-low .logo,.fx-low h1.font-display,.fx-low .extra-badge,.fx-low .mine{animation:none}
+.fx-low .mine{filter:none}
+.fx-low .player-card.active::before{animation:none;opacity:.8}
+.fx-low #embers span:nth-child(n+8){display:none}
+.fx-low .modal,.fx-low .menu-screen{backdrop-filter:none;-webkit-backdrop-filter:none}
+.fx-low .stage-beams,.fx-low .jack-fog,.fx-low .jc-back{animation:none}
+.fx-low .stage-rain span:nth-child(n+9){display:none}
+
+/* ---- Online move clock ---- */
+.turn-clock{position:relative;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:4px 8px;margin:2px 0 8px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.32);border:1px solid #ffffff1c;font-size:12px;font-weight:800;color:#c9c2dd}
+.turn-clock.mine{border-color:#a78bfa88;background:linear-gradient(90deg,rgba(124,58,237,.24),rgba(0,0,0,.3));color:#ede9fe}
+.turn-clock.paused{opacity:.62}
+.turn-clock .tc-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.turn-clock .tc-time{font-family:'Cinzel',serif;font-size:17px;font-variant-numeric:tabular-nums;color:#fde68a;min-width:2.7em;text-align:right}
+.turn-clock .tc-more{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;color:#fde68a;border:1px solid #f59e0b88;background:rgba(245,158,11,.16);cursor:pointer;touch-action:manipulation}
+.turn-clock .tc-bar{grid-column:1/-1;height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.turn-clock .tc-bar i{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(1);transition:transform .26s linear;background:linear-gradient(90deg,#8b5cf6,#22d3ee)}
+.turn-clock.warn .tc-time{color:#fdba74}.turn-clock.warn .tc-bar i{background:linear-gradient(90deg,#f59e0b,#fb923c)}
+.turn-clock.crit .tc-time{color:#fda4af}.turn-clock.crit .tc-bar i{background:linear-gradient(90deg,#ef4444,#f43f5e)}
+.turn-clock.crit.mine{border-color:#fb7185aa}
 
 /* HUD chips */
 .hud-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -722,7 +755,7 @@ h1.font-display{background:linear-gradient(90deg,#fff,#fde68a,#c4b5fd,#fff);back
 .rpg-off .rpg-only{display:none !important}
 .item-new{display:inline-block;font-size:8px;font-weight:900;letter-spacing:.08em;padding:1px 5px;border-radius:99px;background:linear-gradient(90deg,#f43f5e,#f59e0b);color:#fff;vertical-align:middle;margin-left:3px}
 @media (prefers-reduced-motion: reduce){
-  #aurora i,h1.font-display,.logo,.btn-primary,.rt-ico,.rt::before,.stage-beams,.st-ring,.st-emoji,.portal-art .ring,.chest-rays,.fighter.boss .fig,.player-card.active{animation:none !important}
+  #aurora i,h1.font-display,.logo,.btn-primary,.rt-ico,.rt::before,.stage-beams,.st-ring,.st-emoji,.portal-art .ring,.chest-rays,.fighter.boss .fig,.player-card.active,.player-card.active::before{animation:none !important}
 }
 /* Jack of Trader: the gamble card */
 .jack-modal{background:radial-gradient(ellipse at 50% 30%,rgba(88,28,135,.55),rgba(5,3,10,.94) 70%)}
@@ -867,6 +900,13 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
           <h2 id="turn-title" class="font-display text-lg font-extrabold text-white">Player 1's Turn</h2>
         </div>
         <span id="extra-roll-badge" class="extra-badge hidden">🔥 Extra Roll!</span>
+      </div>
+
+      <div id="turn-clock" class="turn-clock hidden" role="timer" aria-label="Move timer">
+        <span id="tc-label" class="tc-label"></span>
+        <b id="tc-time" class="tc-time">0:00</b>
+        <button id="tc-more" class="tc-more hidden" onclick="tmrExtend()" title="Take 30 more seconds (twice per move)">⏳ +30s</button>
+        <div class="tc-bar"><i id="tc-fill"></i></div>
       </div>
 
       <div class="flex items-center justify-center gap-6 py-2 relative">
@@ -1135,6 +1175,17 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
         </div>
         <p id="net-rule-note" class="field-hint"></p>
       </div>
+      <div class="mt-4">
+        <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Think time per move</p>
+        <div class="seg wide" role="radiogroup" aria-label="Think time per move">
+          <button id="net-tmr-0" onclick="netSetTimer(0)">∞ Off</button>
+          <button id="net-tmr-30" onclick="netSetTimer(30)">30s</button>
+          <button id="net-tmr-60" onclick="netSetTimer(60)">60s</button>
+          <button id="net-tmr-90" onclick="netSetTimer(90)">90s</button>
+          <button id="net-tmr-120" onclick="netSetTimer(120)">2 min</button>
+        </div>
+        <p id="net-tmr-note" class="field-hint"></p>
+      </div>
       <p id="online-wait-text" class="text-sm text-slate-300 mt-3"></p>
       <div class="flex gap-2 justify-center mt-4 flex-wrap">
         <button id="net-start-btn" class="btn btn-primary hidden" onclick="netStartMatch()">⚔️ Start match</button>
@@ -1298,6 +1349,9 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
 
 <div id="toast-layer"></div>
 
+<!-- mqtt (online rooms) and Tone (sound) load after the page body so the first screen paints immediately; the game script needs both, so they come right before it -->
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
 /* ============================================================
    DATA
@@ -1793,6 +1847,26 @@ function buildPlayerCards() {
     </div>`).join('');
 }
 
+// Tokens move FLIP-style: left/top jump to the new spot once (one layout), then a transform animation slides the token
+// from where it was to where it is. Transforms run on the GPU compositor, so hops stay smooth even when the main
+// thread is busy; animating left/top forced a full layout of the board on every frame.
+function slideToken(t, nx, ny, dur) {
+  const px = t._px, py = t._py;
+  t._px = nx; t._py = ny;
+  if (px == null || (px === nx && py === ny)) return;
+  const layer = t.parentElement;
+  const bw = layer ? layer.clientWidth : 0, bh = layer ? layer.clientHeight : 0;
+  if (!bw || !bh || fastMode || document.body.classList.contains('no-waapi') || typeof t.animate !== 'function') return;
+  let curX = 0, curY = 0;                                   // an interrupted slide: start from where the token visibly is
+  if (t._mv && t._mv.playState === 'running') {
+    try { const m = new DOMMatrixReadOnly(getComputedStyle(t).transform); curX = m.e + t.offsetWidth * 0.5; curY = m.f + t.offsetHeight * 0.82; } catch (e) {}
+  }
+  if (t._mv) { try { t._mv.cancel(); } catch (e) {} }
+  const dx = (px - nx) / 100 * bw + curX, dy = (py - ny) / 100 * bh + curY;
+  t._mv = t.animate([{ transform: `translate(${dx}px,${dy}px) translate(-50%,-82%)` }, { transform: 'translate(0px,0px) translate(-50%,-82%)' }],
+    { duration: Math.max(1, (dur || 0.2) * 1000), easing: 'ease-in-out' });
+}
+let occPrev = new Set();                                    // tiles that carried a highlight last time
 function placeTokens(dur) {
   const P = PLAYERS();
   P.forEach(p => {
@@ -1806,39 +1880,47 @@ function placeTokens(dur) {
     t.style.setProperty('--dur', (dur || 0.2) + 's');
     t.style.left = (c.x + ox) + '%';
     t.style.top = (c.y + oy) + '%';
+    slideToken(t, c.x + ox, c.y + oy, dur);
     t.style.zIndex = (p === currentPlayer) ? 3 + NP : 2 + idx;
     t.classList.toggle('shielded', !!playerShields[p]);
     t.classList.toggle('frozen', !!playerPoisoned[p]);
     t.classList.toggle('active', p === currentPlayer && !gameOver);
   });
-  for (let n = 1; n <= 100; n++) {
+  // only the tiles that gained or lost a token need touching (not all 100 every step)
+  const now = new Set(P.map(q => playerPositions[q]));
+  const touch = new Set([...now, ...occPrev]);
+  occPrev = now;
+  touch.forEach(n => {
     const el = tileEls[n];
-    if (!el) continue;
+    if (!el) return;
     const occ = P.filter(q => playerPositions[q] === n);
     const key = occ.join('');
-    if (el._occ === key) continue;
+    if (el._occ === key) return;
     el._occ = key;
-    if (!occ.length) { el.style.boxShadow = ''; continue; }
+    if (!occ.length) { el.style.boxShadow = ''; return; }
     const parts = occ.map((q, i) => `inset 0 0 0 ${2 + i * 3}px ${TEAM[q].c}`);
     parts.push(`inset 0 0 18px rgba(${TEAM[occ[0]].rgb},.55)`);
     el.style.boxShadow = parts.join(',');
-  }
+  });
 }
 
+// Writing the same text/HTML again still invalidates layout, and the HUD refreshes on every hop: only touch what changed.
+function setTxt(el, v) { v = String(v); if (el && el.textContent !== v) el.textContent = v; }
+function setHtml(el, h) { if (el && (el._h !== h || el.firstChild !== el._fc)) { el.innerHTML = h; el._h = h; el._fc = el.firstChild; } }
 function updateHUD() {
   PLAYERS().forEach(p => {
     const cl = CLASSES[playerClasses[p]];
-    $(`p${p}-name`).textContent = playerName(p) + (NET.on && p === NET.seat ? ' (you)' : '');
+    setTxt($(`p${p}-name`), playerName(p) + (NET.on && p === NET.seat ? ' (you)' : ''));
     const meta = rpgHudMeta(p);
-    $(`p${p}-title`).innerHTML = meta.title; $(`p${p}-ach`).innerHTML = meta.ach;
+    setHtml($(`p${p}-title`), meta.title); setHtml($(`p${p}-ach`), meta.ach);
     const cashEl = $(`p${p}-cash`);
     if (lastCash[p] != null && playerCash[p] > lastCash[p] && !fastMode) { cashEl.classList.remove('cash-pop'); void cashEl.offsetWidth; cashEl.classList.add('cash-pop'); }
     lastCash[p] = playerCash[p];
-    $(`p${p}-class-badge`).textContent = cl.name;
-    $(`p${p}-cash`).textContent = playerCash[p];
-    $(`p${p}-pos`).textContent = playerPositions[p];
+    setTxt($(`p${p}-class-badge`), cl.name);
+    setTxt(cashEl, playerCash[p]);
+    setTxt($(`p${p}-pos`), playerPositions[p]);
     $(`p${p}-progress`).style.width = Math.max(1, playerPositions[p]) + '%';
-    $(`p${p}-passive`).textContent = cl.title + ' — ' + cl.desc;
+    setTxt($(`p${p}-passive`), cl.title + ' — ' + cl.desc);
     const b = [];
     if (playerShields[p]) b.push('<span class="buff cyan">🛡️ Shield</span>');
     if (playerBribes[p]) b.push('<span class="buff green">🐍 Snake Immune</span>');
@@ -1852,7 +1934,7 @@ function updateHUD() {
     if (playerMarketBan[p]) b.push('<span class="buff red">🚫 Market shut</span>');
     if (playerDelayedGold[p].length) b.push(`<span class="buff amber">📈 +$${playerDelayedGold[p].reduce((a, e) => a + e.amt, 0)} due</span>`);
     rpgHudBuffs(p).forEach(x => b.push(x));
-    $(`p${p}-buffs`).innerHTML = b.length ? b.join('') : '<span class="buff none">No buffs</span>';
+    setHtml($(`p${p}-buffs`), b.length ? b.join('') : '<span class="buff none">No buffs</span>');
     $(`p${p}-card`).classList.toggle('active', p === currentPlayer && !gameOver);
     $(`p${p}-card`).style.opacity = (RP(p) && RP(p).out) ? '.35' : '';
   });
@@ -2785,6 +2867,7 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
   if (gameOver || isRolling) return;
   const gid = gameId;
   isRolling = true;
+  TC.rollN++;                                          // a new roll decision starts: the move clock gives the next player a fresh budget
   updateControls();
 
   const me = currentPlayer;
@@ -3309,6 +3392,7 @@ function resetGame() {
   if (window.resolvePowerUp) { const r = window.resolvePowerUp; window.resolvePowerUp = null; r(); }
   if (NET.puWait) { const r = NET.puWait; NET.puWait = null; r(); }
   NET.decWait = null;
+  tmrReset();
   stageLocked = false; if (stageFin) stageFin();
   ['powerup-modal', 'shop-modal', 'target-modal', 'win-modal', 'confirm-modal', 'jack-modal', 'arena-modal', 'loaded-modal'].forEach(closeModal);
 
@@ -3547,7 +3631,7 @@ function validG(g) {
   // a room record without a mode comes from the original game: play it by the original rules
   const mode = (typeof g.mode === 'string' && MODES[g.mode]) ? g.mode : 'classic';
   const seed = (Number.isInteger(g.seed) && g.seed >= 0 && g.seed <= 4294967295) ? g.seed : 1;
-  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log, mode, seed, rule: g.rule === 'x' ? 'x' : 'b' };
+  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log, mode, seed, rule: g.rule === 'x' ? 'x' : 'b', tmr: tmrValid(g.tmr) };
 }
 function fixNicks(G) {
   const seen = new Set();
@@ -3640,7 +3724,7 @@ function netPeers() {
 
 function netPublish() {
   if (!NET.on || !NET.ch) return;
-  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log, mode: NET.G.mode, seed: NET.G.seed, rule: NET.G.rule } : null;
+  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log, mode: NET.G.mode, seed: NET.G.seed, rule: NET.G.rule, tmr: NET.G.tmr } : null;
   NET.ch.presence({ app: 'sl1', code: NET.code, tok: NET.tok, nick: NET.nick, cls: NET.cls, want: NET.want ? true : null, G }).catch(() => {});
 }
 
@@ -3698,7 +3782,7 @@ function netSync() {
 }
 
 function netStart(G) {
-  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log, mode: validMode(G.mode), seed: G.seed >>> 0 || 1, rule: G.rule === 'x' ? 'x' : 'b' };
+  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log, mode: validMode(G.mode), seed: G.seed >>> 0 || 1, rule: G.rule === 'x' ? 'x' : 'b', tmr: tmrValid(G.tmr) };
   modeKey = NET.G.mode;
   RULES.bounce = NET.G.rule !== 'x';
   NET.seat = G.seats.indexOf(NET.tok) + 1;
@@ -3720,6 +3804,7 @@ function netStart(G) {
   resetGame();
   netRenderChip();
   netPublish();
+  tmrBegin();
   netPump();
 }
 
@@ -3780,15 +3865,138 @@ function netNewGame() {
   const here = new Set([NET.tok, ...netPeers().filter(p => !p.isMe).map(p => p.presence.tok)]);
   const keep = NET.G.seats.map((t, i) => i).filter(i => here.has(NET.G.seats[i]));
   if (keep.length < 2) { toast('A rematch needs at least 2 players in the room.', 'warn'); return; }
-  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '', mode: NET.G.mode, seed: newSeed(), rule: NET.G.rule });
+  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '', mode: NET.G.mode, seed: newSeed(), rule: NET.G.rule, tmr: NET.G.tmr });
 }
 
 function netStartMatch() {
   if (!NET.on || !NET.G || NET.G.gen !== 0 || NET.G.seats[0] !== NET.tok) return;
   if (NET.G.seats.length < 2) { netMsg('Wait for at least one more player.'); return; }
-  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '', mode: NET.G.mode, seed: newSeed(), rule: NET.G.rule };
+  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '', mode: NET.G.mode, seed: newSeed(), rule: NET.G.rule, tmr: NET.G.tmr };
   fixNicks(G);
   netStart(G);
+}
+
+/* ============================================================
+   ONLINE MOVE CLOCK
+   A visible "think time" for online matches. It gives everyone a fair, generous moment to read a power-up, weigh a
+   decision or plan a roll, and keeps one sleepy player from stalling the whole room.
+   Purely local and safe: every client counts down what it sees; only the player whose move it is acts when time runs
+   out, and does exactly what a click would have done (a roll, a Shield, "decline"), so it travels through the normal
+   move log and can never desync. The host picks the length in the lobby (room record field `tmr`, seconds; 0 = off).
+   Time only counts while the game is genuinely waiting for a person: animations, splash screens and Jack's deal pause
+   it, and so does a backgrounded tab. Nothing here touches rules or randomness.
+   ============================================================ */
+const TMR_CHOICES = [0, 30, 60, 90, 120];
+const TMR_DEFAULT = 60;
+const TMR_MAX_EXT = 2, TMR_EXT_MS = 30000, TMR_WARN_MS = 10000, TMR_CRIT_MS = 5000;
+const tmrValid = v => (TMR_CHOICES.includes(v) ? v : 0);              // an old room record, or junk, plays without a clock
+const TC = { timer: null, key: '', left: 0, total: 0, last: 0, ext: 0, warned: '', fired: '', firedAt: 0, rollN: 0, decN: 0, dec: null, st: null };
+const tmrSecs = () => (NET.on && NET.G && NET.G.gen > 0 ? tmrValid(NET.G.tmr) : 0);
+
+// who is the game waiting for right now, and for what? null = nobody (animation, splash, replay, game over)
+function tmrState() {
+  if (!tmrSecs() || gameOver || fastMode || !NET.G || NET.applied < NET.G.log.length) return null;
+  if (TC.dec) return { who: NET.seat, phase: 'dec', key: 'dec:' + TC.decN };                                 // my altar / alliance question is on screen
+  if (NET.decWait) return { who: NET.decWait.who, phase: 'dec', key: 'dec:' + TC.decN };                     // someone else is deciding
+  if (window.resolvePowerUp && currentPlayer === NET.seat) return { who: NET.seat, phase: 'pu', key: 'pu:' + TC.rollN };   // my power-up choice
+  if (NET.puWait) return { who: currentPlayer, phase: 'pu', key: 'pu:' + TC.rollN };
+  if (isRolling || splashDepth > 0 || jack) return null;
+  return { who: currentPlayer, phase: 'roll', key: 'roll:' + currentPlayer + ':' + TC.rollN };
+}
+
+function tmrBegin() {
+  TC.last = performance.now();
+  if (!TC.timer) TC.timer = setInterval(tmrTick, 250);
+}
+function tmrStop() {
+  if (TC.timer) { clearInterval(TC.timer); TC.timer = null; }
+  tmrReset(); tmrRender(null);
+}
+function tmrReset() {
+  TC.key = ''; TC.left = TC.total = TC.ext = 0; TC.warned = TC.fired = ''; TC.firedAt = 0; TC.rollN = 0; TC.decN = 0; TC.dec = null; TC.st = null; STAGE_PICK = null;
+}
+
+function tmrTick() {
+  const now = performance.now();
+  const dt = Math.min(Math.max(0, now - TC.last), 1000);          // a throttled background tab adds at most 1s per tick: the clock effectively waits for you to come back
+  TC.last = now;
+  if (!NET.on || !NET.G) { tmrStop(); return; }
+  const secs = tmrSecs();
+  if (!secs) { tmrRender(null); return; }
+  const st = tmrState();
+  TC.st = st;
+  if (!st) { tmrRender(null, true); return; }
+  if (st.key !== TC.key) { TC.key = st.key; TC.total = TC.left = secs * 1000; TC.ext = 0; }
+  else TC.left = Math.max(0, TC.left - dt);
+  if (st.who === NET.seat) {
+    if (TC.left > 0 && TC.left <= TMR_WARN_MS && TC.warned !== st.key) {
+      TC.warned = st.key; toast('⏰ ' + Math.ceil(TC.left / 1000) + ' seconds left', 'warn');
+      try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
+    }
+    if (TC.left <= 0 && (TC.fired !== st.key || now - TC.firedAt > 4000)) { TC.fired = st.key; TC.firedAt = now; tmrExpire(st); }
+  }
+  tmrRender(st);
+}
+
+function tmrExtend() {
+  const st = tmrState();
+  if (!st || st.who !== NET.seat || st.key !== TC.key || TC.left <= 0 || TC.ext >= TMR_MAX_EXT) return;
+  TC.ext++; TC.left += TMR_EXT_MS; TC.total = Math.max(TC.total, TC.left); TC.warned = '';
+  toast('⏳ +30 seconds', '');
+  tmrRender(st);
+}
+
+const tmrFmt = ms => { const t = Math.ceil(ms / 1000); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+function tmrRender(st, paused) {
+  const box = $('turn-clock'); if (!box) return;
+  if (!tmrSecs()) { if (!box.classList.contains('hidden')) box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const mine = !!st && st.who === NET.seat, ph = st ? st.phase : '';
+  box.classList.toggle('mine', mine);
+  box.classList.toggle('paused', !st || !!paused);
+  if (st) {
+    const nm = playerName(st.who);
+    setTxt($('tc-label'), mine ? ({ roll: '⏱ Your move', pu: '⏱ Pick your power-up', dec: '⏱ Your decision' }[ph])
+      : ({ roll: `⏱ ${nm} is thinking…`, pu: `⏱ ${nm} is choosing a power-up…`, dec: `⏱ ${nm} is deciding…` }[ph]));
+  } else setTxt($('tc-label'), '⏸ …');
+  setTxt($('tc-time'), tmrFmt(TC.left || TC.total || tmrSecs() * 1000));
+  const fill = $('tc-fill'); if (fill) fill.style.transform = 'scaleX(' + (TC.total ? Math.max(0, Math.min(1, TC.left / TC.total)) : 1).toFixed(3) + ')';
+  box.classList.toggle('warn', !!st && TC.left <= TMR_WARN_MS && TC.left > TMR_CRIT_MS);
+  box.classList.toggle('crit', !!st && TC.left <= TMR_CRIT_MS);
+  const more = $('tc-more'); if (more) more.classList.toggle('hidden', !(mine && TC.ext < TMR_MAX_EXT && TC.left > 0));
+  if (more && !more.classList.contains('hidden')) setTxt(more, '⏳ +30s' + (TC.ext ? ' (' + (TMR_MAX_EXT - TC.ext) + ' left)' : ''));
+}
+
+// Time is up for ME: play the move a click would have made, in the safest form
+function tmrForceClose() {                                          // closeModal() fades out over 260ms; the roll guard needs them gone now
+  document.querySelectorAll('.modal:not(.hidden)').forEach(m => { m.dataset.state = 'closed'; m.classList.remove('show'); m.classList.add('hidden'); });
+  const mm = $('main-menu'); if (mm && !mm.classList.contains('hidden')) { mm.dataset.state = 'closed'; mm.classList.remove('show'); mm.classList.add('hidden'); }
+}
+function tmrExpire(st) {
+  if (st.who !== NET.seat) return;
+  toast('⏰ Time is up: a default move was played for you.', 'warn');
+  if (st.phase === 'roll') tmrAutoRoll();
+  else if (st.phase === 'pu') tmrAutoPowerUp();
+  else tmrAutoDecide(st);
+}
+function tmrAutoRoll() {
+  if (!canAct() || isRolling) return;
+  const me = currentPlayer;
+  tmrForceClose();                                                  // shop, arena, target picker, guide, menu: whatever was open
+  if (rpgOn() && RP(me).loaded) { const v = aiLoadedPick(me); netPush(String(v)); executeTurn(v, false, 'normal'); return; }
+  selectedDie = 'normal';                                           // never spend gold on a special die unattended
+  handleRollClick();
+}
+function tmrAutoPowerUp() {
+  if (!window.resolvePowerUp || currentPlayer !== NET.seat) return;
+  tmrForceClose();
+  const me = currentPlayer;
+  commitPowerUp(playerShields[me] ? 'cash' : 'shield', undefined);  // untargeted and harmless to everyone else
+}
+function tmrAutoDecide() {
+  const w = TC.dec;
+  const refuse = w && w.kind === 'altar' ? 'D' : 'q';               // refuse the altar, decline the pact
+  if (STAGE_PICK && STAGE_PICK.keys.includes(refuse)) STAGE_PICK.pick(refuse);
 }
 
 /* ---- Online transport: a tiny relay over public MQTT-over-WebSocket brokers ----
@@ -3932,6 +4140,12 @@ function netSetRule(r) {
   netPublish();
   netRenderLobby();
 }
+function netSetTimer(sec) {
+  if (!NET.on || !NET.G || NET.G.gen !== 0 || NET.G.seats[0] !== NET.tok) return;     // only the host decides
+  NET.G.tmr = tmrValid(sec);
+  netPublish();
+  netRenderLobby();
+}
 function netRenderLobby() {
   const G0 = NET.G && NET.G.gen === 0 ? NET.G : NET.lobby;
   const box = $('online-roster'), btn = $('net-start-btn');
@@ -3949,6 +4163,11 @@ function netRenderLobby() {
   $('net-rule-x').classList.toggle('on', exact);
   $('net-rule-b').disabled = $('net-rule-x').disabled = !host;
   $('net-rule-note').textContent = (host ? '' : 'The host chooses. ') + (exact ? 'A roll past 100 is wasted — you must land on it exactly.' : 'A roll past 100 walks you up to it and back down with the leftover steps.');
+  const tm = tmrValid(G0.tmr);
+  TMR_CHOICES.forEach(v => { const b = $('net-tmr-' + v); if (b) { b.classList.toggle('on', v === tm); b.disabled = !host; } });
+  $('net-tmr-note').textContent = (host ? '' : 'The host chooses. ') + (tm
+    ? `Everyone sees a ${tm >= 120 ? '2-minute' : tm + '-second'} clock on each move, time to read a power-up or think it over. You can add 30s twice per move; if it still runs out, a safe default is played (a roll, a Shield, or "decline").`
+    : 'No clock: take as long as you like.');
   const n = G0.seats.length;
   btn.classList.toggle('hidden', !host);
   btn.disabled = n < 2;
@@ -4039,7 +4258,7 @@ async function netCreate() {
   const code = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
   netMsg('Opening the room…');
   try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach any matchmaking server. Some school/work networks block the WebSocket ports it uses — try another network or mobile data, then try again.'); NET.on = false; return; }
-  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '', mode: pendingRpgMode || 'std', seed: 1, rule: soloBounce ? 'b' : 'x' };
+  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '', mode: pendingRpgMode || 'std', seed: 1, rule: soloBounce ? 'b' : 'x', tmr: TMR_DEFAULT };
   NET.want = false;
   $('online-code').textContent = code;
   $('online-wait-label').textContent = 'Room code';
@@ -4070,6 +4289,7 @@ async function netJoin() {
 }
 
 async function netLeave() {
+  tmrStop();
   if (inOnlineMatch()) matchActive = false;
   chatReset();
   NET.pumpTok++; NET.joinTok++;
@@ -4650,8 +4870,17 @@ function rpgLog(p, html) { addLogEntry(p, html); }
    Visual only: nothing here may change game state, and everything is skipped while fastMode (log replay).
    ============================================================ */
 const REDUCED = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+// Phones and weak touch devices start in Smooth mode (FX Low) unless the player already picked High; desktops stay on High.
+const IS_PHONE = (() => {
+  try {
+    const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    const small = Math.min(screen.width || 9999, screen.height || 9999) <= 700;
+    const weak = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+    return coarse && (small || weak);
+  } catch (e) { return false; }
+})();
 let fxLow = false;
-try { fxLow = localStorage.getItem('sl-fx') === 'low'; } catch (e) {}
+try { const saved = localStorage.getItem('sl-fx'); fxLow = saved ? saved === 'low' : IS_PHONE; } catch (e) { fxLow = IS_PHONE; }
 const FXE = { cv: null, cx: null, ps: [], on: false, w: 0, h: 0, dpr: 1, slow: 0, last: 0 };
 const FX_COL = {
   gold:  ['#fde047', '#fbbf24', '#f59e0b', '#fff7c2'], magic: ['#a78bfa', '#22d3ee', '#f0abfc', '#ffffff'], fire: ['#fb923c', '#f97316', '#fde047', '#ef4444'],
@@ -4664,11 +4893,12 @@ function fxInit() {
   fxResize();
   window.addEventListener('resize', fxResize);
   document.body.classList.toggle('fx-low', fxLow);
+  if (!(window.Element && Element.prototype.animate)) document.body.classList.add('no-waapi');   // tokens fall back to the old left/top transition
   syncFxButton();
 }
 function fxResize() {
   const cv = FXE.cv; if (!cv || !cv.parentElement) return;
-  FXE.dpr = Math.min(window.devicePixelRatio || 1, 2);
+  FXE.dpr = Math.min(window.devicePixelRatio || 1, fxLow ? 1.25 : 2);          // a smaller canvas is much cheaper to clear and fill on phones
   const r = cv.parentElement.getBoundingClientRect();
   FXE.w = Math.max(1, r.width); FXE.h = Math.max(1, r.height);
   cv.width = Math.round(FXE.w * FXE.dpr); cv.height = Math.round(FXE.h * FXE.dpr);
@@ -4677,6 +4907,7 @@ function toggleFx() {
   fxLow = !fxLow;
   try { localStorage.setItem('sl-fx', fxLow ? 'low' : 'high'); } catch (e) {}
   document.body.classList.toggle('fx-low', fxLow);
+  fxResize();
   syncFxButton();
   toast(fxLow ? 'Effects: low (smoother on slow phones)' : 'Effects: high');
 }
@@ -4701,7 +4932,7 @@ function fxFrame(t) {
   const cx = FXE.cx; if (!cx) { FXE.on = false; return; }
   const dt = Math.min(0.05, (t - FXE.last) / 1000); FXE.last = t;
   if (dt > 0.034) FXE.slow++; else if (FXE.slow > 0) FXE.slow--;
-  if (FXE.slow > 70 && !fxLow) { fxLow = true; document.body.classList.add('fx-low'); syncFxButton(); toast('Effects lowered for smoother play (use ✨ to change).'); FXE.slow = 0; }
+  if (FXE.slow > 70 && !fxLow) { fxLow = true; document.body.classList.add('fx-low'); fxResize(); syncFxButton(); toast('Effects lowered for smoother play (use ✨ to change).'); FXE.slow = 0; }
   cx.setTransform(FXE.dpr, 0, 0, FXE.dpr, 0, 0);
   cx.clearRect(0, 0, FXE.w, FXE.h);
   cx.globalCompositeOperation = 'lighter';
@@ -4837,13 +5068,16 @@ function showStage(build, opt, gid) {
   });
 }
 // prompts the local player with buttons on the stage; resolves with the picked key
+let STAGE_PICK = null;                                // { keys, pick(key) } while a stage is waiting for a button press
 function stageChoice(ctx, choices) {
   return new Promise(res => {
     ctx.lock(true);
     const box = document.createElement('div'); box.className = 'st-choices';
+    const me = { keys: choices.map(c => c.key), pick: k => { if (STAGE_PICK === me) STAGE_PICK = null; ctx.lock(false); box.remove(); res(k); } };
+    STAGE_PICK = me;
     choices.forEach(c => {
       const b = document.createElement('button'); b.className = 'btn ' + (c.cls || 'btn-primary'); b.innerHTML = c.label; b.disabled = !!c.off;
-      b.onclick = e => { e.stopPropagation(); ctx.lock(false); box.remove(); res(c.key); };
+      b.onclick = e => { e.stopPropagation(); me.pick(c.key); };
       box.appendChild(b);
     });
     ctx.card.appendChild(box);
@@ -5030,7 +5264,8 @@ function promptDecision(kind, need, ui, botPick, who) {
   who = who || currentPlayer;
   return new Promise(resolve => {
     const w = { kind, need, who, res: resolve, show: null };
-    w.show = () => { const r = ui(ch => { if (NET.on) netPush(ch); if (NET.decWait === w) NET.decWait = null; resolve(ch); }); return r; };
+    TC.decN++;                                         // every client asks the same questions in the same order: a shared key for the move clock
+    w.show = () => { if (NET.on && who === NET.seat) TC.dec = w; const r = ui(ch => { if (TC.dec === w) TC.dec = null; if (NET.on) netPush(ch); if (NET.decWait === w) NET.decWait = null; resolve(ch); }); return r; };
     if (isBot(who) && !NET.on) { resolve(botPick()); return; }
     if (NET.on) {
       const logHas = !!NET.G && NET.applied < NET.G.log.length;
