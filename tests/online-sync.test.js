@@ -39,7 +39,7 @@ function boot(tok) {
   return { w: dom.window, d: dom.window.document };
 }
 const ev = (c, s) => c.w.eval(s);
-const state = c => JSON.stringify(ev(c, '({p:playerPositions,c:playerCash,s:playerShields,b:playerBribes,cp:playerCheckpoints,f:playerPoisoned,cur:currentPlayer,over:gameOver,snk:SNAKES,mines:placedMines,own:customSnakeOwner,sp:shopPurchasedThisTurn,x:extraRollPending})'));
+const state = c => JSON.stringify(ev(c, '({p:playerPositions,c:playerCash,s:playerShields,b:playerBribes,cp:playerCheckpoints,f:playerPoisoned,cur:currentPlayer,over:gameOver,snk:SNAKES,mines:placedMines,own:customSnakeOwner,sp:shopPurchasedThisTurn,x:extraRollPending,rule:RULES.bounce,st:playerStats,fn:playerFrozenNext,br:playerBonusRolls,dg:playerDelayedGold,fb:playerFreeBuy,rc:playerRollCap,mb:playerMarketBan,ev:playerEvents})'));
 async function drive(clients, maxSteps, stopWhen) {
   for (let i = 0; i < maxSteps; i++) {
     await sleep(6);
@@ -48,18 +48,27 @@ async function drive(clients, maxSteps, stopWhen) {
       const w = c.w, d = c.d;
       const tm = d.getElementById('target-modal');
       if (!tm.classList.contains('hidden')) { const b = [...d.querySelectorAll('#target-list button')].filter(x => !x.disabled); if (b.length && Math.random() < 0.9) b[Math.floor(Math.random() * b.length)].click(); else w.eval("closeModal('target-modal')"); continue; }
+      // Jack of Trader: pick a card (or walk away), and press Continue when the card has flipped
+      const jm = d.getElementById('jack-modal');
+      if (!jm.classList.contains('hidden')) {
+        if (!d.getElementById('jack-continue').classList.contains('hidden')) { w.jackContinue(); continue; }
+        const cards = [...d.querySelectorAll('#jack-cards .jack-card')].filter(x => !x.disabled);
+        if (cards.length && ev(c, 'canAct()') && !ev(c, 'jack')) { if (Math.random() < 0.8) cards[Math.floor(Math.random() * cards.length)].click(); else w.jackCancel(); }
+        continue;
+      }
       const pm = d.getElementById('powerup-modal');
       if (!pm.classList.contains('hidden') && ev(c, 'canAct()')) { w.selectPowerUp(['swap', 'freeze', 'shield', 'cash'][Math.floor(Math.random() * 4)]); continue; }
       if (ev(c, 'canAct()') && !ev(c, 'isRolling') && !ev(c, 'splashActive()') && pm.classList.contains('hidden')) {
         if (Math.random() < 0.5 && !ev(c, 'shopPurchasedThisTurn')) { const keys = Object.keys(ev(c, 'SHOP_ITEMS')); w.uiBuy(keys[Math.floor(Math.random() * keys.length)]); if (!tm.classList.contains('hidden')) continue; }
         w.eval("['win-modal','shop-modal'].forEach(id=>{const m=document.getElementById(id); m.classList.add('hidden'); m.dataset.state='closed';})");
+        if (Math.random() < 0.35) w.selectDie(ev(c, 'DICE_KEYS')[Math.floor(Math.random() * 4)]);   // sometimes roll a special die
         w.handleRollClick();
       }
     }
   }
   return false;
 }
-async function settled(clients) { for (let i = 0; i < 600; i++) { await sleep(10); if (clients.every(c => !ev(c, 'isRolling') && !ev(c, 'NET.puWait') && ev(c, 'NET.applied') === ev(c, 'NET.G.log.length') && !ev(c, 'splashDepth') && c.d.getElementById('target-modal').classList.contains('hidden'))) return true; } return false; }
+async function settled(clients) { for (let i = 0; i < 600; i++) { await sleep(10); if (clients.every(c => !ev(c, 'isRolling') && !ev(c, 'NET.puWait') && ev(c, 'NET.applied') === ev(c, 'NET.G.log.length') && !ev(c, 'splashDepth') && !ev(c, 'jack') && c.d.getElementById('jack-modal').classList.contains('hidden') && c.d.getElementById('target-modal').classList.contains('hidden'))) return true; } return false; }
 const same = (cs) => { const s = cs.map(state); return s.every(x => x === s[0]); };
 
 async function scenario(n, classes) {
@@ -80,6 +89,7 @@ async function scenario(n, classes) {
   console.log('finished:', done, '| winner pos', JSON.stringify(ev(H, 'playerPositions')), '| log len', ev(H, 'NET.G.log.length'));
   console.log('ALL STATES MATCH:', same(clients), '| ALL LOGS MATCH:', clients.every(c => ev(c, 'NET.G.log') === ev(H, 'NET.G.log')));
   if (!same(clients)) clients.forEach((c, i) => console.log(' c' + i, state(c)));
+  console.log('jack gambles in log:', (ev(H, 'NET.G.log').match(/x[0-2]y[a-t][0-9]/g) || []).length, '| dice units:', (ev(H, 'NET.G.log').match(/[slg][1-8]/g) || []).length);
   console.log('targets used in log:', (ev(H, 'NET.G.log').match(/[wfmSF][JKLMN]/g) || []).length, '| sample:', ev(H, 'NET.G.log').slice(0, 50));
   return { clients, code };
 }

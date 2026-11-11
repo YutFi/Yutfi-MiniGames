@@ -157,6 +157,30 @@ body::before{
 .f3{transform:rotateX(90deg) translateZ(36px)}
 .f4{transform:rotateX(-90deg) translateZ(36px)}
 .dice-shadow{width:56px;height:10px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%)}
+.face.num{display:flex;align-items:center;justify-content:center;padding:0}
+.face.num b{font-family:'Cinzel',Georgia,serif;font-weight:800;font-size:38px;line-height:1;color:#1b1030;text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.face.die-steady{background:linear-gradient(145deg,#dbeafe,#7fb2f0);border-color:#1d4ed8}
+.face.die-lucky{background:linear-gradient(145deg,#dcfce7,#6fd39a);border-color:#15803d}
+.face.die-gambler{background:linear-gradient(145deg,#fecaca,#e0566a);border-color:#7f1d1d}
+.face.die-gambler b{color:#fff7ed;text-shadow:0 2px 0 rgba(80,0,10,.6)}
+.stat-table{width:100%;border-collapse:collapse;font-size:12px}
+.stat-table th{font-size:11px;font-weight:800;padding:4px 6px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat-table td{padding:4px 6px;color:#d6d0e6;font-weight:700;border-top:1px solid #ffffff12}
+.stat-table td.sl{text-align:left;color:#9a93b2;font-weight:600;white-space:nowrap}
+.stat-table td.win{color:#fde68a;background:rgba(251,191,36,.08)}
+/* Die picker */
+.dice-picker{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.die-chip{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:74px;padding:6px 9px;border-radius:12px;cursor:pointer;color:#e7e3f1;
+  background:rgba(255,255,255,.05);border:1px solid #ffffff22;transition:transform .12s, border-color .15s, background .15s, box-shadow .15s}
+.die-chip:hover:not(:disabled){background:rgba(139,92,246,.2);border-color:#a78bfa;transform:translateY(-1px)}
+.die-chip .di{font-size:20px;line-height:1}
+.die-chip .dn{font-size:11px;font-weight:800}
+.die-chip .dp{font-size:10px;font-weight:800;color:#fcd34d}
+.die-chip .dp.free{color:#86efac}
+.die-chip .dk{font-size:9px;color:#8a83a3}
+.die-chip.on{background:linear-gradient(180deg,rgba(139,92,246,.45),rgba(91,33,182,.4));border-color:#c4b5fd;box-shadow:0 0 14px rgba(139,92,246,.45)}
+.die-chip:disabled{opacity:.4;cursor:not-allowed}
+.die-chip:focus-visible{outline:2px solid #c4b5fd;outline-offset:2px}
 
 /* Turn panel */
 .turn-glow{position:absolute;inset:0;pointer-events:none;transition:background .5s;background:radial-gradient(ellipse at 20% 0%,rgba(59,130,246,.18),transparent 60%)}
@@ -189,6 +213,8 @@ body::before{
 .buff.green{background:rgba(16,185,129,.18);color:#6ee7b7;border-color:rgba(16,185,129,.5)}
 .buff.amber{background:rgba(245,158,11,.18);color:#fcd34d;border-color:rgba(245,158,11,.5)}
 .buff.blue{background:rgba(96,165,250,.18);color:#bfdbfe;border-color:rgba(96,165,250,.5)}
+.buff.purple{background:rgba(168,85,247,.18);color:#e9d5ff;border-color:rgba(168,85,247,.55)}
+.buff.red{background:rgba(244,63,94,.16);color:#fda4af;border-color:rgba(244,63,94,.5)}
 .buff.none{border-color:transparent;color:#6b6384;font-style:italic;font-weight:600}
 .passive{font-size:10px;color:#8f88a6;margin-top:4px;line-height:1.35}
 
@@ -444,6 +470,61 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
   #embers{display:none}
   .flame,.board-light,.tile-icon,.snake-scales,.game-token.active .bobber{animation:none}
 }
+
+/* Jack of Trader: the gamble card */
+.jack-modal{background:radial-gradient(ellipse at 50% 30%,rgba(88,28,135,.55),rgba(5,3,10,.94) 70%)}
+.jack-stage{position:relative;width:min(94vw,470px);max-height:94vh;overflow:hidden;padding:16px 14px 14px;border-radius:22px;border:2px solid #a855f7aa;
+  background:linear-gradient(180deg,#1a0b2e,#0d0618);box-shadow:0 0 0 3px #000,0 0 60px rgba(168,85,247,.45),inset 0 0 60px rgba(168,85,247,.18);animation:jackIn .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes jackIn{from{transform:scale(.7) translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.jack-stage.good{border-color:#fbbf24;box-shadow:0 0 0 3px #000,0 0 70px rgba(251,191,36,.55),inset 0 0 70px rgba(251,191,36,.2)}
+.jack-stage.bad{border-color:#e11d48;box-shadow:0 0 0 3px #000,0 0 70px rgba(168,18,80,.6),inset 0 0 70px rgba(190,18,60,.28)}
+.jack-stage.jack-shake{animation:shakeIt .5s 2}
+body.jack-quake .board-frame{animation:shakeIt .5s 1}
+.jack-fog{position:absolute;inset:-20%;background:radial-gradient(circle at 30% 70%,rgba(168,85,247,.22),transparent 45%),radial-gradient(circle at 75% 30%,rgba(251,191,36,.10),transparent 40%);animation:fogDrift 9s ease-in-out infinite alternate;pointer-events:none}
+.jack-fog.f2{animation-duration:13s;animation-direction:alternate-reverse;opacity:.7}
+@keyframes fogDrift{from{transform:translate(-4%,2%) scale(1)}to{transform:translate(5%,-3%) scale(1.12)}}
+.jack-head{position:relative;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.jack-merchant{position:relative;font-size:52px;line-height:1;filter:drop-shadow(0 0 14px #a855f7);animation:merchantIn .9s cubic-bezier(.2,1.2,.4,1) both}
+.jack-merchant i{position:absolute;right:-12px;bottom:-2px;font-size:22px;font-style:normal;animation:lantern 1.6s ease-in-out infinite alternate}
+@keyframes merchantIn{from{transform:translateX(90px) scale(.6);opacity:0;filter:blur(6px)}to{transform:none;opacity:1}}
+@keyframes lantern{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+.jack-name{font-family:'Cinzel','Trebuchet MS',serif;font-weight:900;font-size:17px;color:#fcd34d;text-shadow:0 0 12px rgba(251,191,36,.6)}
+.jack-line{font-size:12px;color:#e9d5ff;min-height:32px;margin-top:2px}
+.jack-cards{position:relative;display:flex;gap:10px;justify-content:center;margin:6px 0 10px;perspective:900px}
+.jack-card{position:relative;flex:1;max-width:128px;aspect-ratio:2/3;border:0;background:none;padding:0;cursor:pointer;animation:cardDeal .6s cubic-bezier(.2,1.3,.4,1) both;animation-delay:var(--d)}
+.jack-card:disabled{cursor:default}
+@keyframes cardDeal{from{transform:translateY(-60px) rotate(-14deg) scale(.5);opacity:0}to{transform:none;opacity:1}}
+.jc-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.3,1.2,.4,1)}
+.jack-card.flipped .jc-inner{transform:rotateY(180deg)}
+.jc-back,.jc-front{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6px}
+.jc-back{background:repeating-linear-gradient(45deg,#3b0764,#3b0764 6px,#4c1d95 6px,#4c1d95 12px);border:2px solid #fbbf24;box-shadow:0 0 18px rgba(168,85,247,.7),inset 0 0 20px rgba(251,191,36,.25);font-size:38px;animation:cardGlow 2s ease-in-out infinite alternate}
+.jack-card:not(:disabled):hover .jc-back{transform:translateY(-6px);box-shadow:0 0 28px rgba(251,191,36,.9)}
+@keyframes cardGlow{from{box-shadow:0 0 12px rgba(168,85,247,.55),inset 0 0 14px rgba(251,191,36,.18)}to{box-shadow:0 0 26px rgba(168,85,247,.95),inset 0 0 24px rgba(251,191,36,.35)}}
+.jc-front{transform:rotateY(180deg);background:linear-gradient(180deg,#1e1b4b,#0f0a24);border:2px solid #a78bfa}
+.jack-card.is-good .jc-front{border-color:#fbbf24;background:linear-gradient(180deg,#422006,#1c0f02);box-shadow:0 0 26px rgba(251,191,36,.8)}
+.jack-card.is-bad .jc-front{border-color:#e11d48;background:linear-gradient(180deg,#4c0519,#1a0209);box-shadow:0 0 26px rgba(225,29,72,.8)}
+.jc-icon{font-size:38px;line-height:1}
+.jc-name{margin-top:6px;font-size:10px;font-weight:800;color:#fff;line-height:1.15}
+.jack-card.dim{opacity:.35;filter:grayscale(.6);transform:scale(.92);transition:all .4s}
+.jack-card.picked{transform:translateY(-8px) scale(1.04);z-index:2}
+.jack-card.picked:not(.flipped) .jc-back{box-shadow:0 0 34px rgba(251,191,36,1);border-color:#fff}
+.jack-result{position:relative;text-align:center;padding:10px 6px 4px;animation:jackIn .45s both}
+.jack-r-title{font-family:'Cinzel','Trebuchet MS',serif;font-weight:900;font-size:21px;color:#fff}
+.jack-stage.good .jack-r-title{color:#fde68a;text-shadow:0 0 16px rgba(251,191,36,.8)}
+.jack-stage.bad .jack-r-title{color:#fda4af;text-shadow:0 0 16px rgba(225,29,72,.8)}
+.jack-r-text{margin-top:6px;font-size:13px;line-height:1.45;color:#e5e7eb}
+.jack-r-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.jchip{font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;border:1px solid}
+.jchip.good{color:#fde68a;background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.55)}
+.jchip.bad{color:#fda4af;background:rgba(225,29,72,.16);border-color:rgba(225,29,72,.55)}
+.jack-actions{position:relative;display:flex;justify-content:center;gap:10px;margin-top:12px;min-height:38px}
+.jack-fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3}
+.jp{position:absolute;font-size:20px;opacity:0}
+.jp.up{bottom:-10%;animation:jpUp 1.9s ease-out forwards}
+.jp.down{top:-10%;animation:jpDown 1.9s ease-in forwards}
+@keyframes jpUp{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),-480px) scale(var(--s));opacity:0}}
+@keyframes jpDown{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),520px) scale(var(--s));opacity:0}}
+@media (prefers-reduced-motion:reduce){.jack-fog,.jc-back,.jack-merchant i{animation:none}}
 </style>
 </head>
 <body>
@@ -534,6 +615,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
           <div class="text-[10px] text-slate-500 text-center">Space = roll · S = shop</div>
         </div>
       </div>
+      <div id="dice-picker" class="dice-picker" role="radiogroup" aria-label="Choose which die to roll"></div>
       <div id="dice-result-banner" class="text-center relative min-h-[24px] mt-1"></div>
     </div>
 
@@ -549,7 +631,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
   </aside>
 </main>
 
-<footer class="page text-center pb-5 text-[11px] text-slate-600">Dungeon Snakes &amp; Ladders · land exactly on 100 to win — overshoot and you bounce back</footer>
+<footer class="page text-center pb-5 text-[11px] text-slate-600">Dungeon Snakes &amp; Ladders · <span id="rule-footer">land exactly on 100 to win — overshoot and you bounce back</span></footer>
 
 <!-- Welcome splash (also gives the browser the tap it needs before it will play music) -->
 <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Welcome to Yutfi MiniGames" onclick="introStart()">
@@ -640,13 +722,16 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
       <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeHelp()" aria-label="Close">✕</button>
     </div>
     <div class="help-h">Goal</div>
-    <p class="help-p">Be first to reach the treasure on tile <b>100</b>. You need the <b>exact</b> roll to land on it — roll too high and you walk up to 100, then <b>bounce back</b> with the leftover steps (on 98 rolling 5: 99, 100, then 99, 98, 97). Ladders ▲ carry you up, snakes ▼ drag you down.</p>
+    <p class="help-p">Be first to reach the treasure on tile <b>100</b>. <span id="help-rule">You need the <b>exact</b> roll to land on it.</span> Ladders ▲ carry you up, snakes ▼ drag you down. The host (or you, in a solo game) picks the finish rule: <b>Bounce back</b> or <b>Exact roll</b>.</p>
     <div class="help-h">Every turn</div>
     <ul class="help-list">
-      <li>Roll the die. You earn salary each turn.</li>
-      <li>Visit the <b>Black Market</b> once per turn: swap places, freeze a rival, bribe a snake, set a checkpoint, plant a serpent trap or a mine.</li>
+      <li>Pick a die, then roll it. You earn salary each turn.</li>
+      <li>Visit the <b>Black Market</b> once per turn: swap places, freeze a rival, bribe a snake, set a checkpoint, plant a serpent trap or a mine. Or gamble on <b>🃏 Jack of Trader</b>: pick one of three face-down cards, 60% a boon, 40% a curse.</li>
       <li>Roll a <b>6</b> for an extra roll and a power-up of your choice.</li>
     </ul>
+    <div class="help-h">Dice</div>
+    <ul id="help-dice" class="help-list"></ul>
+    <p class="help-p" style="margin-top:6px">A special die costs gold each time you roll it; if you can't afford it you roll the Normal die instead.</p>
     <div class="help-h">Champions</div>
     <ul class="help-list">
       <li>🧑 <b>Human</b> — extra income every turn.</li>
@@ -661,7 +746,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
       <li>During an online match, tap the <b>💬 Chat</b> button (bottom right) for quick chat, emoji taunts and messages. Taunts pop up over your token for everyone.</li>
     </ul>
     <div class="help-h">Controls</div>
-    <p class="help-p"><kbd>Space</kbd> roll · <kbd>S</kbd> Black Market · <kbd>Esc</kbd> close a window. Meme splashes can be skipped with a tap or <kbd>Space</kbd>.</p>
+    <p class="help-p"><kbd>Space</kbd> roll · <kbd>1</kbd>–<kbd>4</kbd> pick a die · <kbd>S</kbd> Black Market · <kbd>Esc</kbd> close a window. Meme splashes can be skipped with a tap or <kbd>Space</kbd>.</p>
     <button class="btn btn-primary mt-4" style="width:100%" onclick="closeHelp()">Got it</button>
   </div>
 </div>
@@ -680,6 +765,28 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
       <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeModal('shop-modal')">✕</button>
     </div>
     <div id="shop-items" class="flex flex-col gap-2"></div>
+  </div>
+</div>
+
+<!-- Jack of Trader -->
+<div id="jack-modal" class="modal hidden jack-modal">
+  <div id="jack-stage" class="jack-stage">
+    <div class="jack-fog"></div><div class="jack-fog f2"></div>
+    <div id="jack-fx" class="jack-fx"></div>
+    <div class="jack-head">
+      <div class="jack-merchant">🧙‍♂️<i>🏮</i></div>
+      <div><div class="jack-name">🃏 Jack of Trader</div><div id="jack-line" class="jack-line"></div></div>
+    </div>
+    <div id="jack-cards" class="jack-cards"></div>
+    <div id="jack-result" class="jack-result hidden">
+      <div id="jack-r-title" class="jack-r-title"></div>
+      <div id="jack-r-text" class="jack-r-text"></div>
+      <div id="jack-r-chips" class="jack-r-chips"></div>
+    </div>
+    <div class="jack-actions">
+      <button id="jack-continue" class="btn btn-gold hidden" onclick="jackContinue()">Continue ▶</button>
+      <button id="jack-cancel" class="btn btn-ghost hidden" onclick="jackCancel()">Not today</button>
+    </div>
   </div>
 </div>
 
@@ -749,6 +856,14 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
       <div id="online-code" class="bigcode my-2"></div>
       <button id="net-copy-btn" class="btn btn-ghost" onclick="netCopyCode()">📋 Copy invite link</button>
       <div id="online-roster" class="flex flex-col gap-1 mt-4 text-left"></div>
+      <div class="mt-4">
+        <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Finish rule</p>
+        <div class="seg wide" role="radiogroup" aria-label="Finish rule">
+          <button id="net-rule-b" onclick="netSetRule('b')">↩ Bounce back</button>
+          <button id="net-rule-x" onclick="netSetRule('x')">🎯 Exact roll</button>
+        </div>
+        <p id="net-rule-note" class="field-hint"></p>
+      </div>
       <p id="online-wait-text" class="text-sm text-slate-300 mt-3"></p>
       <div class="flex gap-2 justify-center mt-4 flex-wrap">
         <button id="net-start-btn" class="btn btn-primary hidden" onclick="netStartMatch()">⚔️ Start match</button>
@@ -776,6 +891,13 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
         <button id="class-mode-pvp" onclick="setPendingMode('PvP')">Player 2</button>
       </div>
     </div>
+    <div class="flex items-center gap-2 mb-3 flex-wrap">
+      <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Finish rule</span>
+      <div class="seg">
+        <button id="class-rule-b" onclick="setPendingRule(true)" title="Roll past 100 and you walk back down with the leftover steps">↩ Bounce back</button>
+        <button id="class-rule-x" onclick="setPendingRule(false)" title="You must land on 100 exactly">🎯 Exact roll</button>
+      </div>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <div>
         <h3 class="text-xs font-extrabold text-blue-400 mb-2 uppercase tracking-wide">Player 1</h3>
@@ -792,10 +914,11 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
 
 <!-- Win modal -->
 <div id="win-modal" class="modal hidden">
-  <div class="modal-card panel text-center" style="max-width:360px;padding:28px">
+  <div class="modal-card panel text-center" style="max-width:480px;padding:28px">
     <div style="font-size:60px;animation:bounceSm .7s infinite alternate">🏆</div>
     <h2 id="win-title" class="font-display text-2xl font-extrabold text-white mt-1">VICTORY!</h2>
-    <p id="win-subtitle" class="text-sm text-slate-300 mt-1 mb-5"></p>
+    <p id="win-subtitle" class="text-sm text-slate-300 mt-1 mb-4"></p>
+    <div id="win-stats" class="mb-5"></div>
     <div class="flex flex-col gap-2">
       <button class="btn btn-primary" style="width:100%" onclick="playAgain()">Play Again</button>
       <button class="btn btn-ghost" style="width:100%" onclick="closeModal('win-modal')">Admire the Board</button>
@@ -873,20 +996,105 @@ const SPECIAL_TILES = {
 };
 
 const CLASSES = {
-  human:  { name: 'Human',  title: 'Hard Worker',        desc: '+$50 extra salary every turn and +$100 on even rolls.' },
+  human:  { name: 'Human',  title: 'Hard Worker',        desc: '+$30 extra salary every turn and +$50 on even rolls.' },
   wizard: { name: 'Wizard', title: 'Arcane Affinity',    desc: '25% off the Black Market. Ladders carry you 2 tiles further.' },
-  demon:  { name: 'Demon',  title: 'Hellfire Vengeance', desc: 'Steals $50 from the rival whenever you pass them.' },
+  demon:  { name: 'Demon',  title: 'Hellfire Vengeance', desc: 'Steals $100 from the rival whenever you pass them, and earns +$25 salary.' },
   angel:  { name: 'Angel',  title: 'Divine Grace',       desc: 'Starts with a free Holy Shield. Immune to freeze.' }
 };
 
 const SHOP_ITEMS = {
   swap:       { icon: '🔁', name: 'Force Position Swap',   desc: 'Instantly trade tiles with your rival.',                       cost: 200, accent: '#818cf8' },
-  bribe:      { icon: '🪙', name: 'Serpent Bribe',         desc: 'Immunity to the next snake bite.',                              cost: 150, accent: '#34d399' },
-  freeze:     { icon: '❄️', name: 'Paralyzing Frost',      desc: 'Rival skips their next turn.',                                  cost: 180, accent: '#60a5fa' },
+  bribe:      { icon: '🪙', name: 'Serpent Bribe',         desc: 'Immunity to the next snake bite.',                              cost: 250, accent: '#34d399' },
+  freeze:     { icon: '❄️', name: 'Paralyzing Frost',      desc: 'Rival skips their next turn (then they are safe from freezing for a turn).', cost: 300, accent: '#60a5fa' },
   checkpoint: { icon: '⚓', name: 'Checkpoint Sigil',      desc: 'Snakes and mines can never drop you below your current tile.',  cost: 300, accent: '#fbbf24' },
   buysnake:   { icon: '🐍', name: 'Summon Serpent Trap',   desc: 'Plant a snake ~4 tiles ahead of you. It drops rivals 15 tiles; you are immune.', cost: 250, accent: '#fb7185' },
-  mine:       { icon: '💣', name: 'Powder Keg Mine',       desc: 'Plant a mine ~3 tiles ahead of your rival. Blast sends them back 6.',            cost: 200, accent: '#f97316' }
+  mine:       { icon: '💣', name: 'Powder Keg Mine',       desc: 'Plant a mine ~3 tiles ahead of your rival. Blast sends them back 6.',            cost: 200, accent: '#f97316' },
+  jack:       { icon: '🃏', name: 'Jack of Trader',        desc: 'Gamble card: pick one of three face-down cards. 60% a boon, 40% a curse — you will not know which until it flips.', cost: 200, accent: '#a855f7' }
 };
+
+/* ---- Dice ----
+   Every die is a list of equally likely faces. Only the rolled number is random, so a roll is
+   fully described by (die, value) and replays identically on every device. `cost` is paid in gold
+   when the die is rolled. A 6 (Normal or Lucky die) still earns the extra roll + power-up. */
+const DICE = {
+  normal:  { code: '',  icon: '🎲', name: 'Normal Die',    short: 'Normal',  cost: 0,   faces: [1, 2, 3, 4, 5, 6], bonus: [6],
+             desc: 'Fair 1–6. Roll a 6 for an extra roll and a power-up.' },
+  steady:  { code: 's', icon: '🎯', name: 'Steady Die',    short: 'Steady',  cost: 0,   faces: [3, 4, 5], bonus: [],
+             desc: 'Always 3, 4 or 5. Never stalls, never a big overshoot — perfect for lining up a ladder or the finish. (No 6, so no extra roll.)' },
+  lucky:   { code: 'l', icon: '🍀', name: 'Lucky Die',     short: 'Lucky',   cost: 200, faces: [2, 3, 4, 5, 6], bonus: [6],
+             desc: 'Never a 1 (2–6). A 6 still gives the extra roll and power-up.' },
+  gambler: { code: 'g', icon: '🎰', name: "Gambler's Die", short: 'Gambler', cost: 250, faces: [1, 2, 7, 8], bonus: [8],
+             desc: 'All or nothing: 1, 2, 7 or 8. Huge leaps, or barely a step — and an 8 gives the extra roll and power-up.' }
+};
+const DICE_KEYS = Object.keys(DICE);
+const DICE_BY_CODE = Object.fromEntries(DICE_KEYS.filter(k => DICE[k].code).map(k => [DICE[k].code, k]));
+const rollDie = key => { const f = DICE[key].faces; return f[Math.floor(Math.random() * f.length)]; };
+// the six cube sides for a die: Normal shows pips 1–6, the others cycle through their own faces
+const diceLabels = key => key === 'normal' ? [1, 2, 3, 4, 5, 6] : Array.from({ length: 6 }, (_, i) => DICE[key].faces[i % DICE[key].faces.length]);
+
+/* ---- Jack of Trader: the gamble card ----
+   Twenty fates. Ten boons at 6% each (60%) and ten curses at 4% each (40%). `n` is how many values the
+   random amount can take (stored as one digit in the move log). Only ONE client ever draws the outcome
+   (the host); everyone else replays it from the log. */
+const JACK = [
+  { icon: '💰', name: 'Golden Jackpot',        good: true,  n: 10 },   //  0  +$100–200
+  { icon: '🛡️', name: 'Divine Protection',     good: true,  n: 1  },   //  1  a shield
+  { icon: '🦘', name: 'Lucky Leap',            good: true,  n: 6  },   //  2  +5–10 tiles
+  { icon: '🎁', name: "Merchant's Blessing",   good: true,  n: 1  },   //  3  a free Black Market purchase
+  { icon: '🎲', name: 'Second Chance',         good: true,  n: 1  },   //  4  one extra roll
+  { icon: '📈', name: 'Golden Investment',     good: true,  n: 1  },   //  5  +$50 now, +$50 next turn
+  { icon: '🔥', name: 'Phoenix Rebirth',       good: true,  n: 1  },   //  6  cleanse a curse, win back lost gold
+  { icon: '🌀', name: 'Secret Shortcut',       good: true,  n: 1  },   //  7  +10 tiles, snakes ignored
+  { icon: '⏪', name: 'Fate Reversal',         good: true,  n: 1  },   //  8  undo a recent setback
+  { icon: '👑', name: "King's Fortune",        good: true,  n: 1  },   //  9  +$150, a shield, +3 tiles
+  { icon: '🪙', name: "Merchant's Scam",       good: false, n: 10 },   // 10  −$50–150
+  { icon: '🐍', name: "Serpent's Curse",       good: false, n: 6  },   // 11  −5–10 tiles
+  { icon: '❄️', name: 'Frozen Contract',       good: false, n: 1  },   // 12  skip the next turn
+  { icon: '💣', name: 'Explosive Debt',        good: false, n: 1  },   // 13  −$50 and −3 tiles
+  { icon: '💔', name: 'Broken Protection',     good: false, n: 1, hitsShield: true },   // 14  lose the shield (or $40)
+  { icon: '🥷', name: "Bandit's Ambush",       good: false, n: 1  },   // 15  the richest rival steals up to $50
+  { icon: '⏳', name: 'Time Collapse',         good: false, n: 1  },   // 16  next roll capped at 3
+  { icon: '🕳️', name: 'Void Portal',           good: false, n: 1, major: true },   // 17  −10 tiles
+  { icon: '📜', name: 'Cursed Fortune',        good: false, n: 1  },   // 18  −$100, Black Market shut for a turn
+  { icon: '🗡️', name: "Jack's Final Betrayal", good: false, n: 1, hitsShield: true, major: true }   // 19  −$150, −5 tiles, lose the shield
+];
+const JACK_GOOD = 10;           // outcomes 0–9 are boons
+const jackCode = (idx, k) => 'y' + String.fromCharCode(97 + idx) + k;      // the move-log unit that carries an outcome
+// the random amount an outcome carries, from its digit k
+function jackAmount(idx, k) {
+  if (idx === 0) return 100 + Math.round(k * 100 / 9);    // Golden Jackpot  $100–200
+  if (idx === 10) return 50 + Math.round(k * 100 / 9);    // Merchant's Scam $50–150
+  if (idx === 2 || idx === 11) return 5 + k;              // Lucky Leap / Serpent's Curse 5–10 tiles
+  return 0;
+}
+// 0–99: 60 slots for the ten boons (6 each), 40 for the ten curses (4 each)
+function rollJackOutcome() {
+  const r = Math.floor(Math.random() * 100);
+  const idx = r < 60 ? Math.floor(r / 6) : JACK_GOOD + Math.floor((r - 60) / 4);
+  return { idx, k: Math.floor(Math.random() * JACK[idx].n) };
+}
+
+/* ---- Class and income numbers (one place, so balance changes are one-line edits; tests/balance.js sweeps them) ---- */
+const TUNE = { baseSalary: 50, humanSalary: 80, humanEven: 50, demonSteal: 100, demonBonus: 25, angelBonus: 0, wizardDiscount: 0.25, wizardLadder: 2 };
+
+/* ---- Finish rule ----
+   bounce: a roll past 100 walks up to 100 and back down with the leftover steps (98 + 5 → 99, 100, 99, 98, 97).
+   exact:  a roll past 100 is wasted — you must land on it exactly. */
+const RULES = { bounce: true };
+let soloBounce = true;        // the rule used for solo / same-screen games (online matches take it from the room)
+// The squares a piece walks for one roll: `fwd` going up, then `back` coming down off tile 100.
+function computePath(from, roll, bounce) {
+  const target = from + roll;
+  const fwd = [];
+  for (let t = from + 1; t <= Math.min(target, 100); t++) fwd.push(t);
+  if (target <= 100) return { fwd, back: [], landing: target, over: 0, blocked: false };
+  const over = target - 100;
+  if (!bounce) return { fwd: [], back: [], landing: from, over, blocked: true };
+  const landing = 100 - over;
+  const back = [];
+  for (let t = 99; t >= landing; t--) back.push(t);
+  return { fwd, back, landing, over, blocked: false };
+}
 
 /* ============================================================
    STATE
@@ -901,6 +1109,33 @@ let playerBribes = { 1: false, 2: false };
 let playerCheckpoints = { 1: 0, 2: 0 };
 let playerPoisoned = { 1: false, 2: false };   // frozen status
 let shopPurchasedThisTurn = false;
+let playerThawed = {};                         // 1/2 = just thawed out: protected from being frozen again until the end of their next full turn (no endless freeze-locks)
+let playerBonusRolls = {};                      // Second Chance: extra rolls waiting to be used
+let playerDelayedGold = {};                    // Golden Investment: gold that arrives next turn
+let playerFreeBuy = {};                        // Merchant's Blessing: the next Black Market purchase is free
+let playerRollCap = {};                        // Time Collapse: the next roll is capped at 3
+let playerMarketBan = {};                      // Cursed Fortune: turns left with the Black Market shut
+let playerFrozenNext = {};                     // Frozen Contract: freezes the player when their current turn ends
+let playerEvents = {};                         // recent setbacks (gold lost, piece dragged back) for Phoenix Rebirth / Fate Reversal
+let jack = null;                               // the card being dealt right now: { p, card, out, deliver, decided, timer }
+let turnPaid = false;                          // has this turn's salary already been collected? (the market is open before the first roll)
+let skipSnakeOnce = false;                     // Secret Shortcut / Fate Reversal: snakes are ignored while the move resolves
+let selectedDie = 'normal';                    // the die the current human player will roll next
+let playerStats = {};                          // per-player match stats shown on the victory screen
+const newStats = () => ({ turns: 0, snakes: 0, ladders: 0, mines: 0, bounces: 0, earned: 0, spent: 0, lost: 0, dice: 0, jack: 0, jackGood: 0, jackBad: 0 });
+const gain = (p, amt) => { playerCash[p] += amt; if (playerStats[p]) playerStats[p].earned += amt; };
+const spend = (p, amt) => { playerCash[p] -= amt; if (playerStats[p]) playerStats[p].spent += amt; };
+// A setback worth remembering for two turns: gold taken from you, or your piece dragged back from `from`
+const noteGold = (p, amt) => { if (amt > 0 && playerEvents[p]) playerEvents[p].cur.push({ kind: 'gold', amt }); };
+const noteMove = (p, from, to) => { if (playerEvents[p] && from - to >= 1) playerEvents[p].cur.push({ kind: 'move', from, to }); };
+// gold taken from `p` (never more than the purse holds); returns what was actually lost
+function loseGold(p, amt) {
+  const n = Math.max(0, Math.min(amt, playerCash[p]));
+  playerCash[p] -= n;
+  if (playerStats[p]) playerStats[p].lost += n;
+  noteGold(p, n);
+  return n;
+}
 let placedMines = {};                          // tile -> owner
 let isRolling = false;
 let gameOver = false;
@@ -911,6 +1146,7 @@ let gameId = 0;                                // bumps on reset to cancel stale
 let botTimer = null;
 let pendingClasses = { 1: 'human', 2: 'demon' };
 let pendingMode = 'PvC';
+let pendingBounce = true;
 let spinX = 0, spinY = 0;
 const tileEls = {};
 
@@ -933,7 +1169,7 @@ const rivals = p => PLAYERS().filter(q => q !== p);
 const defaultTarget = p => { const r = rivals(p); return r.length === 1 ? r[0] : null; };
 const TARGET_SHOP = new Set(['swap', 'freeze', 'mine']);
 const TARGET_PU = new Set(['swap', 'freeze']);
-const isBot = p => gameMode === 'PvC' && p === 2;
+const isBot = p => gameMode === 'BOTS' || (gameMode === 'PvC' && p === 2);   // 'BOTS' = every seat is a bot (balance simulations)
 const playerName = p => (gameMode === 'ONL' ? NET.nicks[p - 1] : (p === 1 ? 'Player 1' : (gameMode === 'PvC' ? 'AI Bot' : 'Player 2')));
 function rnd(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
@@ -968,6 +1204,9 @@ function playSound(type) {
       case 'cash':      chord(['G5', 'C6'], '8n'); break;
       case 'explosion': if (noiseSynth) noiseSynth.triggerAttackRelease('8n', t); break;
       case 'win':       chord(['C4', 'E4', 'G4', 'C5', 'E5', 'G5'], '2n'); break;
+      case 'flip':      chord(['A4', 'D5'], '16n'); break;
+      case 'curse':     chord(['Bb2', 'E3', 'F#3'], '4n'); break;
+      case 'shuffle':   chord(['E4'], '32n'); break;
     }
   } catch (e) { /* audio is optional */ }
 }
@@ -1276,6 +1515,13 @@ function updateHUD() {
     if (playerBribes[p]) b.push('<span class="buff green">🐍 Snake Immune</span>');
     if (playerCheckpoints[p] > 0) b.push(`<span class="buff amber">⚓ CP ${playerCheckpoints[p]}</span>`);
     if (playerPoisoned[p]) b.push('<span class="buff blue">❄️ Frozen</span>');
+    else if (playerThawed[p]) b.push('<span class="buff cyan">🧊 Thawed</span>');
+    if (playerFrozenNext[p]) b.push('<span class="buff blue">❄️ Freeze pending</span>');
+    if (playerBonusRolls[p] > 0) b.push(`<span class="buff purple">🎲 +${playerBonusRolls[p]} roll</span>`);
+    if (playerFreeBuy[p]) b.push('<span class="buff purple">🎁 Free buy</span>');
+    if (playerRollCap[p]) b.push('<span class="buff red">⏳ Roll ≤ 3</span>');
+    if (playerMarketBan[p]) b.push('<span class="buff red">🚫 Market shut</span>');
+    if (playerDelayedGold[p].length) b.push(`<span class="buff amber">📈 +$${playerDelayedGold[p].reduce((a, e) => a + e.amt, 0)} due</span>`);
     $(`p${p}-buffs`).innerHTML = b.length ? b.join('') : '<span class="buff none">No buffs</span>';
     $(`p${p}-card`).classList.toggle('active', p === currentPlayer && !gameOver);
   });
@@ -1300,12 +1546,45 @@ function updateTurnUI() {
 function updateControls() {
   const bot = isBot(currentPlayer);
   const mine = canAct();
-  const blocked = isRolling || gameOver || bot || !mine;
+  const blocked = isRolling || gameOver || bot || !mine || !!jack;      // a Jack deal in progress holds the board
   $('roll-btn').disabled = blocked;
+  const sd = DICE[selectedDie];
   $('roll-label').textContent = gameOver ? '🏁 GAME OVER' : bot ? '🤖 Bot is plotting…' : isRolling ? '🎲 Rolling…'
-    : (!mine && NET.on) ? `⏳ ${playerName(currentPlayer)}'s turn…` : '🎲 ROLL DICE';
+    : (!mine && NET.on) ? `⏳ ${playerName(currentPlayer)}'s turn…`
+    : selectedDie === 'normal' ? '🎲 ROLL DICE' : `${sd.icon} ROLL ${sd.short.toUpperCase()}${sd.cost ? ' · $' + sd.cost : ''}`;
   $('open-shop-btn').disabled = blocked;
   $('shop-btn-label').textContent = shopPurchasedThisTurn ? '🛒 Market (used this turn)' : '🛒 Black Market (1/turn)';
+  refreshDicePicker(blocked);
+}
+
+/* ---- choosing a die ---- */
+function buildDicePicker() {
+  $('dice-picker').innerHTML = DICE_KEYS.map((k, i) => {
+    const d = DICE[k];
+    return `<button type="button" class="die-chip" id="die-${k}" role="radio" title="${d.name} — ${d.desc}" onclick="selectDie('${k}')">
+      <span class="di">${d.icon}</span><span class="dn">${d.short}</span>
+      <span class="dp${d.cost ? '' : ' free'}">${d.cost ? '$' + d.cost : 'Free'}</span><span class="dk">key ${i + 1}</span></button>`;
+  }).join('');
+}
+function refreshDicePicker(blocked) {
+  if (blocked === undefined) blocked = isRolling || gameOver || isBot(currentPlayer) || !canAct();
+  DICE_KEYS.forEach(k => {
+    const b = $('die-' + k);
+    if (!b) return;
+    const poor = DICE[k].cost > playerCash[currentPlayer];
+    b.disabled = blocked || poor;
+    b.classList.toggle('on', k === selectedDie);
+    b.setAttribute('aria-checked', String(k === selectedDie));
+  });
+  // the cube always previews the die that is selected (it shows the last roll until the next turn starts)
+  if (!fastMode && !isRolling && $('cube').dataset.die !== selectedDie) buildDice(selectedDie);
+}
+function selectDie(key) {
+  if (!DICE[key] || isRolling || gameOver || isBot(currentPlayer) || !canAct()) return;
+  if (DICE[key].cost > playerCash[currentPlayer]) { toast(`The ${DICE[key].name} costs $${DICE[key].cost} — you can't afford it yet.`, 'warn'); return; }
+  selectedDie = key;
+  buildDice(key);                       // preview the die on the cube
+  updateControls();
 }
 
 function setBanner(html) { $('dice-result-banner').innerHTML = html; }
@@ -1391,22 +1670,33 @@ function addLogEntry(player, text) {
 /* ============================================================
    DICE
    ============================================================ */
-function buildDice() {
+// Draws the cube for a die: Normal shows classic pips, the special dice show numerals in their own colour.
+function buildDice(key) {
+  key = DICE[key] ? key : 'normal';
   const pips = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+  const labels = diceLabels(key);
   let html = '';
   for (let f = 1; f <= 6; f++) {
-    html += `<div class="face f${f}">` + pips[f].map(n => {
-      const r = Math.floor((n - 1) / 3) + 1, c = ((n - 1) % 3) + 1;
-      return `<span class="pip${f === 1 ? ' red' : ''}" style="grid-row:${r};grid-column:${c}"></span>`;
-    }).join('') + '</div>';
+    if (key === 'normal') {
+      html += `<div class="face f${f}">` + pips[f].map(n => {
+        const r = Math.floor((n - 1) / 3) + 1, c = ((n - 1) % 3) + 1;
+        return `<span class="pip${f === 1 ? ' red' : ''}" style="grid-row:${r};grid-column:${c}"></span>`;
+      }).join('') + '</div>';
+    } else {
+      html += `<div class="face f${f} num die-${key}"><b>${labels[f - 1]}</b></div>`;
+    }
   }
+  $('cube').dataset.die = key;
   $('cube').innerHTML = html;
 }
-function rollDice3D(value) {
+function rollDice3D(value, key) {
   if (fastMode) return Promise.resolve();
+  key = DICE[key] ? key : 'normal';
+  if ($('cube').dataset.die !== key) buildDice(key);
   return new Promise(resolve => {
     playSound('roll');
-    const target = { 1: [0, 0], 6: [0, -180], 2: [0, -90], 5: [0, 90], 3: [-90, 0], 4: [90, 0] }[value];
+    const face = Math.max(1, diceLabels(key).indexOf(value) + 1);     // a cube side that shows the rolled number
+    const target = { 1: [0, 0], 6: [0, -180], 2: [0, -90], 5: [0, 90], 3: [-90, 0], 4: [90, 0] }[face];
     spinX += (2 + Math.floor(Math.random() * 2)) * 360;
     spinY += (2 + Math.floor(Math.random() * 2)) * 360;
     $('cube').style.transform = `rotateX(${spinX + target[0]}deg) rotateY(${spinY + target[1]}deg)`;
@@ -1590,8 +1880,9 @@ function showSplash(key, ctx, gid) {
    SHOP
    ============================================================ */
 function getCost(p, key) {
+  if (playerFreeBuy[p]) return 0;                      // Merchant's Blessing: the next purchase is on the house
   const base = SHOP_ITEMS[key].cost;
-  return playerClasses[p] === 'wizard' ? Math.round(base * 0.75) : base;
+  return playerClasses[p] === 'wizard' ? Math.round(base * (1 - TUNE.wizardDiscount)) : base;
 }
 function openShopModal() {
   if (isRolling || gameOver || isBot(currentPlayer) || !canAct()) return;
@@ -1601,21 +1892,22 @@ function openShopModal() {
 function renderShop() {
   const p = currentPlayer;
   $('shop-purse').textContent = playerCash[p];
-  $('shop-note').textContent = shopPurchasedThisTurn ? 'already traded this turn' : (playerClasses[p] === 'wizard' ? '1 purchase per turn · Wizard −25%' : '1 purchase per turn');
+  const banned = playerMarketBan[p] === 2;
+  $('shop-note').textContent = banned ? 'closed to you this turn (Cursed Fortune)' : shopPurchasedThisTurn ? 'already traded this turn' : playerFreeBuy[p] ? 'your next purchase is FREE' : (playerClasses[p] === 'wizard' ? '1 purchase per turn · Wizard −25%' : '1 purchase per turn');
   const list = $('shop-items');
   list.innerHTML = '';
   Object.entries(SHOP_ITEMS).forEach(([key, item]) => {
     const price = getCost(p, key);
     const poor = playerCash[p] < price;
     const btn = document.createElement('button');
-    btn.className = 'shop-item' + ((poor || shopPurchasedThisTurn) ? ' disabled' : '');
+    btn.className = 'shop-item' + ((poor || shopPurchasedThisTurn || banned) ? ' disabled' : '');
     btn.style.setProperty('--accent', item.accent);
     btn.innerHTML = `
       <div class="flex items-center gap-3 min-w-0">
         <div class="shop-ico">${item.icon}</div>
         <div class="min-w-0"><div class="text-xs font-extrabold text-white">${item.name}</div><div class="text-[11px] text-slate-400 leading-snug">${item.desc}</div></div>
       </div>
-      <span class="price${poor ? ' poor' : ''}">$${price}</span>`;
+      <span class="price${poor ? ' poor' : ''}">${price === 0 ? 'FREE' : '$' + price}</span>`;
     btn.onclick = () => uiBuy(key);
     list.appendChild(btn);
   });
@@ -1637,6 +1929,8 @@ function buyShopItem(key, target) {
   const warn = m => { if (!bot) toast(m, 'warn'); };
 
   if (shopPurchasedThisTurn) { warn('The merchant only trades once per turn.'); return false; }
+  if (playerMarketBan[me] === 2) { warn('The Black Market is closed to you this turn (Cursed Fortune).'); return false; }
+  if (key === 'jack' && jack) { warn('Jack is already dealing a hand.'); return false; }
   const price = getCost(me, key);
   if (playerCash[me] < price) { warn(`Not enough gold — you need $${price}.`); return false; }
 
@@ -1647,6 +1941,7 @@ function buyShopItem(key, target) {
   if (key === 'freeze') {
     if (playerClasses[opp] === 'angel') { warn('Angels are immune to freeze — purchase cancelled.'); return false; }
     if (playerPoisoned[opp]) { warn('Your rival is already frozen.'); return false; }
+    if (playerThawed[opp]) { warn('Your rival has just thawed out and is protected for a turn.'); return false; }
   }
   if (key === 'checkpoint' && playerCheckpoints[me] === playerPositions[me]) { warn('A sigil already marks this tile.'); return false; }
   if (key === 'buysnake') {
@@ -1658,9 +1953,22 @@ function buyShopItem(key, target) {
     if (!tile) { warn('No free tile ahead of your rival for a mine.'); return false; }
   }
 
-  playerCash[me] -= price;
+  const wasFree = !!playerFreeBuy[me];
+  playerFreeBuy[me] = false;
+  spend(me, price);
   shopPurchasedThisTurn = true;
-  floatAtPlayer(me, `-$${price}`, '#fb7185');
+  floatAtPlayer(me, price ? `-$${price}` : 'FREE!', price ? '#fb7185' : '#86efac');
+
+  if (key === 'jack') {
+    // The outcome is NOT decided here: only the authority (solo engine / online host) draws it, once, and it arrives later as its own log unit.
+    playerStats[me].jack++;
+    addLogEntry(me, wasFree ? '🎁 Free purchase: the <b>Jack of Trader</b> shuffles his cards…' : `💸 Paid $${price}: <b>Jack of Trader</b> shuffles his cards…`);
+    jackBegin(me, Math.max(0, Math.min(2, target | 0)));
+    refreshAll();
+    updateControls();
+    closeModal('shop-modal');
+    return true;
+  }
 
   if (key === 'swap') {
     const tmp = playerPositions[me];
@@ -1709,6 +2017,327 @@ function buyShopItem(key, target) {
 }
 
 /* ============================================================
+   JACK OF TRADER (Black Market gamble card)
+   Flow: buy (x<card>) → the authority draws the outcome ONCE → it is logged (y<outcome><amount>) → every client
+   replays the same reveal and the same effects. A client never rolls this itself, except solo / the online host.
+   ============================================================ */
+let jackChosen = false;
+const isHost = () => NET.on && !!NET.G && NET.G.seats[0] === NET.tok;
+// Where a backward move lands: never below tile 1, and a checkpoint sigil catches you (as it does for a mine)
+function jackBack(p, n) {
+  const pos = playerPositions[p], cp = playerCheckpoints[p];
+  let dest = Math.max(1, pos - n);
+  if (cp > 0) dest = Math.min(pos, Math.max(dest, cp));
+  return dest;
+}
+// Jack can never carry a piece onto tile 100: the finish has to be earned with the dice
+const jackFwd = (p, n) => Math.min(99, playerPositions[p] + n);
+const jackRecent = p => { const e = playerEvents[p]; return e ? e.prev.concat(e.cur) : []; };
+
+// Phoenix Rebirth: lift one negative status
+function jackCleanse(p) {
+  if (playerPoisoned[p]) { playerPoisoned[p] = false; return '❄️ Frozen status lifted'; }
+  if (playerFrozenNext[p]) { playerFrozenNext[p] = false; return '❄️ Pending freeze lifted'; }
+  if (playerRollCap[p]) { playerRollCap[p] = false; return '⏳ Time Collapse lifted'; }
+  if (playerMarketBan[p]) { playerMarketBan[p] = 0; return '🚫 Market ban lifted'; }
+  return null;
+}
+// Phoenix Rebirth: win back up to `cap` of the gold taken from you lately
+function jackRecover(p, cap) {
+  let left = cap, got = 0;
+  for (const ev of jackRecent(p)) {
+    if (ev.kind !== 'gold' || left <= 0 || ev.amt <= 0) continue;
+    const t = Math.min(left, ev.amt);
+    ev.amt -= t; left -= t; got += t;
+  }
+  if (got > 0) gain(p, got);
+  return got;
+}
+// Fate Reversal: undo ONE eligible setback from the last turns.
+// Priority: a freeze > a drop of 4+ tiles > 20+ stolen gold > a roll cap > a market ban. Returns { label, to, gold }.
+function jackReverse(p) {
+  const r = { label: null, to: null, gold: 0 };
+  if (playerPoisoned[p]) { playerPoisoned[p] = false; r.label = '❄️ Freeze undone'; return r; }
+  if (playerFrozenNext[p]) { playerFrozenNext[p] = false; r.label = '❄️ Freeze undone'; return r; }
+  const evs = jackRecent(p);
+  let mv = null, gd = null;
+  for (const ev of evs) {
+    if (ev.kind === 'move' && ev.from - ev.to >= 4 && ev.from > playerPositions[p] && (!mv || ev.from - ev.to >= mv.from - mv.to)) mv = ev;
+    if (ev.kind === 'gold' && ev.amt >= 20 && (!gd || ev.amt >= gd.amt)) gd = ev;
+  }
+  if (mv) { r.to = Math.min(99, mv.from); mv.to = mv.from; r.label = '⏪ Setback undone'; return r; }     // the event is spent (to = from → no longer a setback)
+  if (gd) { r.gold = gd.amt; gd.amt = 0; gain(p, r.gold); r.label = '⏪ Stolen gold returned'; return r; }
+  if (playerRollCap[p]) { playerRollCap[p] = false; r.label = '⏳ Roll cap undone'; return r; }
+  if (playerMarketBan[p]) { playerMarketBan[p] = 0; r.label = '🚫 Market ban undone'; return r; }
+  return r;
+}
+
+// Apply the instant part of an outcome to the game state and describe it. Movement is returned, not performed (r.move).
+function jackResolve(p, idx, k) {
+  const o = JACK[idx], amt = jackAmount(idx, k), pos = playerPositions[p];
+  const r = { idx, k, p, text: '', chips: [], move: null };
+  const chip = (t, c) => r.chips.push({ t, c });
+  const give = n => { gain(p, n); chip('+$' + n, 'good'); floatAtPlayer(p, '+$' + n, '#fde68a'); return n; };
+  const lose = n => { const got = loseGold(p, n); chip('−$' + got, 'bad'); if (got) floatAtPlayer(p, '-$' + got, '#fb7185'); return got; };
+  const fwd = n => {
+    const dest = jackFwd(p, n);
+    if (dest === pos) { give(40); return false; }          // already at the doorstep: nothing to advance, so a small consolation
+    r.move = { to: dest }; chip('▲ +' + (dest - pos) + ' tiles', 'good'); return dest - pos;
+  };
+  const back = n => {
+    const dest = jackBack(p, n);
+    if (dest === pos) { chip('▼ no room to fall', 'bad'); return 0; }
+    r.move = { to: dest }; chip('▼ −' + (pos - dest) + ' tiles', 'bad'); return pos - dest;
+  };
+  const dropShield = () => { if (!playerShields[p]) return false; playerShields[p] = false; chip('💔 Shield lost', 'bad'); return true; };
+
+  switch (idx) {
+    case 0: give(amt); r.text = `A fountain of coins pours out of the card. You pocket <b>$${amt}</b>.`; break;
+    case 1:
+      if (!playerShields[p]) { playerShields[p] = true; chip('🛡️ Holy Shield', 'good'); r.text = 'A Holy Shield wraps around you. It will block the next snake bite or mine.'; }
+      else { give(50); r.text = 'You already carry a Holy Shield, so the blessing turns into <b>$50</b> instead.'; }
+      break;
+    case 2: { const n = fwd(amt); r.text = n ? `A gust of luck throws you <b>${n} tiles</b> forward.` : 'You are already at the doorstep, so Lady Luck leaves <b>$40</b> instead.'; break; }
+    case 3: playerFreeBuy[p] = true; chip('🎁 Next purchase free', 'good'); r.text = 'Your <b>next Black Market purchase costs nothing</b>.'; break;
+    case 4: playerBonusRolls[p]++; chip('🎲 +1 roll', 'good'); r.text = 'Fate deals you <b>one extra dice roll</b> after your next move.'; break;
+    case 5: give(50); playerDelayedGold[p].push({ amt: 50, wait: turnPaid ? 1 : 2 }); chip('+$50 next turn', 'good'); r.text = '<b>$50</b> now, and another <b>$50</b> arrives with your next salary.'; break;
+    case 6: {
+      const c = jackCleanse(p), got = jackRecover(p, 100);
+      if (c) chip(c, 'good');
+      if (got) chip('+$' + got + ' recovered', 'good');
+      if (!c && !got) { give(50); r.text = 'The phoenix finds nothing to cleanse, so it leaves a feather worth <b>$50</b>.'; }
+      else r.text = [c ? 'A curse burns away.' : '', got ? `You win back <b>$${got}</b> of the gold you lost.` : ''].filter(Boolean).join(' ');
+      break;
+    }
+    case 7: {
+      const n = fwd(10);
+      if (n) { r.move.noSnake = true; r.text = `A hidden door opens: <b>${n} tiles</b> forward, and no snake can touch you on the way.`; }
+      else r.text = 'The shortcut leads nowhere — you are at the doorstep — so you find <b>$40</b>.';
+      break;
+    }
+    case 8: {
+      const v = jackReverse(p);
+      if (!v.label) { give(75); r.text = 'Fate rewinds, but finds nothing to undo. It leaves <b>$75</b> for your trouble.'; break; }
+      chip(v.label, 'good');
+      if (v.gold) chip('+$' + v.gold, 'good');
+      if (v.to != null) { r.move = { to: v.to, noSnake: true }; chip('▲ back to tile ' + v.to, 'good'); }
+      r.text = 'Time runs backwards for a moment and one recent misfortune is <b>undone</b>.';
+      break;
+    }
+    case 9: {
+      give(150);
+      playerShields[p] = true; chip('🛡️ Holy Shield', 'good');
+      const n = fwd(3);
+      r.text = `A crown of fortune: <b>$150</b>, a <b>Holy Shield</b>${n ? ` and <b>${n} tiles</b> forward` : ''}.`;
+      break;
+    }
+    case 10: { const got = lose(amt); r.text = got ? `The merchant's scales were rigged. You are <b>$${got}</b> poorer.` : 'Jack tried to fleece you, but your purse was already empty.'; break; }
+    case 11: { const n = back(amt); r.text = n ? `Serpents coil around the card and drag you <b>${n} tiles</b> back.` : 'The serpents hiss, but there is nowhere left to drag you.'; break; }
+    case 12:
+      if (playerClasses[p] === 'angel') { chip('😇 Divine Grace', 'good'); r.text = 'Jack slides a frozen contract across the table, but <b>Angels are immune to freezing</b>.'; }
+      else if (playerPoisoned[p] || playerFrozenNext[p]) { chip('❄️ already frozen', 'bad'); r.text = 'A frozen contract, but you are already on ice.'; }
+      else { playerFrozenNext[p] = true; chip('❄️ Skip next turn', 'bad'); r.text = 'You signed in ice-cold ink: <b>you will skip your next turn</b>.'; }
+      break;
+    case 13: { const got = lose(50), n = back(3); r.text = `The debt explodes: <b>−$${got}</b>${n ? ` and you are blasted <b>${n} tiles</b> back` : ''}.`; break; }
+    case 14:
+      if (dropShield()) r.text = 'Your protection shatters. <b>Your shield is gone</b>.';
+      else { const got = lose(40); r.text = got ? `You had no shield to break, so Jack takes <b>$${got}</b> instead.` : 'You had no shield and no coin. Jack leaves empty-handed.'; }
+      break;
+    case 15: {
+      const rs = rivals(p);
+      let q = rs[0];
+      for (const x of rs) if (playerCash[x] > playerCash[q]) q = x;                // the richest rival (ties: the lowest seat)
+      const got = loseGold(p, Math.min(50, playerCash[p]));
+      if (got) { gain(q, got); chip('−$' + got, 'bad'); floatAtPlayer(p, '-$' + got, '#fb7185'); floatAtPlayer(q, '+$' + got, '#fde68a'); r.text = `Bandits ambush you! <b>${playerName(q)}</b>, the richest rival, steals <b>$${got}</b>.`; }
+      else { chip('empty purse', 'bad'); r.text = 'Bandits ambush you, but your purse is empty. They leave grumbling.'; }
+      break;
+    }
+    case 16: playerRollCap[p] = true; chip('⏳ Next roll max 3', 'bad'); r.text = 'Time itself stumbles: <b>your next roll can be at most 3</b>.'; break;
+    case 17: { const n = back(10); r.major = true; r.text = n ? `The floor opens into a void. You fall <b>${n} tiles</b>.` : 'A void opens beneath you, but there is no further down to fall.'; break; }
+    case 18: { const got = lose(100); playerMarketBan[p] = 1; chip('🚫 Market closed 1 turn', 'bad'); r.text = `A cursed fortune: <b>−$${got}</b>, and the <b>Black Market is closed to you for your next turn</b>.`; break; }
+    case 19: {
+      const got = lose(150), n = back(5), sh = dropShield();
+      r.major = true;
+      r.text = `Jack betrays you: <b>−$${got}</b>${n ? `, <b>${n} tiles</b> back` : ''}${sh ? ' and your <b>shield shatters</b>' : ''}.`;
+      break;
+    }
+  }
+  if (o.major) r.major = true;
+  return r;
+}
+
+// After the card has flipped: carry out the movement and resolve the tile you land on
+async function jackMove(p, mv, gid) {
+  if (!mv || mv.to === playerPositions[p]) return;
+  const from = playerPositions[p], isBack = mv.to < from;
+  if (isBack) noteMove(p, from, mv.to);
+  playSound(isBack ? 'snake' : 'ladder');
+  floatAtPlayer(p, isBack ? '▼ Dragged back' : '▲ Whoosh!', isBack ? '#fda4af' : '#fcd34d');
+  movePlayerTo(p, mv.to, 0.9);
+  await sleep(1000);
+  if (gid !== gameId) return;
+  skipSnakeOnce = !!mv.noSnake;
+  try { await resolveTile(p, gid); } finally { skipSnakeOnce = false; }
+}
+
+/* ---- the deal: state, authority, log ---- */
+function jackBegin(p, pick) {
+  const j = { p, pick, out: null, ui: false, dealP: null, contRes: null, timer: null };
+  j.outP = new Promise(r => { j.gotOut = r; });
+  j.done = new Promise(r => { j.finish = r; });
+  jack = j;
+  jackRun(j);
+  return j;
+}
+// an outcome arrived (from the local draw or from the log). Ignored unless a deal is waiting for it: no double rewards.
+function jackDeliver(idx, k) {
+  if (!jack || jack.out) return false;
+  if (!(idx >= 0 && idx < JACK.length) || !(k >= 0 && k < JACK[idx].n)) return false;
+  jack.out = { idx, k };
+  jack.gotOut(jack.out);
+  return true;
+}
+// solo, hot-seat, bots, or the online host buying: draw it here, record it, deliver it
+function jackDealLocal() {
+  if (!jack || jack.out) return;
+  const o = rollJackOutcome();
+  if (NET.on) netPush(jackCode(o.idx, o.k));
+  jackDeliver(o.idx, o.k);
+}
+// the online host saw a guest's purchase: draw ONCE and append to the shared log (everyone, the host included, applies it from there)
+function jackDealViaLog() {
+  if (!jack || jack.out || jack.dealt || !isHost()) return;
+  jack.dealt = true;                                   // one draw per deal, however many times this is asked
+  const o = rollJackOutcome();
+  NET.G.log += jackCode(o.idx, o.k);
+  netPublish();
+}
+
+async function jackRun(j) {
+  const gid = gameId;
+  if (!fastMode) { j.ui = true; j.dealP = jackShowDeal(j); }
+  const out = await j.outP;
+  if (gid !== gameId || jack !== j) return;
+  const o = JACK[out.idx];
+  const r = jackResolve(j.p, out.idx, out.k);
+  refreshAll();
+  if (!fastMode) {
+    if (!j.dealP) { j.ui = true; j.dealP = jackShowDeal(j, true); }
+    await j.dealP;
+    if (gid !== gameId || jack !== j) return;
+    await jackReveal(j, r);
+    if (gid !== gameId || jack !== j) return;
+  }
+  const plain = r.text.replace(/<[^>]+>/g, '');
+  addLogEntry(j.p, `🃏 <b>${o.name}</b> — ${plain}`);
+  if (o.good) playerStats[j.p].jackGood++; else playerStats[j.p].jackBad++;
+  await jackMove(j.p, r.move, gid);
+  if (gid !== gameId || jack !== j) return;
+  refreshAll();
+  jack = null;
+  j.finish();
+  if (playerPositions[j.p] >= 100) { showWinModal(j.p); return; }       // unreachable by design (Jack stops at 99); a safety net, not a rule
+  updateControls();
+}
+
+/* ---- the show ---- */
+function jackReset() {
+  clearTimeout(jackReset.t);
+  const cards = $('jack-cards');
+  cards.innerHTML = [0, 1, 2].map(i => `<button class="jack-card" data-i="${i}" style="--d:${i * 0.18}s" aria-label="Card ${i + 1}"><div class="jc-inner"><div class="jc-back"><span>🃏</span></div><div class="jc-front"><div class="jc-icon"></div><div class="jc-name"></div></div></div></button>`).join('');
+  const stage = $('jack-stage');
+  stage.classList.remove('good', 'bad', 'jack-shake', 'revealed');
+  $('jack-result').classList.add('hidden');
+  $('jack-fx').innerHTML = '';
+  $('jack-continue').classList.add('hidden');
+  $('jack-cancel').classList.add('hidden');
+}
+function jackLine(t) { $('jack-line').innerHTML = t; }
+// the buyer picks a card (before anything is paid)
+function jackChoose() {
+  jackChosen = false;
+  jackReset();
+  jackLine('<b>Jack of Trader</b> drifts out of the shadows…');
+  $('jack-cancel').classList.remove('hidden');
+  openModal('jack-modal');
+  jackReset.t = setTimeout(() => {
+    if (jack || jackChosen) return;
+    jackLine('“Pick a card, traveller. <i>Any</i> card.”');
+    document.querySelectorAll('#jack-cards .jack-card').forEach(b => { b.disabled = false; b.onclick = () => jackPick(+b.dataset.i); });
+  }, 1100);
+  document.querySelectorAll('#jack-cards .jack-card').forEach(b => { b.disabled = true; });
+}
+function jackPick(i) {
+  if (jackChosen) return;
+  jackChosen = true;
+  commitBuy('jack', i);
+  if (!jack) { jackChosen = false; closeModal('jack-modal'); }
+}
+function jackCancel() { if (jack || jackChosen) return; closeModal('jack-modal'); }
+// the picked card is highlighted for everyone (a spectator's screen opens on the entrance first)
+async function jackShowDeal(j, late) {
+  const m = $('jack-modal');
+  if (m.classList.contains('hidden') || m.dataset.state === 'closed') {
+    jackReset();
+    jackLine(`<b>Jack of Trader</b> appears for ${playerName(j.p)}…`);
+    openModal('jack-modal');
+    playSound('shuffle');
+    await sleep(late ? 400 : 1300);
+  }
+  const cards = document.querySelectorAll('#jack-cards .jack-card');
+  cards.forEach((b, i) => { b.disabled = true; b.classList.toggle('picked', i === j.pick); b.classList.toggle('dim', i !== j.pick); });
+  $('jack-cancel').classList.add('hidden');
+  jackLine(j.out ? 'Jack turns the card over…' : '<i>Jack shuffles the fates…</i>');
+  playSound('shuffle');
+  await sleep(900);
+}
+function jackParticles(good, major) {
+  const fx = $('jack-fx');
+  const set = good ? ['✨', '🪙', '⭐', '💛'] : ['💜', '🔥', '☠️', '🩸'];
+  let h = '';
+  for (let i = 0; i < 26; i++) {
+    const x = Math.round(Math.random() * 100), d = (Math.random() * 0.5).toFixed(2), s = (0.7 + Math.random() * 0.9).toFixed(2), dx = Math.round((Math.random() - 0.5) * 120);
+    h += `<span class="jp ${good ? 'up' : 'down'}" style="left:${x}%;animation-delay:${d}s;--s:${s};--dx:${dx}px">${set[i % set.length]}</span>`;
+  }
+  fx.innerHTML = h;
+}
+async function jackReveal(j, r) {
+  const o = JACK[r.idx], stage = $('jack-stage');
+  const card = document.querySelector(`#jack-cards .jack-card[data-i="${j.pick}"]`);
+  if (card) {
+    card.querySelector('.jc-icon').textContent = o.icon;
+    card.querySelector('.jc-name').textContent = o.name;
+    card.classList.add(o.good ? 'is-good' : 'is-bad');
+    card.classList.add('flipped');
+  }
+  playSound('flip');
+  await sleep(900);
+  stage.classList.add('revealed', o.good ? 'good' : 'bad');
+  if (!o.good && r.major) { stage.classList.add('jack-shake'); document.body.classList.add('jack-quake'); setTimeout(() => document.body.classList.remove('jack-quake'), 700); }
+  playSound(o.good ? 'cash' : (r.major ? 'explosion' : 'curse'));
+  jackParticles(o.good, r.major);
+  jackLine(o.good ? '“Fortune smiles on you.”' : '“Ah. The cards were not kind.”');
+  $('jack-r-title').innerHTML = `${o.icon} ${o.name}`;
+  $('jack-r-text').innerHTML = r.text;
+  $('jack-r-chips').innerHTML = r.chips.map(c => `<span class="jchip ${c.c}">${c.t}</span>`).join('');
+  $('jack-result').classList.remove('hidden');
+  $('jack-continue').classList.remove('hidden');
+  // the player who bought it presses Continue; everyone else (and bots) is released automatically
+  const manual = !isBot(j.p) && (!NET.on || j.p === NET.seat);
+  const gid = gameId;
+  await new Promise(res => {
+    j.contRes = res;
+    if (!manual) j.timer = setTimeout(res, 4500);
+  });
+  clearTimeout(j.timer);
+  j.contRes = null;
+  if (gid !== gameId) return;
+  closeModal('jack-modal');
+  await sleep(300);
+}
+function jackContinue() { if (jack && jack.contRes) { const f = jack.contRes; jack.contRes = null; f(); } }
+
+/* ============================================================
    POWER-UPS (roll a 6)
    ============================================================ */
 function applyPowerUp(player, type, target) {
@@ -1727,6 +2356,9 @@ function applyPowerUp(player, type, target) {
       addLogEntry(player, '👼 The enemy Angel\'s Divine Grace <b>blocked</b> the freeze!');
       floatAtPlayer(opp, 'Immune!', '#fef08a');
       key = 'angelImmune'; ctx = { p: opp };
+    } else if (playerThawed[opp]) {
+      addLogEntry(player, '🧊 The rival has just thawed out — the freeze <b>fizzles</b>.');
+      floatAtPlayer(opp, 'Thawed!', '#bfdbfe');
     } else {
       playerPoisoned[opp] = true;
       addLogEntry(player, '❄️ Power-up: <b>froze</b> the rival — they skip their next turn.');
@@ -1739,7 +2371,7 @@ function applyPowerUp(player, type, target) {
     key = 'shield';
     playSound('powerup');
   } else if (type === 'cash') {
-    playerCash[player] += 250;
+    gain(player, 250);
     floatAtPlayer(player, '+$250', '#fde68a');
     addLogEntry(player, '💰 Power-up: claimed a <b>+$250</b> bounty.');
     key = 'bounty'; ctx.amt = 250;
@@ -1780,35 +2412,64 @@ function commitPowerUp(type, target) {
 /* ============================================================
    AI
    ============================================================ */
-async function aiPowerUp() {
+const aiRival = me => rivals(me).reduce((a, b) => (playerPositions[b] > playerPositions[a] ? b : a));   // the rival to worry about: the leader
+async function aiPowerUp(me) {
   await sleep(700);
-  const me = 2, op = 1;
+  const op = defaultTarget(me) || aiRival(me);
   let c;
   if (playerPositions[op] - playerPositions[me] >= 14) c = 'swap';
-  else if (playerPositions[op] > playerPositions[me] && playerClasses[op] !== 'angel' && !playerPoisoned[op]) c = 'freeze';
+  else if (playerPositions[op] > playerPositions[me] && playerClasses[op] !== 'angel' && !playerPoisoned[op] && !playerThawed[op]) c = 'freeze';
   else if (!playerShields[me]) c = 'shield';
   else c = 'cash';
   await applyPowerUp(me, c);
   await sleep(600);
 }
-function aiChooseItem() {
-  const me = 2, op = 1;
+function aiChooseItem(me) {
+  const op = defaultTarget(me) || aiRival(me);
   const pos = playerPositions[me], opPos = playerPositions[op], cash = playerCash[me];
   const can = k => cash >= getCost(me, k);
   if (can('swap') && opPos - pos >= 18 && opPos < 95) return 'swap';
-  if (can('freeze') && playerClasses[op] !== 'angel' && !playerPoisoned[op] && opPos - pos >= 6) return 'freeze';
+  if (can('freeze') && playerClasses[op] !== 'angel' && !playerPoisoned[op] && !playerThawed[op] && opPos - pos >= 6) return 'freeze';
   const snakeAhead = Object.keys(SNAKES).some(s => { s = +s; return s > pos && s <= pos + 6 && customSnakeOwner[s] !== me; });
   if (can('bribe') && snakeAhead && !playerBribes[me] && !playerShields[me]) return 'bribe';
   if (can('checkpoint') && pos >= 55 && playerCheckpoints[me] < pos - 10 && cash >= getCost(me, 'checkpoint') + 100) return 'checkpoint';
   if (cash >= 450 && can('mine') && opPos < 92 && Math.random() < 0.5) return 'mine';
   if (cash >= 450 && can('buysnake') && Math.random() < 0.5) return 'buysnake';
+  if (can('jack') && cash >= getCost(me, 'jack') + 150 && Math.random() < 0.35) return 'jack';
   return null;
 }
-async function aiShop() {
+async function aiShop(me) {
   await sleep(450);
   if (shopPurchasedThisTurn) return;
-  const key = aiChooseItem();
-  if (key && buyShopItem(key)) await sleep(800);
+  const key = aiChooseItem(me);
+  if (key === 'jack') {
+    if (buyShopItem('jack', Math.floor(Math.random() * 3))) { const j = jack; jackDealLocal(); if (j) await j.done; await sleep(500); }
+  } else if (key && buyShopItem(key)) await sleep(800);
+}
+
+// Where a piece would end up after one roll, counting ladders, snakes and the haste rune (not shields or mines).
+function aiLandingValue(me, from, roll) {
+  const mv = computePath(from, roll, RULES.bounce);
+  let t = mv.landing;
+  if (t >= 100) return 140;                         // finishing is worth far more than any tile
+  if (LADDERS[t]) t = LADDERS[t];
+  else if (SNAKES[t] && customSnakeOwner[t] !== me && !playerBribes[me] && !playerShields[me]) t = SNAKES[t];
+  else if (SPECIAL_TILES[t] && SPECIAL_TILES[t].type === 'boost') t = Math.min(100, t + 4);
+  return t >= 100 ? 140 : t;
+}
+// The bot rolls whichever die it expects to leave it furthest along, after weighing the price in gold.
+function aiChooseDie(me) {
+  const pos = playerPositions[me], cash = playerCash[me];
+  const goldValue = cash >= 400 ? 0.01 : 0.03;      // tiles per gold coin: spare gold is cheap, a thin purse is precious
+  let best = 'normal', bestScore = -Infinity;
+  for (const k of DICE_KEYS) {
+    const d = DICE[k];
+    if (d.cost > cash) continue;
+    const ev = d.faces.reduce((s, f) => s + aiLandingValue(me, pos, f) + (d.bonus.includes(f) ? 5 : 0), 0) / d.faces.length;   // a bonus face = extra roll + power-up
+    const score = ev - d.cost * goldValue;
+    if (score > bestScore + 1e-9) { best = k; bestScore = score; }
+  }
+  return best;
 }
 function scheduleBot(ms) {
   clearTimeout(botTimer);
@@ -1824,15 +2485,16 @@ function handleRollClick() {
   if (anyModalOpen() || splashActive()) return;
   if (NET.on) {
     if (!canAct()) return;
-    const v = 1 + Math.floor(Math.random() * 6);
-    netPush(String(v));            // everyone replays this exact roll
-    executeTurn(v, false);
+    const dk = DICE[selectedDie].cost <= playerCash[currentPlayer] ? selectedDie : 'normal';
+    const v = rollDie(dk);
+    netPush(DICE[dk].code + String(v));      // everyone replays this exact roll: one digit, or a die letter + digit
+    executeTurn(v, false, dk);
     return;
   }
   executeTurn();
 }
 
-async function executeTurn(forcedRoll, fromLog) {
+async function executeTurn(forcedRoll, fromLog, dieKey) {
   if (gameOver || isRolling) return;
   const gid = gameId;
   isRolling = true;
@@ -1847,13 +2509,24 @@ async function executeTurn(forcedRoll, fromLog) {
   // Salary (once per turn, not on extra rolls)
   let salary = 0;
   if (!wasExtra) {
-    salary = playerClasses[me] === 'human' ? 100 : 50;
-    playerCash[me] += salary;
+    salary = playerClasses[me] === 'human' ? TUNE.humanSalary : TUNE.baseSalary + (playerClasses[me] === 'demon' ? TUNE.demonBonus : playerClasses[me] === 'angel' ? TUNE.angelBonus : 0);
+    gain(me, salary);
+    playerStats[me].turns++;
+    turnPaid = true;
     floatAtPlayer(me, `+$${salary}`, '#fde68a');
+    // Golden Investment: the second payment arrives with a later salary
+    for (const e of playerDelayedGold[me].slice()) {
+      if (--e.wait > 0) continue;
+      playerDelayedGold[me].splice(playerDelayedGold[me].indexOf(e), 1);
+      gain(me, e.amt);
+      floatAtPlayer(me, `+$${e.amt}`, '#fde68a');
+      addLogEntry(me, `📈 Golden Investment pays out: <b>+$${e.amt}</b>.`);
+    }
     refreshAll();
 
     if (playerPoisoned[me]) {
       playerPoisoned[me] = false;
+      playerThawed[me] = 1;
       addLogEntry(me, '❄️ Frozen solid — <b>turn skipped</b>!');
       await splash('frozenSkip', { p: me });
       setBanner(`<p class="text-xs font-bold text-sky-300">${name} is frozen and loses this turn (+$${salary})</p>`);
@@ -1866,37 +2539,59 @@ async function executeTurn(forcedRoll, fromLog) {
   }
 
   if (isBot(me) && !shopPurchasedThisTurn) {
-    await aiShop();
+    await aiShop(me);
     await splashIdle();
     if (gid !== gameId) return;
   }
 
-  const roll = forcedRoll || (1 + Math.floor(Math.random() * 6));
-  await rollDice3D(roll);
+  // Which die? A replayed or online roll names its die; a bot picks one; a local human uses the picker.
+  let dKey = forcedRoll ? (DICE[dieKey] ? dieKey : 'normal') : (isBot(me) ? aiChooseDie(me) : selectedDie);
+  if (!DICE[dKey] || DICE[dKey].cost > playerCash[me]) dKey = 'normal';      // can't afford it → the normal die
+  let roll = forcedRoll || rollDie(dKey);
+  if (!DICE[dKey].faces.includes(roll)) { dKey = 'normal'; if (!DICE.normal.faces.includes(roll)) roll = 1; }   // a roll this die can't produce is ignored
+  const die = DICE[dKey];
+  selectedDie = 'normal';
+  if (die.cost > 0) {
+    spend(me, die.cost);
+    playerStats[me].dice++;
+    floatAtPlayer(me, `-$${die.cost}`, '#fb7185');
+    addLogEntry(me, `${die.icon} Paid <b>$${die.cost}</b> for the <b>${die.name}</b>.`);
+    refreshAll();
+  }
+  updateControls();
+  await rollDice3D(roll, dKey);
   if (gid !== gameId) return;
 
-  setBanner(`<p class="text-xs font-bold text-white">${name} rolled <span style="padding:2px 9px;border-radius:8px;background:rgba(139,92,246,.3);border:1px solid rgba(167,139,250,.5);color:#ddd6fe;font-size:14px">${roll}</span>${salary ? ` <span class="text-amber-300">(+$${salary} salary)</span>` : ''}</p>`);
+  // Time Collapse: this roll can be 3 at most
+  let capped = 0;
+  if (playerRollCap[me]) {
+    playerRollCap[me] = false;
+    if (roll > 3) { capped = roll; roll = 3; floatAtPlayer(me, '⏳ Capped at 3', '#c4b5fd'); addLogEntry(me, `⏳ Time Collapse: the roll of ${capped} is <b>capped at 3</b>.`); }
+    else addLogEntry(me, '⏳ Time Collapse fizzles: the roll was already 3 or less.');
+  }
+
+  setBanner(`<p class="text-xs font-bold text-white">${name} rolled <span style="padding:2px 9px;border-radius:8px;background:rgba(139,92,246,.3);border:1px solid rgba(167,139,250,.5);color:#ddd6fe;font-size:14px">${roll}</span>${capped ? ` <span class="text-violet-300">(${capped} → 3 ⏳)</span>` : ''}${dKey !== 'normal' ? ` <span class="text-slate-400">${die.icon} ${die.short}</span>` : ''}${salary ? ` <span class="text-amber-300">(+$${salary} salary)</span>` : ''}</p>`);
 
   if (playerClasses[me] === 'human' && roll % 2 === 0) {
-    playerCash[me] += 100;
-    floatAtPlayer(me, '+$100', '#fde68a');
-    addLogEntry(me, `🧑 Work ethic: even roll (${roll}) earned <b>+$100</b>.`);
+    gain(me, TUNE.humanEven);
+    floatAtPlayer(me, `+$${TUNE.humanEven}`, '#fde68a');
+    addLogEntry(me, `🧑 Work ethic: even roll (${roll}) earned <b>+$${TUNE.humanEven}</b>.`);
     refreshAll();
   }
 
-  if (roll === 6) {
+  if (die.bonus.includes(roll)) {                      // a bonus face (a 6 on the normal and Lucky dice): an extra roll and a power-up
     extraRollPending = true;
     $('extra-roll-badge').classList.remove('hidden');
     playSound('powerup');
     await splash('sixRoll', { p: me });
     if (gid !== gameId) return;
-    if (isBot(me)) await aiPowerUp(); else await promptPowerUpChoice(fromLog);
+    if (isBot(me)) await aiPowerUp(me); else await promptPowerUpChoice(fromLog);
     if (gid !== gameId) return;
   }
 
   // Movement
   const from = playerPositions[me];
-  const target = from + roll;
+  const mv = computePath(from, roll, RULES.bounce);
 
   // One animated step onto `pos` (shared by forward and bounce-back movement)
   const stepOnto = async (pos) => {
@@ -1906,9 +2601,8 @@ async function executeTurn(forcedRoll, fromLog) {
     if (playerClasses[me] === 'demon') {
       for (const q of rivals(me)) {
         if (pos !== playerPositions[q] || playerCash[q] <= 0) continue;
-        const stolen = Math.min(50, playerCash[q]);
-        playerCash[q] -= stolen;
-        playerCash[me] += stolen;
+        const stolen = loseGold(q, Math.min(TUNE.demonSteal, playerCash[q]));
+        gain(me, stolen);
         floatAtPlayer(q, `-$${stolen}`, '#fb7185');
         floatAtPlayer(me, `+$${stolen}`, '#fde68a');
         addLogEntry(me, `😈 Hellfire: passed ${playerName(q)} and stole <b>$${stolen}</b>!`);
@@ -1920,33 +2614,44 @@ async function executeTurn(forcedRoll, fromLog) {
     await sleep(210);
   };
 
-  // Walk forward as far as tile 100, then bounce back for any leftover steps.
-  // Example: on 98 rolling 5 → 99, 100 (2 forward) then 99, 98, 97 (3 back) → lands on 97.
-  const forwardEnd = Math.min(target, 100);
-  for (let pos = from + 1; pos <= forwardEnd; pos++) {
-    await stepOnto(pos);
-    if (gid !== gameId) return;
-  }
-
-  if (target > 100) {
-    const back = target - 100;
-    const landing = 100 - back;
-    addLogEntry(me, `Rolled ${roll} from ${from} — hit tile 100 and <b>bounced back ${back}</b> to tile <b>${landing}</b>.`);
-    floatAtPlayer(me, 'Bounce!', '#fca5a5');
-    await splash('bounceBack', { p: me, n: landing });
-    if (gid !== gameId) return;
-    for (let pos = 99; pos >= landing; pos--) {
+  if (mv.blocked) {
+    // "Exact" rule: a roll past 100 is wasted
+    addLogEntry(me, `Rolled ${roll} but needs exactly <b>${100 - from}</b> to land on 100.`);
+    floatAtPlayer(me, 'Need exact!', '#fca5a5');
+    await splash('needExact', { p: me });
+    await sleep(900);
+  } else {
+    // Walk up toward 100 — and, under the "bounce" rule, back down with the leftover steps.
+    // Example: on 98 rolling 5 → 99, 100 (2 forward) then 99, 98, 97 (3 back) → lands on 97.
+    for (const pos of mv.fwd) {
       await stepOnto(pos);
       if (gid !== gameId) return;
     }
+    if (mv.over > 0) {
+      playerStats[me].bounces++;
+      addLogEntry(me, `Rolled ${roll} from ${from} — hit tile 100 and <b>bounced back ${mv.over}</b> to tile <b>${mv.landing}</b>.`);
+      floatAtPlayer(me, 'Bounce!', '#fca5a5');
+      await splash('bounceBack', { p: me, n: mv.landing });
+      if (gid !== gameId) return;
+      for (const pos of mv.back) {
+        await stepOnto(pos);
+        if (gid !== gameId) return;
+      }
+    }
+    await resolveTile(me, gid);
+    if (gid !== gameId) return;
+    if (playerPositions[me] === 100) { showWinModal(me); return; }
   }
 
-  await resolveTile(me, gid);
-  if (gid !== gameId) return;
-  if (playerPositions[me] === 100) { showWinModal(me); return; }
-
+  let bonusRoll = false;
+  if (!extraRollPending && playerBonusRolls[me] > 0) {      // Second Chance
+    playerBonusRolls[me]--;
+    extraRollPending = true;
+    bonusRoll = true;
+    $('extra-roll-badge').classList.remove('hidden');
+  }
   if (extraRollPending) {
-    addLogEntry(me, '🔥 Rolled a 6 — <b>extra roll</b>!');
+    addLogEntry(me, bonusRoll ? '🎲 Second Chance — <b>extra roll</b>!' : '🔥 Rolled a 6 — <b>extra roll</b>!');
     isRolling = false;
     updateControls();
     if (isBot(me)) scheduleBot(1000);
@@ -1956,6 +2661,15 @@ async function executeTurn(forcedRoll, fromLog) {
 }
 
 function switchTurn() {
+  // end-of-turn bookkeeping for the player who is leaving
+  const prev = currentPlayer;
+  if (playerThawed[prev] === 2) playerThawed[prev] = 0;                       // the protection after a thaw lasts through your next full turn
+  else if (playerThawed[prev] === 1) playerThawed[prev] = 2;
+  if (playerFrozenNext[prev]) { playerFrozenNext[prev] = false; playerPoisoned[prev] = true; }     // Frozen Contract bites now: their next turn is skipped
+  if (playerMarketBan[prev] === 2) playerMarketBan[prev] = 0;                                          // Cursed Fortune: the closed turn is over
+  else if (playerMarketBan[prev] === 1) playerMarketBan[prev] = 2;                                      // ...and starts with their next turn
+  if (playerEvents[prev]) { playerEvents[prev].prev = playerEvents[prev].cur; playerEvents[prev].cur = []; }
+  turnPaid = false;
   currentPlayer = currentPlayer % NP + 1;
   shopPurchasedThisTurn = false;
   extraRollPending = false;
@@ -1991,11 +2705,13 @@ async function resolveOnce(p) {
       await splash('mineBlocked', { p });
       return false;
     }
+    playerStats[p].mines++;
     burst(pos, ['💥', '🔥', '✨'], 10);
     playSound('explosion');
     let back = Math.max(1, pos - 6);
     if (cp > 0) back = Math.min(pos, Math.max(back, cp));
     addLogEntry(p, `💥 Stepped on a <b>mine</b>! Blasted back to tile ${back}.`);
+    noteMove(p, pos, back);
     floatText(pos, 'BOOM!', '#fb923c');
     movePlayerTo(p, back, 0.7);
     await sleep(900);
@@ -2006,12 +2722,13 @@ async function resolveOnce(p) {
   // 2. Ladders
   if (LADDERS[pos]) {
     let dest = LADDERS[pos];
-    if (playerClasses[p] === 'wizard' && dest + 2 <= 100 && !SNAKES[dest + 2]) {
-      dest += 2;
+    if (playerClasses[p] === 'wizard' && dest + TUNE.wizardLadder <= 100 && !SNAKES[dest + TUNE.wizardLadder]) {
+      dest += TUNE.wizardLadder;
       addLogEntry(p, `🧙‍♂️ Arcane Affinity: climbed a ladder with +2 bonus tiles to <b>${dest}</b>!`);
     } else {
       addLogEntry(p, `▲ Climbed a ladder to tile <b>${dest}</b>!`);
     }
+    playerStats[p].ladders++;
     playSound('ladder');
     floatText(pos, '▲ Climb!', '#fcd34d');
     movePlayerTo(p, dest, 0.9);
@@ -2020,8 +2737,8 @@ async function resolveOnce(p) {
     return true;
   }
 
-  // 3. Snakes
-  if (SNAKES[pos]) {
+  // 3. Snakes (Secret Shortcut and Fate Reversal move you without waking them)
+  if (SNAKES[pos] && !skipSnakeOnce) {
     if (customSnakeOwner[pos] === p) {
       addLogEntry(p, '🐍 Your own serpent trap lets you pass unharmed.');
       await splash('snakeDodge', { p });
@@ -2056,6 +2773,8 @@ async function resolveOnce(p) {
     } else {
       addLogEntry(p, `▼ Bitten by a snake! Slid down to tile <b>${dest}</b>.`);
     }
+    playerStats[p].snakes++;
+    noteMove(p, pos, dest);
     playSound('snake');
     floatText(pos, '🐍 Bitten!', '#fda4af');
     movePlayerTo(p, dest, 0.9);
@@ -2089,7 +2808,7 @@ async function resolveOnce(p) {
     }
     if (st.type === 'cash') {
       const bonus = pos > 50 ? 300 : 200;
-      playerCash[p] += bonus;
+      gain(p, bonus);
       addLogEntry(p, `💰 Treasure chest: collected <b>+$${bonus}</b>!`);
       floatText(pos, `+$${bonus}`, '#fde68a');
       burst(pos, ['🪙', '✨'], 8);
@@ -2104,6 +2823,9 @@ async function resolveOnce(p) {
         addLogEntry(p, '👼 Divine Grace: immune to the frost trap!');
         floatText(pos, 'Immune!', '#fef08a');
         await splash('angelImmune', { p });
+      } else if (playerThawed[p]) {
+        addLogEntry(p, '🧊 Still thawing out — the frost trap <b>does nothing</b>.');
+        floatText(pos, 'Thawed!', '#bfdbfe');
       } else {
         playerPoisoned[p] = true;
         addLogEntry(p, '❄️ Frost trap: you will <b>skip your next turn</b>!');
@@ -2122,6 +2844,16 @@ async function resolveOnce(p) {
 /* ============================================================
    WIN / RESET
    ============================================================ */
+// Match summary: one column per player, the winner highlighted. Everything here is derived from the replayed game, so every device shows the same numbers.
+function renderWinStats(winner) {
+  const rows = [
+    ['🎲 Turns', 'turns'], ['🐍 Snake bites', 'snakes'], ['🪜 Ladders', 'ladders'], ['💥 Mines hit', 'mines'],
+    ['↩ Bounces', 'bounces'], ['🪙 Gold earned', 'earned', '$'], ['🛒 Gold spent', 'spent', '$'], ['😈 Gold stolen', 'lost', '$'], ['🎯 Special dice', 'dice'], ['🃏 Jack gambles', 'jack']
+  ];
+  const head = PLAYERS().map(q => `<th style="color:${TEAM[q].c}">${CLASS_ICON[playerClasses[q]]}<div>${playerName(q)}</div></th>`).join('');
+  const body = rows.map(([label, key, pre]) => `<tr><td class="sl">${label}</td>${PLAYERS().map(q => `<td class="${q === winner ? 'win' : ''}">${pre || ''}${playerStats[q][key]}</td>`).join('')}</tr>`).join('');
+  return `<table class="stat-table"><thead><tr><th></th>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
 function showWinModal(p) {
   gameOver = true;
   updateControls();
@@ -2131,6 +2863,7 @@ function showWinModal(p) {
   addLogEntry(p, `🏆 <b>${playerName(p)}</b> reached the treasure!`);
   $('win-title').textContent = `${playerName(p).toUpperCase()} WINS!`;
   $('win-subtitle').textContent = `${CLASSES[playerClasses[p]].name} claimed the treasure on tile 100 with $${playerCash[p]} in the purse.`;
+  $('win-stats').innerHTML = renderWinStats(p);
   const gid = gameId;
   splash('win', { p }).then(() => setTimeout(() => { if (gid === gameId && gameOver) openModal('win-modal'); }, 500));
 }
@@ -2165,10 +2898,22 @@ function resetGame() {
   currentPlayer = 1;
   playerPositions = mk(1);
   playerCash = mk(200);
+  playerStats = mk(() => newStats());
+  selectedDie = 'normal';
+  if (gameMode !== 'ONL') RULES.bounce = soloBounce;     // online matches take the rule from the room
   playerShields = mk(p => playerClasses[p] === 'angel');
   playerBribes = mk(false);
   playerCheckpoints = mk(0);
   playerPoisoned = mk(false);
+  playerThawed = mk(0);
+  playerBonusRolls = mk(0);
+  playerDelayedGold = mk(() => []);
+  playerFreeBuy = mk(false);
+  playerRollCap = mk(false);
+  playerMarketBan = mk(0);
+  playerFrozenNext = mk(false);
+  playerEvents = mk(() => ({ cur: [], prev: [] }));
+  jack = null; jackChosen = false; turnPaid = false; skipSnakeOnce = false;
   shopPurchasedThisTurn = false;
   SNAKES = { ...BASE_SNAKES };
   customSnakeOwner = {};
@@ -2180,7 +2925,7 @@ function resetGame() {
 
   if (window.resolvePowerUp) { const r = window.resolvePowerUp; window.resolvePowerUp = null; r(); }
   if (NET.puWait) { const r = NET.puWait; NET.puWait = null; r(); }
-  ['powerup-modal', 'shop-modal', 'target-modal', 'win-modal', 'confirm-modal'].forEach(closeModal);
+  ['powerup-modal', 'shop-modal', 'target-modal', 'win-modal', 'confirm-modal', 'jack-modal'].forEach(closeModal);
 
   $('extra-roll-badge').classList.add('hidden');
   $('fx-layer').innerHTML = '';
@@ -2194,6 +2939,8 @@ function resetGame() {
   buildPlayerCards();
   buildTokens();
   syncModeButtons();
+  syncRuleText();
+  buildDice('normal');
   updateTurnUI();
   P.forEach(p => { if (playerShields[p]) addLogEntry(p, '👼 Divine Grace: starts with a free <b>Holy Shield</b>.'); });
 }
@@ -2201,9 +2948,20 @@ function resetGame() {
 /* ============================================================
    MODE & CLASS SELECTION
    ============================================================ */
+// The finish rule is shown in the footer, the "How to play" text and the mode chip
+function syncRuleText() {
+  const b = RULES.bounce;
+  const f = $('rule-footer');
+  if (f) f.textContent = b ? 'land exactly on 100 to win — overshoot and you bounce back' : 'you need the exact roll to land on 100';
+  const h = $('help-rule');
+  if (h) h.innerHTML = b
+    ? 'Roll too high and you walk up to 100, then <b>bounce back</b> with the leftover steps (on 98 rolling 5: 99, 100, then 99, 98, 97).'
+    : 'You need the <b>exact</b> roll to land on it — a roll that goes past 100 is wasted.';
+  syncModeButtons();
+}
 function syncModeButtons() {
   const chip = $('mode-chip');
-  chip.textContent = gameMode === 'ONL' ? '🌐 Online' : gameMode === 'PvP' ? '👥 2 Players' : '🤖 vs AI Bot';
+  chip.textContent = (gameMode === 'ONL' ? '🌐 Online' : gameMode === 'PvP' ? '👥 2 Players' : gameMode === 'BOTS' ? '🤖 Bots' : '🤖 vs AI Bot') + (RULES.bounce ? ' · ↩ Bounce' : ' · 🎯 Exact');
   chip.classList.toggle('onl', gameMode === 'ONL');
   $('classes-btn').classList.toggle('hidden', gameMode === 'ONL');   // champions are locked in an online match
 }
@@ -2214,18 +2972,22 @@ function setMode(mode) {
   resetGame();
 }
 function setPendingMode(mode) { pendingMode = mode; buildClassModal(); }
+function setPendingRule(bounce) { pendingBounce = bounce; buildClassModal(); }
 
 function openClassSelectModal() {
   if (NET.on) { toast('Champions are locked in an online match — a rematch keeps them.', 'warn'); return; }
   if (isRolling && !gameOver) { toast('Wait for the current turn to finish.', 'warn'); return; }
   pendingClasses = { ...playerClasses };
   pendingMode = gameMode;
+  pendingBounce = soloBounce;
   buildClassModal();
   openModal('class-modal');
 }
 function buildClassModal() {
   $('class-mode-pvc').classList.toggle('on', pendingMode === 'PvC');
   $('class-mode-pvp').classList.toggle('on', pendingMode === 'PvP');
+  $('class-rule-b').classList.toggle('on', pendingBounce);
+  $('class-rule-x').classList.toggle('on', !pendingBounce);
   $('class-title-2').textContent = pendingMode === 'PvC' ? 'AI Bot' : 'Player 2';
   [1, 2].forEach(p => {
     const box = $('class-list-' + p);
@@ -2242,6 +3004,8 @@ function buildClassModal() {
 function applyClassSelection() {
   playerClasses = { ...pendingClasses };
   gameMode = pendingMode;
+  soloBounce = pendingBounce;
+  try { localStorage.setItem('sl-rule', soloBounce ? 'bounce' : 'exact'); } catch (e) {}
   classFromMenu = false;
   matchActive = true;
   musicSync();
@@ -2350,14 +3114,16 @@ function closeHelp() { closeModal('help-modal'); helpFromMenu = false; }
    Both browsers replay the same log through the same deterministic engine,
    so boards, gold and traps always match. Reloading replays the log fast.
    ============================================================ */
-const SHOP_CODE = { swap: 'w', bribe: 'b', freeze: 'f', checkpoint: 'c', buysnake: 't', mine: 'm' };
+const SHOP_CODE = { swap: 'w', bribe: 'b', freeze: 'f', checkpoint: 'c', buysnake: 't', mine: 'm', jack: 'x' };
 const SHOP_BY_CODE = Object.fromEntries(Object.entries(SHOP_CODE).map(([k, v]) => [v, k]));
 const PU_CODE = { swap: 'S', freeze: 'F', shield: 'H', cash: 'C' };
 const PU_BY_CODE = Object.fromEntries(Object.entries(PU_CODE).map(([k, v]) => [v, k]));
-// log grammar: a roll is 1-6; shop/power-up choices are one letter, and swap/freeze/mine add a target letter J..N (player 1..5)
+// log grammar: a normal-die roll is 1-6; another die is its letter + the number rolled (s4, l6, g8);
+// shop/power-up choices are one letter, and swap/freeze/mine add a target letter J..N (player 1..5)
+// Jack of Trader: x0..x2 = bought it and picked card 0..2; y<a-t><0-9> = the outcome (one of 20) and its amount digit, drawn ONCE by the host
 const TCHARS = 'JKLMN';
 const tchar = t => TCHARS[t - 1];
-const LOG_RE = /^(?:[1-6btcHC]|[wfmSF][JKLMN])*$/;
+const LOG_RE = /^(?:[1-6btcHC]|[wfmSF][JKLMN]|[slg][1-8]|x[0-2]|y[a-t][0-9])*$/;
 const TOK_RE = /^[a-z0-9]{10}$/;
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
@@ -2389,7 +3155,7 @@ function validG(g) {
   if (!Array.isArray(g.cls) || g.cls.length !== n || !g.cls.every(c => typeof c === 'string' && CLASSES[c])) return null;
   if (!Array.isArray(g.nicks) || g.nicks.length !== n) return null;
   if (typeof g.log !== 'string' || g.log.length > 3000 || !LOG_RE.test(g.log)) return null;
-  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log };
+  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log, rule: g.rule === 'x' ? 'x' : 'b' };
 }
 function fixNicks(G) {
   const seen = new Set();
@@ -2432,6 +3198,7 @@ function pickTarget(kind, cb, strict) {
       if (kind === 'swap' && playerPositions[q] === playerPositions[me]) why = 'already on your tile';
       if (kind === 'freeze' && playerClasses[q] === 'angel') why = 'Angels are immune';
       if (kind === 'freeze' && !why && playerPoisoned[q]) why = 'already frozen';
+      if (kind === 'freeze' && !why && playerThawed[q]) why = 'just thawed';
       if (kind === 'mine' && findFreeTile(playerPositions[q], [3, 2, 4, 1, 5, 6]) == null) why = 'no free tile ahead';
     }
     const b = document.createElement('button');
@@ -2447,12 +3214,28 @@ function pickTarget(kind, cb, strict) {
 
 function uiBuy(key) {
   if (NET.on && !canAct()) return;
+  if (key === 'jack') {
+    const me = currentPlayer, price = getCost(me, 'jack');
+    if (shopPurchasedThisTurn) { toast('The merchant only trades once per turn.', 'warn'); return; }
+    if (playerMarketBan[me] === 2) { toast('The Black Market is closed to you this turn (Cursed Fortune).', 'warn'); return; }
+    if (playerCash[me] < price) { toast(`Not enough gold — you need $${price}.`, 'warn'); return; }
+    if (jack) return;
+    closeModal('shop-modal');
+    jackChoose();
+    return;
+  }
   if (TARGET_SHOP.has(key) && rivals(currentPlayer).length > 1) { pickTarget(key, t => commitBuy(key, t), true); return; }
   commitBuy(key, defaultTarget(currentPlayer));
 }
 function commitBuy(key, target) {
   const ok = buyShopItem(key, target);
-  if (ok && NET.on) netPush(SHOP_CODE[key] + (TARGET_SHOP.has(key) ? tchar(target) : ''));
+  if (!ok) return;
+  if (key === 'jack') {
+    if (NET.on) netPush(SHOP_CODE.jack + String(target | 0));     // x0..x2: the purchase and the card picked
+    if (!NET.on || isHost()) jackDealLocal();                      // solo or the host: draw the outcome once. A guest waits for the host's y-unit.
+    return;
+  }
+  if (NET.on) netPush(SHOP_CODE[key] + (TARGET_SHOP.has(key) ? tchar(target) : ''));
 }
 
 /* ---- replication ---- */
@@ -2464,7 +3247,7 @@ function netPeers() {
 
 function netPublish() {
   if (!NET.on || !NET.ch) return;
-  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log } : null;
+  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log, rule: NET.G.rule } : null;
   NET.ch.presence({ app: 'sl1', code: NET.code, tok: NET.tok, nick: NET.nick, cls: NET.cls, want: NET.want ? true : null, G }).catch(() => {});
 }
 
@@ -2522,7 +3305,8 @@ function netSync() {
 }
 
 function netStart(G) {
-  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log };
+  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log, rule: G.rule === 'x' ? 'x' : 'b' };
+  RULES.bounce = NET.G.rule !== 'x';
   NET.seat = G.seats.indexOf(NET.tok) + 1;
   NET.nicks = G.nicks.slice();
   NET.applied = 0;
@@ -2551,20 +3335,35 @@ async function netPump() {
   while (alive() && NET.applied < NET.G.log.length) {
     const log = NET.G.log, c = log[NET.applied];
     const targeted = 'wfmSF'.includes(c);
-    const len = targeted ? 2 : 1;
+    const dieKey = DICE_BY_CODE[c];                       // 's' / 'l' / 'g': a roll with a special die
+    const len = c === 'y' ? 3 : (targeted || dieKey || c === 'x') ? 2 : 1;
     if (NET.applied + len > log.length) break;          // half-written unit: wait for the rest
     const isPU = !!PU_BY_CODE[c];
-    const ready = isPU ? () => !!NET.puWait : () => !isRolling && splashDepth === 0 && !NET.puWait;
+    const ready = c === 'y' ? () => true : isPU ? () => !!NET.puWait : () => !isRolling && splashDepth === 0 && !NET.puWait && !jack;
     while (alive() && !ready() && !gameOver) await realSleep(fastMode ? 0 : 40);
     if (!alive() || gameOver) break;
     const t = targeted ? TCHARS.indexOf(log[NET.applied + 1]) + 1 : 0;
+    const dv = dieKey ? +log[NET.applied + 1] : 0;
     NET.applied += len;
     if (targeted && (t < 1 || t > NP)) continue;
-    if (c >= '1' && c <= '6') executeTurn(+c, true);
+    if (c === 'y') {                                   // the host's draw: delivered only to a deal that is waiting for it (a duplicate does nothing)
+      const idx = log.charCodeAt(NET.applied - 2) - 97, k = +log[NET.applied - 1];
+      jackDeliver(idx, k);
+      continue;
+    }
+    if (c === 'x') {
+      if (buyShopItem('jack', +log[NET.applied - 1]) && NET.applied === NET.G.log.length) jackDealViaLog();   // the host draws once, only if no outcome is logged yet
+      continue;
+    }
+    if (dieKey) executeTurn(dv, true, dieKey);
+    else if (c >= '1' && c <= '6') executeTurn(+c, true);
     else if (isPU) netResolvePU(PU_BY_CODE[c], t || undefined);
     else if (SHOP_BY_CODE[c]) buyShopItem(SHOP_BY_CODE[c], t || undefined);
   }
-  if (tok === NET.pumpTok) { fastMode = false; updateControls(); netRenderChip(); }
+  if (tok === NET.pumpTok) {
+    fastMode = false; updateControls(); netRenderChip();
+    if (jack && !jack.out && !jack.ui && !gameOver) { jack.ui = true; jack.dealP = jackShowDeal(jack, true); }     // reloaded mid-deal: show the merchant while the host's outcome is awaited
+  }
 }
 
 function netResolvePU(type, target) {
@@ -2579,13 +3378,13 @@ function netNewGame() {
   const here = new Set([NET.tok, ...netPeers().filter(p => !p.isMe).map(p => p.presence.tok)]);
   const keep = NET.G.seats.map((t, i) => i).filter(i => here.has(NET.G.seats[i]));
   if (keep.length < 2) { toast('A rematch needs at least 2 players in the room.', 'warn'); return; }
-  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '' });
+  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '', rule: NET.G.rule });
 }
 
 function netStartMatch() {
   if (!NET.on || !NET.G || NET.G.gen !== 0 || NET.G.seats[0] !== NET.tok) return;
   if (NET.G.seats.length < 2) { netMsg('Wait for at least one more player.'); return; }
-  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '' };
+  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '', rule: NET.G.rule };
   fixNicks(G);
   netStart(G);
 }
@@ -2725,12 +3524,23 @@ function netFail(text) {
   });
 }
 
+function netSetRule(r) {
+  if (!NET.on || !NET.G || NET.G.gen !== 0 || NET.G.seats[0] !== NET.tok) return;     // only the host decides
+  NET.G.rule = r === 'x' ? 'x' : 'b';
+  netPublish();
+  netRenderLobby();
+}
 function netRenderLobby() {
   const G0 = NET.G && NET.G.gen === 0 ? NET.G : NET.lobby;
   const box = $('online-roster'), btn = $('net-start-btn');
   if (!G0) { box.innerHTML = ''; btn.classList.add('hidden'); return; }
   const host = !!NET.G && NET.G.gen === 0 && NET.G.seats[0] === NET.tok;
   box.innerHTML = G0.seats.map((t, i) => `<div class="roster-row"><span class="net-dot up"></span><b>${G0.nicks[i] || 'Player ' + (i + 1)}</b><span style="opacity:.75">${CLASS_ICON[G0.cls[i]] || ''} ${CLASSES[G0.cls[i]].name}</span>${i === 0 ? '<span class="roster-tag">host</span>' : ''}${t === NET.tok ? '<span class="roster-tag">you</span>' : ''}</div>`).join('');
+  const exact = G0.rule === 'x';
+  $('net-rule-b').classList.toggle('on', !exact);
+  $('net-rule-x').classList.toggle('on', exact);
+  $('net-rule-b').disabled = $('net-rule-x').disabled = !host;
+  $('net-rule-note').textContent = (host ? '' : 'The host chooses. ') + (exact ? 'A roll past 100 is wasted — you must land on it exactly.' : 'A roll past 100 walks you up to it and back down with the leftover steps.');
   const n = G0.seats.length;
   btn.classList.toggle('hidden', !host);
   btn.disabled = n < 2;
@@ -2821,7 +3631,7 @@ async function netCreate() {
   const code = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
   netMsg('Opening the room…');
   try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach any matchmaking server. Some school/work networks block the WebSocket ports it uses — try another network or mobile data, then try again.'); NET.on = false; return; }
-  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '' };
+  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '', rule: soloBounce ? 'b' : 'x' };
   NET.want = false;
   $('online-code').textContent = code;
   $('online-wait-label').textContent = 'Room code';
@@ -3102,7 +3912,8 @@ window.addEventListener('keydown', e => {
   if (anyModalOpen()) {
     if (e.key === 'Escape') {
       const open = id => !$(id).classList.contains('hidden');
-      if (open('confirm-modal')) { confirmHandler = null; closeModal('confirm-modal'); }
+      if (open('jack-modal')) jackCancel();
+      else if (open('confirm-modal')) { confirmHandler = null; closeModal('confirm-modal'); }
       else if (open('target-modal')) closeModal('target-modal');
       else if (open('shop-modal')) closeModal('shop-modal');
       else if (open('help-modal')) closeHelp();
@@ -3120,6 +3931,8 @@ window.addEventListener('keydown', e => {
     handleRollClick();
   } else if (e.key === 's' || e.key === 'S') {
     openShopModal();
+  } else if (/^[1-9]$/.test(e.key) && DICE_KEYS[+e.key - 1]) {
+    selectDie(DICE_KEYS[+e.key - 1]);
   }
 });
 
@@ -3252,7 +4065,10 @@ function init() {
   syncMusicButton();
   introBuild();
   buildEmbers();
-  buildDice();
+  buildDice('normal');
+  buildDicePicker();
+  $('help-dice').innerHTML = DICE_KEYS.map(k => `<li>${DICE[k].icon} <b>${DICE[k].name}</b> (${DICE[k].cost ? '$' + DICE[k].cost : 'free'}) — ${DICE[k].desc}</li>`).join('');
+  try { soloBounce = localStorage.getItem('sl-rule') !== 'exact'; } catch (e) {}
   buildPlayerCards();
   resetGame();
   chatBuildControls();
@@ -3269,6 +4085,7 @@ function init() {
   $('net-code').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); netJoin(); } });
   pendingClasses = { ...playerClasses };
   pendingMode = gameMode;
+  pendingBounce = soloBounce;
   buildClassModal();
   // Opening screen: the main menu (an invite link skips straight to the online Join tab)
   showMenu('modes');

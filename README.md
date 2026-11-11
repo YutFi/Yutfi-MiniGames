@@ -53,11 +53,14 @@ Limits worth knowing:
 - Matches can't be joined after the host presses Start.
 
 ### Rules in brief
-- Roll a die and climb ladders / slide down snakes. You need the **exact** roll to land on tile 100. If you roll too high, you walk up to 100 and **bounce back** with the leftover steps (e.g. on 98 rolling 5: 99, 100, then back 99, 98, 97).
-- Earn salary each turn, spend gold at the **Black Market** (one purchase per turn): swap places, freeze a rival, bribe a snake, set a checkpoint, plant a serpent trap or a mine.
+- Roll a die and climb ladders / slide down snakes. You need the **exact** roll to land on tile 100. By default, if you roll too high you walk up to 100 and **bounce back** with the leftover steps (e.g. on 98 rolling 5: 99, 100, then back 99, 98, 97). Prefer the stricter **🎯 Exact finish** rule (a roll past 100 is simply wasted)? Pick it in the class screen, or the host picks it in the online lobby. It is shared by the whole room.
+- **Four dice** (pick one before you roll, keys `1`–`4`): 🎲 Normal (free, fair 1–6), 🎯 Steady (free, always 3, 4 or 5), 🍀 Lucky ($200, 2–6) and 🎰 Gambler's ($250, 1, 2, 7 or 8). A die you can't afford falls back to the normal one. A 6 on a Normal or Lucky die — or an 8 on the Gambler's die — gives the extra roll and power-up.
+- Earn salary each turn, spend gold at the **Black Market** (one purchase per turn): swap places, freeze a rival, bribe a snake, set a checkpoint, plant a serpent trap or a mine, or gamble on **🃏 Jack of Trader**.
+- **🃏 Jack of Trader** ($200): three face-down cards, you pick one, and you don't know what you bought until it flips. 60% a boon (Golden Jackpot, Divine Protection, Lucky Leap, Merchant's Blessing, Second Chance, Golden Investment, Phoenix Rebirth, Secret Shortcut, Fate Reversal, King's Fortune, 6% each) and 40% a curse (Merchant's Scam, Serpent's Curse, Frozen Contract, Explosive Debt, Broken Protection, Bandit's Ambush, Time Collapse, Void Portal, Cursed Fortune, Jack's Final Betrayal, 4% each). Jack never carries a piece onto tile 100: the finish has to be earned with the dice. In online rooms the **host** draws the outcome once and writes it into the shared move log, so every screen plays the same card, a reload replays it, and a duplicate can't pay out twice.
 - Roll a **6** for an extra roll and a power-up.
-- Classes: **Human** (extra income), **Wizard** (cheaper market, longer ladders), **Demon** (steals gold as it passes rivals), **Angel** (starts shielded, immune to freeze).
+- Classes: **Human** (extra salary, bonus on even rolls), **Wizard** (cheaper market, longer ladders), **Demon** (steals $100 as it passes rivals, +$25 salary), **Angel** (starts shielded, immune to freeze).
 - Every mine, snake bite, swap, power-up and penalty triggers a full-screen meme splash (toggle with **Memes On/Off**; tap or press Space to skip).
+- The winner screen shows a **match summary** (turns, snake bites, ladders, mines, bounces, gold earned/spent/stolen, special dice, Jack gambles) and **Play again** starts a rematch in the same room.
 
 ## Party Game — Save the Princess
 Local **or online** 2–4 players (any mix of humans and bots, three bot difficulties). Pick a race (Human, Angel, Devil, Wizard — each has a one-time ability) and a mode (Classic, Chaos, Speed Rescue).
@@ -96,6 +99,7 @@ index.html              hub + Snake Game (open it, or host it)
 party.html              Party Game — Save the Princess
 README.md
 docs/ARCHITECTURE.md    how replication and the online relay work
-tests/                  jsdom tests: multiplayer sync, main menu and chat  (cd tests && npm install && npm test)
+tests/                  jsdom tests: multiplayer sync, main menu and chat, finish rule + dice, Jack of Trader  (cd tests && npm install && npm test)
+tests/balance.js        bot-vs-bot balance simulations: classes, Black Market items, dice, Jack  (node balance.js classes|items|dice|jack)
 .gitignore
 ```
