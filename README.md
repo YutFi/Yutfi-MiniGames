@@ -52,6 +52,30 @@ Limits worth knowing:
 - It depends on free public MQTT brokers. If all three are down, or a network blocks outbound WebSocket ports (some school/work networks do), online rooms won't connect; try mobile data. Room codes are not secret, so share them only with friends. Offline modes still work.
 - Matches can't be joined after the host presses Start.
 
+### The Dungeon RPG layer
+Everything below is on in the default **Dungeon RPG** mode. Pick **📜 Classic** (🎭 Champions dialog, or the host's lobby for online rooms) to play the plain rules below, with no special tiles or RPG items. Dice, the finish rule and Jack of Trader work in every mode.
+
+**Special tiles** (shown on the board; each rests for a few rounds after use)
+- 🎁 **Treasure Chest** – random gold, a half-price Black Market coupon, a shield, a Phantom Cloak, an extra roll… or a rare **Mimic**.
+- 🌀 **Mystery Portal** – warp forward or back, swap places with a random rival, or reach a secret bonus vault.
+- 🎡 **Wheel of Fortune** – animated roulette: $200 jackpots, extra rolls, shields, a free item… or a snake curse / lost turn.
+- 🔮 **Cursed Altar** – pay $100 for a blessing, or refuse and risk a curse (the choice is asked first).
+- 🏕️ **Rest Camp** – cures freezes, poison and curses, restores a shield, a little gold.
+- ❓ **Hidden traps** – spikes, poison cloud, gold-thief pit, iron cage. 🧙 Wizards sense traps ahead, 🧑 Humans may disarm them, 😇 Angels resist poison and cages, 😈 Demons ignore spikes.
+- 👹 **Bosses** – Ice Titan (tile 33), Ancient Dragon (56), Lich King (82). A boss blocks the road: you stop on its tile and trade up to three exchanges of blows. Boss health is **shared**, so every visit chips it down for everyone; the killing blow wins gold and a piece of gear.
+
+**New Black Market items** (the six originals are unchanged; still one purchase per turn, with per-match limits and cooldowns): ⏪ Time Rewind $150 · 🪞 Mirror Curse $120 · 🎲 Loaded Dice $200 (once per match) · 👻 Phantom Cloak $160 (2 turns) · 🪝 Snakeslayer Hook $130 · 🎯 Bounty Contract $100 · ⚡ Chain Lightning $180.
+
+**World events** every 3–5 rounds, identical for every player: Gold Rush, Snake Awakening, Goddess Blessing, Dark Storm, Merchant Festival, Dragon's Wrath, Lucky Day, Frozen Kingdom, Double Salary, Chaos Day.
+
+**The Arena** (one action per turn, before you roll): Magical Duel ($50 stake), Treasure Competition, a 3-round Alliance (shared rewards, you cover each other… until someone betrays), and **Wanted** – the hero who runs far ahead gets a bounty on their head.
+
+**Titles & achievements** (cosmetic only): Merchant, Snake Master, Villain, Guardian, Lucky One, Champion, Gambler · First Blood, Lucky Gambler, Snake Survivor, Millionaire, Dragon Slayer, Unstoppable, Comeback King, Master Trader.
+
+**Game modes** (host chooses before an online match): 🏰 Dungeon RPG · 📜 Classic · 🌪️ Chaos · 💀 Hardcore (one life) · 💎 Richest Wins (20 rounds, laps pay $400) · 🔥 Survival (3 lives, growing toll, harmful events) · ⏩ Double Trouble · 🎯 Bounty Hunter · 🚫 No Market · ⚡ Speed Race.
+
+Open **📖 Guide** in the game for the same summary; it is next to ✨ **FX** in the header. ✨ **FX** toggles heavy particle effects (it also lowers itself automatically on slow phones).
+
 ### Rules in brief
 - Roll a die and climb ladders / slide down snakes. You need the **exact** roll to land on tile 100. By default, if you roll too high you walk up to 100 and **bounce back** with the leftover steps (e.g. on 98 rolling 5: 99, 100, then back 99, 98, 97). Prefer the stricter **🎯 Exact finish** rule (a roll past 100 is simply wasted)? Pick it in the class screen, or the host picks it in the online lobby. It is shared by the whole room.
 - **Four dice** (pick one before you roll, keys `1`–`4`): 🎲 Normal (free, fair 1–6), 🎯 Steady (free, always 3, 4 or 5), 🍀 Lucky ($200, 2–6) and 🎰 Gambler's ($250, 1, 2, 7 or 8). A die you can't afford falls back to the normal one. A 6 on a Normal or Lucky die — or an 8 on the Gambler's die — gives the extra roll and power-up.
@@ -99,7 +123,9 @@ index.html              hub + Snake Game (open it, or host it)
 party.html              Party Game — Save the Princess
 README.md
 docs/ARCHITECTURE.md    how replication and the online relay work
-tests/                  jsdom tests: multiplayer sync, main menu and chat, finish rule + dice, Jack of Trader  (cd tests && npm install && npm test)
+docs/RPG-DESIGN.md      design notes for the Dungeon RPG layer
+docs/rpg/               RPG layer source parts, merge script and screenshots of every cinematic
+tests/                  jsdom tests: multiplayer sync (all modes), main menu and chat, finish rule + dice, Jack of Trader, RPG gameplay logic, cinematics  (cd tests && npm install && npm test)
 tests/balance.js        bot-vs-bot balance simulations: classes, Black Market items, dice, Jack  (node balance.js classes|items|dice|jack)
 .gitignore
 ```

@@ -109,6 +109,11 @@ async function scenario(n, classes, mode) {
 
 
 (async () => {
+  if (process.env.ONLYMODE) {                         // e.g. ONLYMODE=richest node online-sync.test.js: one 3-player room in that mode, with stuck-client diagnostics
+    const { clients } = await scenario(3, ['human', 'wizard', 'demon'], process.env.ONLYMODE);
+    clients.forEach((c, i) => console.log(' c' + i, 'applied', ev(c, 'NET.applied') + '/' + ev(c, 'NET.G.log.length'), 'next', JSON.stringify(ev(c, 'NET.G.log.slice(NET.applied, NET.applied + 4)')), 'rolling', ev(c, 'isRolling'), 'splash', ev(c, 'splashDepth'), 'dec', JSON.stringify(ev(c, 'NET.decWait ? {k: NET.decWait.kind, who: NET.decWait.who, need: NET.decWait.need} : null')), 'seat', ev(c, 'NET.seat'), 'pu', !!ev(c, 'NET.puWait'), 'jack', !!ev(c, 'jack'), 'stage', !c.d.getElementById('stage').classList.contains('hidden'), 'cur', ev(c, 'currentPlayer')));
+    console.log('ERRORS:', errors.length ? errors.slice(0, 8) : 'none'); process.exit(0);
+  }
   await scenario(2, ['wizard','demon']);
   const { clients, code } = await scenario(5, ['human','wizard','demon','angel','wizard']);
   // rematch, then a guest reloads mid-game (host stays up)
