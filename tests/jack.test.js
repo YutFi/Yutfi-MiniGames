@@ -34,6 +34,7 @@ function boot(tok, withMqtt) {
   vc.on('jsdomError', e => errors.push('jsdomError: ' + (e.detail || e.message)));
   const dom = new JSDOM(html, { url: 'https://yutfi.github.io/Dungeon-of-Snakes-Ladders/', runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc,
     beforeParse(w) {
+      w.HTMLCanvasElement.prototype.getContext = () => null;   // the effects canvas is not needed (and not implemented) in jsdom
       const st = w.setTimeout.bind(w);
       w.setTimeout = (fn, ms, ...a) => st(fn, ((ms || 0) >= 5000 ? ms : Math.min(ms || 0, 2)), ...a);
       if (tok) w.sessionStorage.setItem('sl-tok', tok);
@@ -52,7 +53,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   const until = async (f, n = 400) => { for (let i = 0; i < n; i++) { if (f()) return true; await sleep(3); } return false; };
 
   // a clean game: human vs human (no shields, nothing on the board that would get in the way)
-  const fresh = (c1 = 'human', c2 = 'human') => ev(`gameMode='PvP'; playerClasses={1:'${c1}',2:'${c2}'}; soloBounce=true; resetGame(); fastMode=true; playerShields={1:false,2:false}`);
+  const fresh = (c1 = 'human', c2 = 'human') => ev(`gameMode='PvP'; playerClasses={1:'${c1}',2:'${c2}'}; soloBounce=true; modeKey='classic'; resetGame(); fastMode=true; playerShields={1:false,2:false}`);
   // buy the card for the current player and hand it a chosen outcome; resolves when the whole effect (movement included) is over
   const play = async (idx, k = 0, pick = 1) => {
     const ok = ev(`buyShopItem('jack', ${pick})`);

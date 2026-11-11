@@ -471,6 +471,210 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
   .flame,.board-light,.tile-icon,.snake-scales,.game-token.active .bobber{animation:none}
 }
 
+/* ============================================================
+   MODERN LAYER (additive): aurora, glass panels, shine buttons
+   ============================================================ */
+#aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#aurora i{position:absolute;width:55vmax;height:55vmax;border-radius:50%;filter:blur(70px);opacity:.38;will-change:transform;animation:auroraDrift 26s ease-in-out infinite alternate}
+#aurora i:nth-child(1){left:-18vmax;top:-22vmax;background:radial-gradient(circle,#7c3aed,transparent 65%)}
+#aurora i:nth-child(2){right:-20vmax;top:10vmax;background:radial-gradient(circle,#0891b2,transparent 65%);animation-duration:32s;animation-delay:-8s}
+#aurora i:nth-child(3){left:10vmax;bottom:-30vmax;background:radial-gradient(circle,#be185d,transparent 65%);animation-duration:38s;animation-delay:-15s;opacity:.28}
+@keyframes auroraDrift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(7vmax,5vmax,0) scale(1.18)}}
+.panel{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);position:relative}
+.panel::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.07),transparent 30%,transparent 70%,rgba(139,92,246,.06))}
+main > section, main > aside > *{animation:riseIn .6s cubic-bezier(.2,.9,.3,1) both}
+main > aside > *:nth-child(2){animation-delay:.07s}main > aside > *:nth-child(3){animation-delay:.14s}main > aside > *:nth-child(4){animation-delay:.21s}
+@keyframes riseIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+h1.font-display{background:linear-gradient(90deg,#fff,#fde68a,#c4b5fd,#fff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent !important;animation:titleShine 7s linear infinite}
+@keyframes titleShine{to{background-position:-250% 0}}
+.logo{animation:logoFloat 4s ease-in-out infinite}
+@keyframes logoFloat{50%{transform:translateY(-3px) rotate(-4deg);box-shadow:0 0 28px rgba(251,146,60,.6), inset 0 1px 0 rgba(255,255,255,.2)}}
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn::before{content:'';position:absolute;top:0;left:-70%;width:45%;height:100%;z-index:-1;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transition:left .55s}
+.btn:hover:not(:disabled)::before{left:130%}
+.btn-primary:not(:disabled){animation:primaryGlow 2.4s ease-in-out infinite alternate}
+@keyframes primaryGlow{from{box-shadow:0 6px 18px rgba(124,58,237,.35), inset 0 1px 0 rgba(255,255,255,.3)}to{box-shadow:0 8px 30px rgba(167,139,250,.65), inset 0 1px 0 rgba(255,255,255,.4)}}
+.btn-arena{background:linear-gradient(180deg,#e11d4833,#7f1d1d22);border-color:#fb718588;color:#fecdd3}
+.btn-guide{background:linear-gradient(180deg,#22d3ee22,#0e749022);border-color:#22d3ee77;color:#a5f3fc}
+.dice-wrap.ready .dice-scene{animation:diceReady 1.6s ease-in-out infinite}
+@keyframes diceReady{50%{transform:translateY(-5px);filter:drop-shadow(0 8px 14px rgba(251,191,36,.55))}}
+.player-card.active{background:linear-gradient(180deg,rgba(62,50,92,.95),rgba(26,21,40,.97));animation:cardGlow 2.2s ease-in-out infinite alternate}
+@keyframes cardGlow{from{box-shadow:0 12px 30px rgba(0,0,0,.55), 0 0 12px rgba(251,191,36,.1)}to{box-shadow:0 12px 30px rgba(0,0,0,.55), 0 0 30px rgba(251,191,36,.3)}}
+.cash-pop{animation:cashPop .5s ease-out}
+@keyframes cashPop{40%{transform:scale(1.35);color:#fff}}
+.tile{transition:box-shadow .25s, filter .25s, transform .2s}
+.game-token .hopper{will-change:transform}
+.game-token.active{filter:drop-shadow(0 0 8px var(--team))}
+.board-shake{animation:boardShake .55s cubic-bezier(.36,.07,.19,.97) both}
+.board-shake-big{animation:boardShake .9s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes boardShake{10%,90%{transform:translate3d(-2px,0,0)}20%,80%{transform:translate3d(4px,2px,0)}30%,50%,70%{transform:translate3d(-7px,-2px,0)}40%,60%{transform:translate3d(7px,2px,0)}}
+#fx-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:10;pointer-events:none}
+.dmg{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.03em;font-size:clamp(16px,3.6vw,26px);-webkit-text-stroke:1px #000;paint-order:stroke fill;animation:dmgPop 1.1s cubic-bezier(.2,.8,.3,1) forwards}
+.dmg.crit{font-size:clamp(22px,5vw,36px);color:#fde047}
+@keyframes dmgPop{0%{transform:translate(-50%,-30%) scale(.3);opacity:0}18%{transform:translate(-50%,-90%) scale(1.5);opacity:1}100%{transform:translate(-50%,-260%) scale(.9);opacity:0}}
+.coin-fly{position:fixed;z-index:90;font-size:20px;pointer-events:none;transition:transform .8s cubic-bezier(.5,-.2,.6,1), opacity .8s;will-change:transform}
+.fx-low #aurora i:nth-child(n+2){display:none}
+.fx-low .panel{backdrop-filter:none;-webkit-backdrop-filter:none}
+.fx-low main > section, .fx-low main > aside > *{animation:none}
+
+/* HUD chips */
+.hud-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;border:1px solid #ffffff22;background:rgba(0,0,0,.35);color:#e7e3f1}
+.chip.evt{border-color:#fbbf2499;color:#fde68a;background:linear-gradient(90deg,rgba(245,158,11,.22),rgba(124,58,237,.18));animation:chipPulse 1.8s ease-in-out infinite alternate}
+.chip.mode{border-color:#22d3ee77;color:#a5f3fc}
+.chip.wanted{border-color:#fb7185aa;color:#fecdd3;background:rgba(190,18,60,.25)}
+@keyframes chipPulse{to{box-shadow:0 0 14px rgba(251,191,36,.45)}}
+.rep-title{font-size:9.5px;font-weight:800;padding:1px 7px;border-radius:999px;color:#fde68a;background:linear-gradient(90deg,rgba(245,158,11,.28),rgba(168,85,247,.22));border:1px solid rgba(251,191,36,.5);white-space:nowrap}
+.ach-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.ach{font-size:13px;filter:drop-shadow(0 0 4px rgba(251,191,36,.6))}
+.buff.red{background:rgba(244,63,94,.18);color:#fda4af;border-color:rgba(244,63,94,.5)}
+.buff.violet{background:rgba(139,92,246,.2);color:#ddd6fe;border-color:rgba(139,92,246,.55)}
+.buff.lime{background:rgba(132,204,22,.16);color:#d9f99d;border-color:rgba(132,204,22,.5)}
+
+/* ============================================================
+   RPG TILES
+   ============================================================ */
+.rt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none;transition:filter .5s, opacity .5s}
+.rt-ico{position:relative;z-index:2;font-size:clamp(14px,3.3vw,26px);filter:drop-shadow(0 0 6px var(--rc,#fbbf24));animation:rtBob 2.4s ease-in-out infinite alternate}
+@keyframes rtBob{from{transform:translateY(1px) scale(.94)}to{transform:translateY(-2px) scale(1.08)}}
+.rt::before{content:'';position:absolute;inset:8%;border-radius:50%;z-index:1;opacity:.85}
+.rt-chest{--rc:#fbbf24}.rt-chest::before{background:radial-gradient(circle,rgba(251,191,36,.45),transparent 68%);animation:rtPulse 1.7s ease-in-out infinite alternate}
+.rt-portal{--rc:#a78bfa}.rt-portal::before{inset:6%;background:conic-gradient(from 0deg,#7c3aed,#22d3ee,#ec4899,#7c3aed);-webkit-mask:radial-gradient(circle,transparent 34%,#000 38%,#000 62%,transparent 68%);mask:radial-gradient(circle,transparent 34%,#000 38%,#000 62%,transparent 68%);animation:rtSpin 3s linear infinite;opacity:.95}
+.rt-wheel{--rc:#f472b6}.rt-wheel::before{inset:7%;background:conic-gradient(#ef4444 0 12.5%,#fbbf24 0 25%,#22c55e 0 37.5%,#3b82f6 0 50%,#a855f7 0 62.5%,#f97316 0 75%,#14b8a6 0 87.5%,#ec4899 0);animation:rtSpin 6s linear infinite;opacity:.6;-webkit-mask:radial-gradient(circle,transparent 24%,#000 26%);mask:radial-gradient(circle,transparent 24%,#000 26%)}
+.rt-altar{--rc:#c084fc}.rt-altar::before{background:radial-gradient(circle,rgba(168,85,247,.55),transparent 68%);animation:rtPulse 1.3s ease-in-out infinite alternate}
+.rt-camp{--rc:#4ade80}.rt-camp::before{background:radial-gradient(circle,rgba(74,222,128,.35),transparent 68%);animation:rtPulse 2.2s ease-in-out infinite alternate}
+.rt-trap{--rc:#fb7185}.rt-trap::before{background:radial-gradient(circle,rgba(244,63,94,.4),transparent 68%)}
+.rt-boss{--rc:#ef4444}.rt-boss::before{inset:0;border-radius:0;background:radial-gradient(circle,rgba(239,68,68,.5),rgba(127,29,29,.25) 55%,transparent 75%);animation:rtPulse 1.1s ease-in-out infinite alternate}
+.rt-boss .rt-ico{font-size:clamp(18px,4.6vw,36px);animation:bossIdle 1.8s ease-in-out infinite alternate}
+@keyframes bossIdle{from{transform:translateY(2px) scale(.95) rotate(-3deg)}to{transform:translateY(-3px) scale(1.12) rotate(3deg)}}
+.rt-hp{position:absolute;left:8%;right:8%;bottom:3px;height:4px;border-radius:99px;background:rgba(0,0,0,.7);overflow:hidden;z-index:3}
+.rt-hp i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#fb923c);transition:width .6s}
+.rt.dormant{filter:grayscale(1) brightness(.55);opacity:.7}
+.rt.dormant .rt-ico,.rt.dormant::before{animation:none}
+.rt.boss-dead .rt-ico{animation:none;opacity:.45;filter:grayscale(1)}
+.rt.boss-dead::before{display:none}
+.rt-lbl{position:absolute;bottom:1px;left:0;right:0;text-align:center;font-size:clamp(6px,1.25vw,9px);font-weight:800;letter-spacing:.04em;color:#fff;text-shadow:0 1px 2px #000,0 0 4px #000;z-index:3;text-transform:uppercase}
+@keyframes rtPulse{from{transform:scale(.88);opacity:.55}to{transform:scale(1.08);opacity:1}}
+@keyframes rtSpin{to{transform:rotate(360deg)}}
+.tile.hot{animation:tileHot .7s ease-out}
+@keyframes tileHot{0%{filter:brightness(2.2) saturate(1.6)}100%{filter:none}}
+
+/* ============================================================
+   STAGE (cinematic overlay used by events, chests, wheel, portal, bosses...)
+   ============================================================ */
+.stage{position:fixed;inset:0;z-index:78;display:flex;align-items:center;justify-content:center;padding:14px;opacity:0;transition:opacity .22s;overflow:hidden;
+  background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--tint,#7c3aed) 60%,#07040d) 0%,rgba(5,3,10,.95) 74%)}
+.stage.show{opacity:1}
+.stage-beams{position:absolute;left:50%;top:44%;width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;pointer-events:none;opacity:.35;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--tint,#7c3aed) 80%,#fff) 0 7deg,transparent 7deg 22deg);
+  -webkit-mask:radial-gradient(circle,#000 0,transparent 45%);mask:radial-gradient(circle,#000 0,transparent 45%);animation:rtSpin 36s linear infinite}
+.stage-rain{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.stage-rain span{position:absolute;top:-10%;font-size:clamp(18px,4.5vw,32px);opacity:.9;animation:rainDown linear forwards}
+.stage-rain.up span{top:auto;bottom:-10%;animation-name:riseUp}
+@keyframes riseUp{to{transform:translateY(-125vh) rotate(var(--rot,90deg));opacity:0}}
+.stage-card{position:relative;z-index:2;width:min(94vw,540px);text-align:center;padding:18px 14px 12px;animation:stagePop .55s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stagePop{from{transform:scale(.4) translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.stage.shake .stage-card{animation:stagePop .55s cubic-bezier(.2,1.4,.4,1) both, shakeIt .5s .45s 2}
+.st-kicker{font-size:11px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:color-mix(in srgb,var(--tint,#a78bfa) 70%,#fff);opacity:.9}
+.st-title{font-family:'Cinzel',Georgia,serif;font-weight:800;font-size:clamp(28px,8.5vw,54px);line-height:1.05;margin:6px 0;color:#fff;
+  text-shadow:0 0 22px color-mix(in srgb,var(--tint,#a78bfa) 85%,transparent),0 3px 0 rgba(0,0,0,.65);animation:titleIn .8s cubic-bezier(.2,1,.3,1) both}
+@keyframes titleIn{from{letter-spacing:.45em;opacity:0;filter:blur(8px)}to{letter-spacing:.02em;opacity:1;filter:none}}
+.st-sub{font-size:clamp(13px,3.4vw,17px);font-weight:700;color:#ece8f7;text-shadow:0 2px 6px rgba(0,0,0,.8);min-height:22px}
+.st-art{position:relative;margin:8px auto;display:flex;align-items:center;justify-content:center;min-height:150px}
+.st-emoji{font-size:clamp(84px,24vw,150px);line-height:1.05;filter:drop-shadow(0 0 28px var(--tint,#a78bfa));animation:emojiWobble .9s ease-in-out infinite alternate}
+.st-ring{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px;border-radius:50%;border:3px solid var(--tint,#a78bfa);opacity:0;animation:ringOut 1.4s ease-out infinite}
+.st-ring:nth-child(2){animation-delay:.45s}.st-ring:nth-child(3){animation-delay:.9s}
+@keyframes ringOut{from{transform:scale(.4);opacity:.9}to{transform:scale(6);opacity:0}}
+.st-result{font-size:clamp(18px,5vw,28px);font-weight:900;color:#fde68a;min-height:36px;text-shadow:0 2px 0 #000,0 0 18px rgba(251,191,36,.7);animation:resultPop .5s cubic-bezier(.2,1.8,.4,1) both}
+@keyframes resultPop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.st-hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:10px;letter-spacing:.1em;color:#ffffff88;z-index:3;pointer-events:none}
+.st-choices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.st-choices .btn{font-size:14px;padding:12px 18px}
+
+/* chest */
+.chest-svg{width:min(52vw,210px);height:auto;overflow:visible;filter:drop-shadow(0 12px 18px rgba(0,0,0,.6))}
+.chest-svg .lid{transform-box:fill-box;transform-origin:50% 100%;transition:transform .7s cubic-bezier(.3,1.7,.5,1)}
+.chest-svg.open .lid{transform:rotate(-42deg) translate(-2px,-8px)}
+.chest-svg.rattle{animation:chestRattle .5s ease-in-out 3}
+@keyframes chestRattle{25%{transform:rotate(-5deg) translateY(-3px)}75%{transform:rotate(5deg) translateY(-3px)}}
+.chest-rays{position:absolute;width:300px;height:300px;opacity:0;transition:opacity .5s;pointer-events:none;
+  background:repeating-conic-gradient(from 0deg,rgba(253,224,71,.75) 0 6deg,transparent 6deg 20deg);-webkit-mask:radial-gradient(circle,#000,transparent 66%);mask:radial-gradient(circle,#000,transparent 66%);animation:rtSpin 9s linear infinite}
+.chest-rays.on{opacity:1}
+.chest-rays.mimic{background:repeating-conic-gradient(from 0deg,rgba(244,63,94,.8) 0 6deg,transparent 6deg 20deg)}
+.chest-loot{position:absolute;font-size:34px;left:50%;top:38%;opacity:0;pointer-events:none}
+.chest-loot.go{animation:lootUp 1.2s cubic-bezier(.2,.9,.3,1) forwards}
+@keyframes lootUp{0%{opacity:0;transform:translate(-50%,10px) scale(.4)}25%{opacity:1}100%{opacity:1;transform:translate(calc(-50% + var(--lx,0px)),-110px) scale(1.2)}}
+
+/* portal */
+.portal-art{position:relative;width:min(58vw,230px);aspect-ratio:1/1}
+.portal-art .ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#7c3aed,#22d3ee,#ec4899,#fbbf24,#7c3aed);-webkit-mask:radial-gradient(circle,transparent 46%,#000 49%,#000 70%,transparent 74%);mask:radial-gradient(circle,transparent 46%,#000 49%,#000 70%,transparent 74%);animation:rtSpin 1.8s linear infinite;filter:blur(1px) drop-shadow(0 0 16px #a78bfa)}
+.portal-art .ring.r2{inset:12%;animation-duration:1.1s;animation-direction:reverse;opacity:.85}
+.portal-art .core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle,#fff,#c4b5fd 30%,#4c1d95 70%,#000);box-shadow:0 0 50px 14px rgba(167,139,250,.7);animation:coreBreath 1.2s ease-in-out infinite alternate}
+@keyframes coreBreath{from{transform:scale(.85)}to{transform:scale(1.12)}}
+.portal-art .hero{position:absolute;left:50%;top:50%;width:70px;height:70px;margin:-35px;transition:transform 1.1s cubic-bezier(.6,0,.3,1),opacity 1.1s}
+.portal-art .hero svg{width:100%;height:100%}
+.portal-art.sucked .hero{transform:scale(0) rotate(720deg);opacity:0}
+
+/* wheel */
+.wheel-wrap{position:relative;width:min(74vw,300px);aspect-ratio:1/1}
+.wheel-wrap svg{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 16px rgba(0,0,0,.6))}
+.wheel-spin{transform-origin:50% 50%;transition:transform 4.6s cubic-bezier(.08,.72,.12,1)}
+.wheel-wrap svg.wheel-ptr{position:absolute;left:50%;top:-8px;width:26px;height:34px;margin-left:-13px;z-index:3;filter:drop-shadow(0 3px 3px rgba(0,0,0,.8))}
+.wheel-wrap svg.wheel-ptr.tick{animation:ptrTick .12s}
+@keyframes ptrTick{50%{transform:rotate(-16deg)}}
+
+/* boss arena */
+.arena{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:6px;margin:10px 0 4px;position:relative;min-height:170px}
+.fighter{position:relative;text-align:center}
+.fighter .fig{font-size:clamp(70px,20vw,120px);line-height:1;display:inline-block;filter:drop-shadow(0 8px 12px rgba(0,0,0,.7));transition:transform .18s}
+.fighter .fig svg{width:clamp(70px,20vw,110px);height:auto;display:block}
+.fighter.boss .fig{animation:bossIdle 1.6s ease-in-out infinite alternate;filter:drop-shadow(0 0 22px var(--tint,#ef4444))}
+.fighter.lunge-r .fig{animation:lungeR .45s ease-out}
+.fighter.lunge-l .fig{animation:lungeL .45s ease-out}
+.fighter.hit .fig{animation:hitFlash .45s}
+.fighter.dead .fig{animation:deadFall 1s ease-in forwards}
+@keyframes lungeR{40%{transform:translateX(46px) scale(1.15)}}
+@keyframes lungeL{40%{transform:translateX(-46px) scale(1.15)}}
+@keyframes hitFlash{20%{filter:brightness(3) saturate(0)}40%{transform:translateX(8px) rotate(4deg)}60%{transform:translateX(-8px) rotate(-4deg)}}
+@keyframes deadFall{to{transform:translateY(40px) rotate(80deg) scale(.5);opacity:0;filter:grayscale(1)}}
+.hpbar{height:12px;border-radius:99px;background:rgba(0,0,0,.65);border:1px solid #ffffff44;overflow:hidden;position:relative;margin:4px auto 0;width:100%}
+.hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#16a34a,#84cc16);transition:width .6s cubic-bezier(.3,.9,.3,1)}
+.hpbar.boss i{background:linear-gradient(90deg,#b91c1c,#f97316)}
+.hpbar.low i{background:linear-gradient(90deg,#b91c1c,#ef4444)}
+.hp-lbl{font-size:10px;font-weight:800;color:#fff;text-shadow:0 1px 2px #000;margin-top:2px}
+.arena-vs{font-family:Anton,Impact,sans-serif;font-size:22px;color:#fde047;text-shadow:0 0 12px #f59e0b;align-self:center}
+.arena .dmg{position:absolute;left:50%;top:20%;z-index:5}
+.arena-die{display:inline-flex;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#1c1917;background:linear-gradient(145deg,#f5ecd6,#cdbf9c);border:2px solid #8a7a52;animation:dieTumble .5s ease-out}
+@keyframes dieTumble{from{transform:rotate(540deg) scale(.2)}to{transform:none}}
+.boss-banner{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(22px,7vw,40px);margin-top:4px}
+.boss-banner.win{color:#fde047;text-shadow:0 0 22px #f59e0b}
+.boss-banner.lose{color:#fda4af;text-shadow:0 0 22px #be123c}
+.duel-row{display:flex;justify-content:center;gap:22px;align-items:center;margin:10px 0}
+.duel-side{text-align:center;font-weight:800;font-size:13px}
+.duel-side .arena-die{width:56px;height:56px;font-size:30px;margin-top:6px;border-radius:14px}
+.duel-side.win .arena-die{box-shadow:0 0 22px #fbbf24;border-color:#fbbf24}
+.duel-side.lose{opacity:.6}
+
+/* loaded dice picker + arena menu */
+.die-pick{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:10px 0}
+.die-pick button{aspect-ratio:1/1;border-radius:12px;font-size:22px;font-weight:900;color:#1c1917;background:linear-gradient(145deg,#f5ecd6,#cdbf9c);border:2px solid #8a7a52;cursor:pointer;transition:transform .12s, box-shadow .15s}
+.die-pick button:hover{transform:translateY(-3px) rotate(-4deg);box-shadow:0 0 16px #fbbf24}
+.arena-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid #ffffff22;color:#fff;cursor:pointer;transition:all .15s}
+.arena-opt:hover:not(:disabled){background:rgba(244,63,94,.18);border-color:#fb7185}
+.arena-opt:disabled{opacity:.42;cursor:not-allowed}
+.arena-opt .ai{font-size:24px;flex:none}
+.arena-opt b{display:block;font-size:13px}.arena-opt small{display:block;font-size:11px;color:#a8a2bd;line-height:1.3}
+.mode-card{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid #ffffff18;cursor:pointer;transition:all .15s}
+.mode-card:hover{background:rgba(255,255,255,.09)}
+.mode-card.selected{border-color:#22d3ee;background:rgba(6,182,212,.16);box-shadow:0 0 14px rgba(34,211,238,.25)}
+.mode-card .mi{font-size:22px;flex:none}
+.mode-card b{font-size:12px;color:#fff}.mode-card small{display:block;font-size:10.5px;color:#a39cba;line-height:1.3}
+.guide-sec{margin-top:10px}.guide-sec h4{font-size:12px;font-weight:800;color:#fde68a;margin-bottom:3px}.guide-sec p,.guide-sec li{font-size:11.5px;color:#cfc9e0;line-height:1.45}.guide-sec ul{list-style:disc;padding-left:18px}
+.rpg-off .rpg-only{display:none !important}
+.item-new{display:inline-block;font-size:8px;font-weight:900;letter-spacing:.08em;padding:1px 5px;border-radius:99px;background:linear-gradient(90deg,#f43f5e,#f59e0b);color:#fff;vertical-align:middle;margin-left:3px}
+@media (prefers-reduced-motion: reduce){
+  #aurora i,h1.font-display,.logo,.btn-primary,.rt-ico,.rt::before,.stage-beams,.st-ring,.st-emoji,.portal-art .ring,.chest-rays,.fighter.boss .fig,.player-card.active{animation:none !important}
+}
 /* Jack of Trader: the gamble card */
 .jack-modal{background:radial-gradient(ellipse at 50% 30%,rgba(88,28,135,.55),rgba(5,3,10,.94) 70%)}
 .jack-stage{position:relative;width:min(94vw,470px);max-height:94vh;overflow:hidden;padding:16px 14px 14px;border-radius:22px;border:2px solid #a855f7aa;
@@ -528,6 +732,7 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
 </style>
 </head>
 <body>
+<div id="aurora"><i></i><i></i><i></i></div>
 <div id="embers"></div>
 
 <!-- Header -->
@@ -549,6 +754,8 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
     <span id="mode-chip" class="mode-chip" title="Current game mode">🤖 vs AI Bot</span>
     <button id="classes-btn" class="btn btn-ghost" onclick="openClassSelectModal()">🎭 Champions</button>
     <button class="btn btn-danger" onclick="confirmReset()">↺ Restart</button>
+      <button class="btn btn-guide" onclick="openGuide()" title="How the dungeon works">📖 <span class="hide-sm">Guide</span></button>
+      <button id="fx-btn" class="btn btn-ghost" onclick="toggleFx()" title="Effects quality (turn down on slow phones)">✨ <span id="fx-text" class="hide-sm">FX High</span></button>
     <button id="menu-btn" class="btn btn-primary" style="padding:9px 14px;font-size:13px" onclick="showMenu('home')" title="Open the main menu">☰ Menu</button>
   </div>
 </header>
@@ -578,6 +785,7 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
         <div class="board-light"></div>
         <div id="tokens-layer"></div>
         <div id="fx-layer"></div>
+        <canvas id="fx-canvas"></canvas>
       </div>
     </div>
     <div class="panel legend">
@@ -588,6 +796,13 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
       <span>💰 Treasure</span>
       <span>❄️ Frost trap</span>
       <span>💣 Mine</span>
+      <span class="rpg-only">🎁 Chest</span>
+      <span class="rpg-only">🌀 Portal</span>
+      <span class="rpg-only">🎡 Wheel</span>
+      <span class="rpg-only">🔮 Altar</span>
+      <span class="rpg-only">🏕️ Camp</span>
+      <span class="rpg-only">👹 Boss</span>
+      <span class="rpg-only">❓ Hidden trap</span>
     </div>
   </section>
 
@@ -612,11 +827,13 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
         <div class="flex flex-col gap-2" style="min-width:170px">
           <button id="roll-btn" class="btn btn-primary" onclick="handleRollClick()"><span id="roll-label">🎲 ROLL DICE</span></button>
           <button id="open-shop-btn" class="btn btn-gold" onclick="openShopModal()"><span id="shop-btn-label">🛒 Black Market (1/turn)</span></button>
+          <button id="open-arena-btn" class="btn btn-arena rpg-only" onclick="openArena()"><span id="arena-btn-label">⚔️ Arena</span></button>
           <div class="text-[10px] text-slate-500 text-center">Space = roll · S = shop</div>
         </div>
       </div>
       <div id="dice-picker" class="dice-picker" role="radiogroup" aria-label="Choose which die to roll"></div>
       <div id="dice-result-banner" class="text-center relative min-h-[24px] mt-1"></div>
+      <div id="hud-chips" class="hud-row justify-center mt-2 relative"></div>
     </div>
 
     <div id="players-wrap" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
@@ -856,6 +1073,10 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
       <div id="online-code" class="bigcode my-2"></div>
       <button id="net-copy-btn" class="btn btn-ghost" onclick="netCopyCode()">📋 Copy invite link</button>
       <div id="online-roster" class="flex flex-col gap-1 mt-4 text-left"></div>
+      <div id="net-mode-wrap" class="mt-4 text-left hidden">
+        <p id="net-mode-label" class="lbl" style="margin-top:0">Game mode (host chooses)</p>
+        <div id="net-mode-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      </div>
       <div class="mt-4">
         <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Finish rule</p>
         <div class="seg wide" role="radiogroup" aria-label="Finish rule">
@@ -908,6 +1129,10 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
         <div id="class-list-2" class="flex flex-col gap-2"></div>
       </div>
     </div>
+    <div class="mb-4">
+      <h3 class="text-xs font-extrabold text-cyan-300 mb-2 uppercase tracking-wide">Game mode</h3>
+      <div id="class-mode-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+    </div>
     <button class="btn btn-primary w-full" style="width:100%" onclick="applyClassSelection()">⚔️ Enter the Dungeon</button>
   </div>
 </div>
@@ -917,8 +1142,9 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
   <div class="modal-card panel text-center" style="max-width:480px;padding:28px">
     <div style="font-size:60px;animation:bounceSm .7s infinite alternate">🏆</div>
     <h2 id="win-title" class="font-display text-2xl font-extrabold text-white mt-1">VICTORY!</h2>
-    <p id="win-subtitle" class="text-sm text-slate-300 mt-1 mb-4"></p>
-    <div id="win-stats" class="mb-5"></div>
+    <p id="win-subtitle" class="text-sm text-slate-300 mt-1 mb-3"></p>
+    <div id="win-stats" class="mb-3"></div>
+    <div id="win-extra" class="mb-4 text-xs text-slate-300"></div>
     <div class="flex flex-col gap-2">
       <button class="btn btn-primary" style="width:100%" onclick="playAgain()">Play Again</button>
       <button class="btn btn-ghost" style="width:100%" onclick="closeModal('win-modal')">Admire the Board</button>
@@ -938,6 +1164,51 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
       <button id="confirm-ok" class="btn btn-danger" style="flex:1" onclick="runConfirm()">Restart</button>
     </div>
   </div>
+</div>
+
+<!-- Arena modal (PvP actions) -->
+<div id="arena-modal" class="modal hidden" onclick="if(event.target===this)closeModal('arena-modal')">
+  <div class="modal-card panel" style="max-width:460px;border-color:#fb718566">
+    <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-700/60">
+      <div class="flex items-center gap-3">
+        <div class="shop-ico" style="--accent:#fb7185">⚔️</div>
+        <div><h2 class="font-display text-base font-extrabold text-white">The Arena</h2>
+        <p class="text-[11px] text-slate-400">One arena action per turn · results are rolled by the shared dungeon seed</p></div>
+      </div>
+      <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeModal('arena-modal')">✕</button>
+    </div>
+    <div id="arena-list" class="flex flex-col gap-2"></div>
+  </div>
+</div>
+
+<!-- Loaded Dice picker -->
+<div id="loaded-modal" class="modal hidden">
+  <div class="modal-card panel text-center" style="max-width:380px;border-color:#fbbf2466">
+    <div style="font-size:38px">🎲</div>
+    <h3 class="font-display text-lg font-extrabold text-white">Loaded Dice</h3>
+    <p class="text-xs text-slate-400">Choose the number you want to roll.</p>
+    <div id="loaded-pick" class="die-pick"></div>
+  </div>
+</div>
+
+<!-- Guide -->
+<div id="guide-modal" class="modal hidden" onclick="if(event.target===this)closeModal('guide-modal')">
+  <div class="modal-card panel" style="max-width:640px;border-color:#22d3ee66">
+    <div class="flex items-center justify-between mb-2 pb-3 border-b border-slate-700/60">
+      <div><h2 class="font-display text-xl font-extrabold text-white">Dungeon Guide</h2>
+      <p class="text-xs text-slate-400">The classic rules still apply: exact roll to land on 100, snakes slide, ladders climb.</p></div>
+      <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeModal('guide-modal')">✕</button>
+    </div>
+    <div id="guide-body"></div>
+  </div>
+</div>
+
+<!-- Stage: cinematic overlay for events, chests, wheel, portals, bosses and duels -->
+<div id="stage" class="stage hidden">
+  <div class="stage-beams"></div>
+  <div class="stage-rain" id="stage-rain"></div>
+  <div id="stage-card" class="stage-card"></div>
+  <div class="st-hint">TAP OR PRESS SPACE TO SKIP</div>
 </div>
 
 <div id="splash" class="splash hidden">
@@ -1153,7 +1424,7 @@ const tileEls = {};
 const $ = id => document.getElementById(id);
 let fastMode = false;                          // true while fast-forwarding a replayed move log
 const realSleep = ms => new Promise(r => setTimeout(r, ms));
-const sleep = ms => (fastMode ? Promise.resolve() : realSleep(ms));
+const sleep = ms => (fastMode ? Promise.resolve() : realSleep(ms * (typeof RPG === 'object' && RPG ? RPG.speed : 1)));
 const MAXP = 5;                                // most players in one match
 let NP = 2;                                    // players in the current match
 const PLAYERS = () => Array.from({ length: NP }, (_, i) => i + 1);
@@ -1165,7 +1436,7 @@ const TEAM = {
   5: { c: '#a855f7', d: '#581c87', rgb: '168,85,247' }
 };
 const other = p => (p === 1 ? 2 : 1);          // only meaningful in 2-player matches
-const rivals = p => PLAYERS().filter(q => q !== p);
+const rivals = p => PLAYERS().filter(q => q !== p && !(RPG && RPG.p[q] && RPG.p[q].out));
 const defaultTarget = p => { const r = rivals(p); return r.length === 1 ? r[0] : null; };
 const TARGET_SHOP = new Set(['swap', 'freeze', 'mine']);
 const TARGET_PU = new Set(['swap', 'freeze']);
@@ -1347,6 +1618,7 @@ function generateBoard() {
       tileEls[n] = tile;
     }
   }
+  rpgDecorateTiles();
 }
 
 const SNAKE_PALETTE = [
@@ -1460,11 +1732,12 @@ function buildPlayerCards() {
     <div id="p${p}-card" class="panel player-card team${p}">
       <div class="portrait" id="p${p}-portrait"></div>
       <div class="min-w-0 flex-1">
-        <div class="flex items-center gap-2 flex-wrap"><span id="p${p}-name" class="pname"></span><span id="p${p}-class-badge" class="class-badge"></span></div>
+        <div class="flex items-center gap-2 flex-wrap"><span id="p${p}-name" class="pname"></span><span id="p${p}-class-badge" class="class-badge"></span><span id="p${p}-title"></span></div>
         <div class="stats"><span class="cash">🪙 $<b id="p${p}-cash">0</b></span><span class="tilepos">Tile <b id="p${p}-pos">1</b></span></div>
         <div class="progress"><i id="p${p}-progress" style="width:1%"></i></div>
         <div id="p${p}-buffs" class="buffs"></div>
         <div id="p${p}-passive" class="passive"></div>
+        <div id="p${p}-ach" class="ach-row"></div>
       </div>
     </div>`).join('');
 }
@@ -1505,6 +1778,11 @@ function updateHUD() {
   PLAYERS().forEach(p => {
     const cl = CLASSES[playerClasses[p]];
     $(`p${p}-name`).textContent = playerName(p) + (NET.on && p === NET.seat ? ' (you)' : '');
+    const meta = rpgHudMeta(p);
+    $(`p${p}-title`).innerHTML = meta.title; $(`p${p}-ach`).innerHTML = meta.ach;
+    const cashEl = $(`p${p}-cash`);
+    if (lastCash[p] != null && playerCash[p] > lastCash[p] && !fastMode) { cashEl.classList.remove('cash-pop'); void cashEl.offsetWidth; cashEl.classList.add('cash-pop'); }
+    lastCash[p] = playerCash[p];
     $(`p${p}-class-badge`).textContent = cl.name;
     $(`p${p}-cash`).textContent = playerCash[p];
     $(`p${p}-pos`).textContent = playerPositions[p];
@@ -1522,10 +1800,14 @@ function updateHUD() {
     if (playerRollCap[p]) b.push('<span class="buff red">⏳ Roll ≤ 3</span>');
     if (playerMarketBan[p]) b.push('<span class="buff red">🚫 Market shut</span>');
     if (playerDelayedGold[p].length) b.push(`<span class="buff amber">📈 +$${playerDelayedGold[p].reduce((a, e) => a + e.amt, 0)} due</span>`);
+    rpgHudBuffs(p).forEach(x => b.push(x));
     $(`p${p}-buffs`).innerHTML = b.length ? b.join('') : '<span class="buff none">No buffs</span>';
     $(`p${p}-card`).classList.toggle('active', p === currentPlayer && !gameOver);
+    $(`p${p}-card`).style.opacity = (RP(p) && RP(p).out) ? '.35' : '';
   });
+  renderHudChips();
 }
+const lastCash = {};
 
 function refreshAll(dur) { placeTokens(dur); updateHUD(); }
 
@@ -1553,7 +1835,9 @@ function updateControls() {
     : (!mine && NET.on) ? `⏳ ${playerName(currentPlayer)}'s turn…`
     : selectedDie === 'normal' ? '🎲 ROLL DICE' : `${sd.icon} ROLL ${sd.short.toUpperCase()}${sd.cost ? ' · $' + sd.cost : ''}`;
   $('open-shop-btn').disabled = blocked;
-  $('shop-btn-label').textContent = shopPurchasedThisTurn ? '🛒 Market (used this turn)' : '🛒 Black Market (1/turn)';
+  $('shop-btn-label').textContent = !marketOpen() ? '🚫 Market closed' : shopPurchasedThisTurn ? '🛒 Market (used this turn)' : '🛒 Black Market (1/turn)';
+  const ab = $('open-arena-btn');
+  if (ab) { ab.disabled = blocked || !rpgOn() || !!RPG.actionUsed; $('arena-btn-label').textContent = (rpgOn() && RPG.actionUsed) ? '⚔️ Arena (used)' : '⚔️ Arena'; }
   refreshDicePicker(blocked);
 }
 
@@ -1879,45 +2163,11 @@ function showSplash(key, ctx, gid) {
 /* ============================================================
    SHOP
    ============================================================ */
-function getCost(p, key) {
-  if (playerFreeBuy[p]) return 0;                      // Merchant's Blessing: the next purchase is on the house
-  const base = SHOP_ITEMS[key].cost;
-  return playerClasses[p] === 'wizard' ? Math.round(base * (1 - TUNE.wizardDiscount)) : base;
-}
-function openShopModal() {
-  if (isRolling || gameOver || isBot(currentPlayer) || !canAct()) return;
-  renderShop();
-  openModal('shop-modal');
-}
-function renderShop() {
-  const p = currentPlayer;
-  $('shop-purse').textContent = playerCash[p];
-  const banned = playerMarketBan[p] === 2;
-  $('shop-note').textContent = banned ? 'closed to you this turn (Cursed Fortune)' : shopPurchasedThisTurn ? 'already traded this turn' : playerFreeBuy[p] ? 'your next purchase is FREE' : (playerClasses[p] === 'wizard' ? '1 purchase per turn · Wizard −25%' : '1 purchase per turn');
-  const list = $('shop-items');
-  list.innerHTML = '';
-  Object.entries(SHOP_ITEMS).forEach(([key, item]) => {
-    const price = getCost(p, key);
-    const poor = playerCash[p] < price;
-    const btn = document.createElement('button');
-    btn.className = 'shop-item' + ((poor || shopPurchasedThisTurn || banned) ? ' disabled' : '');
-    btn.style.setProperty('--accent', item.accent);
-    btn.innerHTML = `
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="shop-ico">${item.icon}</div>
-        <div class="min-w-0"><div class="text-xs font-extrabold text-white">${item.name}</div><div class="text-[11px] text-slate-400 leading-snug">${item.desc}</div></div>
-      </div>
-      <span class="price${poor ? ' poor' : ''}">${price === 0 ? 'FREE' : '$' + price}</span>`;
-    btn.onclick = () => uiBuy(key);
-    list.appendChild(btn);
-  });
-}
-
 function findFreeTile(base, offsets) {
   for (const o of offsets) {
     const t = base + o;
     if (t <= 1 || t >= 100) continue;
-    if (LADDERS[t] || SNAKES[t] || SPECIAL_TILES[t] || placedMines[t]) continue;
+    if (LADDERS[t] || SNAKES[t] || SPECIAL_TILES[t] || placedMines[t] || (RPG.tiles[t] && RPG.tiles[t].t !== 'trap')) continue;
     return t;
   }
   return null;
@@ -2474,26 +2724,12 @@ function aiChooseDie(me) {
 function scheduleBot(ms) {
   clearTimeout(botTimer);
   const gid = gameId;
-  botTimer = setTimeout(() => { if (gid === gameId) executeTurn(); }, ms);
+  botTimer = setTimeout(async () => { await splashIdle(); if (gid === gameId) executeTurn(); }, ms);
 }
 
 /* ============================================================
    TURN FLOW
    ============================================================ */
-function handleRollClick() {
-  if (isRolling || gameOver || isBot(currentPlayer)) return;
-  if (anyModalOpen() || splashActive()) return;
-  if (NET.on) {
-    if (!canAct()) return;
-    const dk = DICE[selectedDie].cost <= playerCash[currentPlayer] ? selectedDie : 'normal';
-    const v = rollDie(dk);
-    netPush(DICE[dk].code + String(v));      // everyone replays this exact roll: one digit, or a die letter + digit
-    executeTurn(v, false, dk);
-    return;
-  }
-  executeTurn();
-}
-
 async function executeTurn(forcedRoll, fromLog, dieKey) {
   if (gameOver || isRolling) return;
   const gid = gameId;
@@ -2501,6 +2737,8 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
   updateControls();
 
   const me = currentPlayer;
+  if (rpgOn() && RP(me).out) { isRolling = false; switchTurn(); return; }
+  RPG.fromLog = !!fromLog; RPG.teleHops = 0;
   const name = playerName(me);
   const wasExtra = extraRollPending;
   extraRollPending = false;
@@ -2509,7 +2747,7 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
   // Salary (once per turn, not on extra rolls)
   let salary = 0;
   if (!wasExtra) {
-    salary = playerClasses[me] === 'human' ? TUNE.humanSalary : TUNE.baseSalary + (playerClasses[me] === 'demon' ? TUNE.demonBonus : playerClasses[me] === 'angel' ? TUNE.angelBonus : 0);
+    salary = rpgSalary(me);
     gain(me, salary);
     playerStats[me].turns++;
     turnPaid = true;
@@ -2524,6 +2762,13 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
     }
     refreshAll();
 
+    if (rpgOn() && RP(me).poison > 0) {
+      const r = RP(me); r.poison--;
+      const l = lose(me, 20);
+      rpgLog(me, `☠️ Poison saps <b>$${l}</b> (${r.poison} turn${r.poison === 1 ? '' : 's'} left).`);
+      refreshAll();
+    }
+
     if (playerPoisoned[me]) {
       playerPoisoned[me] = false;
       playerThawed[me] = 1;
@@ -2533,6 +2778,20 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
       refreshAll();
       await sleep(1200);
       if (gid !== gameId) return;
+      rpgTurnEnd(me);
+      switchTurn();
+      return;
+    }
+
+    if (rpgOn() && RP(me).skip > 0) {
+      const r = RP(me), jail = r.why === 'jail'; r.skip--; r.why = '';
+      rpgLog(me, jail ? '⛓️ Locked in an iron cage — <b>turn skipped</b>!' : '⏳ Lost turn — <b>turn skipped</b>!');
+      await quick({ kicker: jail ? 'IRON CAGE' : 'LOST TURN', title: jail ? 'Caged!' : 'Turn Lost', sub: name, emoji: jail ? '⛓️' : '⏳', tint: '#475569', ms: 1300 });
+      setBanner(`<p class="text-xs font-bold text-slate-300">${name} loses this turn (+$${salary})</p>`);
+      refreshAll();
+      await sleep(700);
+      if (gid !== gameId) return;
+      rpgTurnEnd(me);
       switchTurn();
       return;
     }
@@ -2543,11 +2802,18 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
     await splashIdle();
     if (gid !== gameId) return;
   }
+  if (isBot(me) && rpgOn() && !wasExtra) {
+    await aiArena();
+    await splashIdle();
+    if (gid !== gameId) return;
+  }
 
   // Which die? A replayed or online roll names its die; a bot picks one; a local human uses the picker.
-  let dKey = forcedRoll ? (DICE[dieKey] ? dieKey : 'normal') : (isBot(me) ? aiChooseDie(me) : selectedDie);
+  // Loaded Dice (Black Market): the roll is picked by the player and always uses the normal die.
+  const loadedBot = !forcedRoll && isBot(me) && rpgOn() && RP(me).loaded;
+  let dKey = forcedRoll ? (DICE[dieKey] ? dieKey : 'normal') : (loadedBot ? 'normal' : isBot(me) ? aiChooseDie(me) : selectedDie);
   if (!DICE[dKey] || DICE[dKey].cost > playerCash[me]) dKey = 'normal';      // can't afford it → the normal die
-  let roll = forcedRoll || rollDie(dKey);
+  let roll = forcedRoll || (loadedBot ? aiLoadedPick(me) : rollDie(dKey));
   if (!DICE[dKey].faces.includes(roll)) { dKey = 'normal'; if (!DICE.normal.faces.includes(roll)) roll = 1; }   // a roll this die can't produce is ignored
   const die = DICE[dKey];
   selectedDie = 'normal';
@@ -2558,9 +2824,12 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
     addLogEntry(me, `${die.icon} Paid <b>$${die.cost}</b> for the <b>${die.name}</b>.`);
     refreshAll();
   }
+  if (rpgOn()) RP(me).lastFrom = playerPositions[me];
   updateControls();
+  const rawRoll = roll;
   await rollDice3D(roll, dKey);
   if (gid !== gameId) return;
+  roll = rpgAdjustRoll(me, rawRoll);
 
   // Time Collapse: this roll can be 3 at most
   let capped = 0;
@@ -2570,7 +2839,7 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
     else addLogEntry(me, '⏳ Time Collapse fizzles: the roll was already 3 or less.');
   }
 
-  setBanner(`<p class="text-xs font-bold text-white">${name} rolled <span style="padding:2px 9px;border-radius:8px;background:rgba(139,92,246,.3);border:1px solid rgba(167,139,250,.5);color:#ddd6fe;font-size:14px">${roll}</span>${capped ? ` <span class="text-violet-300">(${capped} → 3 ⏳)</span>` : ''}${dKey !== 'normal' ? ` <span class="text-slate-400">${die.icon} ${die.short}</span>` : ''}${salary ? ` <span class="text-amber-300">(+$${salary} salary)</span>` : ''}</p>`);
+  setBanner(`<p class="text-xs font-bold text-white">${name} rolled <span style="padding:2px 9px;border-radius:8px;background:rgba(139,92,246,.3);border:1px solid rgba(167,139,250,.5);color:#ddd6fe;font-size:14px">${rawRoll}</span>${roll !== rawRoll ? ` <span class="text-rose-300">→ ${roll}${capped ? ' ⏳' : ''}</span>` : ''}${dKey !== 'normal' ? ` <span class="text-slate-400">${die.icon} ${die.short}</span>` : ''}${salary ? ` <span class="text-amber-300">(+$${salary} salary)</span>` : ''}</p>`);
 
   if (playerClasses[me] === 'human' && roll % 2 === 0) {
     gain(me, TUNE.humanEven);
@@ -2601,6 +2870,7 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
     if (playerClasses[me] === 'demon') {
       for (const q of rivals(me)) {
         if (pos !== playerPositions[q] || playerCash[q] <= 0) continue;
+        if (rpgOn() && rpgGuard(q, me, 'hellfire') !== 'hit') continue;
         const stolen = loseGold(q, Math.min(TUNE.demonSteal, playerCash[q]));
         gain(me, stolen);
         floatAtPlayer(q, `-$${stolen}`, '#fb7185');
@@ -2608,6 +2878,7 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
         addLogEntry(me, `😈 Hellfire: passed ${playerName(q)} and stole <b>$${stolen}</b>!`);
         playSound('cash');
         refreshAll();
+        if (rpgOn()) rpgHit(me, q, 'hellfire');
         await splash('steal', { p: me, t: q, amt: stolen });
       }
     }
@@ -2623,11 +2894,13 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
   } else {
     // Walk up toward 100 — and, under the "bounce" rule, back down with the leftover steps.
     // Example: on 98 rolling 5 → 99, 100 (2 forward) then 99, 98, 97 (3 back) → lands on 97.
+    let barred = false;
     for (const pos of mv.fwd) {
       await stepOnto(pos);
       if (gid !== gameId) return;
+      if (rpgOn() && bossBlocks(pos)) { barred = true; break; }          // a living boss bars the road
     }
-    if (mv.over > 0) {
+    if (mv.over > 0 && !barred) {
       playerStats[me].bounces++;
       addLogEntry(me, `Rolled ${roll} from ${from} — hit tile 100 and <b>bounced back ${mv.over}</b> to tile <b>${mv.landing}</b>.`);
       floatAtPlayer(me, 'Bounce!', '#fca5a5');
@@ -2640,18 +2913,30 @@ async function executeTurn(forcedRoll, fromLog, dieKey) {
     }
     await resolveTile(me, gid);
     if (gid !== gameId) return;
-    if (playerPositions[me] === 100) { showWinModal(me); return; }
+    if (gameOver) return;
+    rpgDetect(me);
+    if (playerPositions[me] === 100) {
+      if (rpgOn() && RPG.cfg.rounds) { await rpgLap(me); if (gid !== gameId) return; }
+      else { showWinModal(me); return; }
+    }
   }
 
-  let bonusRoll = false;
+  rpgTurnEnd(me);
+  let bonusRoll = false, secondChance = false;
+  if (!extraRollPending && rpgOn() && !RP(me).out && RP(me).bonusRoll) {
+    const r = RP(me); r.bonusRoll = false;
+    if (r.twin) { r.twin = false; r.bonusRoll = true; }
+    extraRollPending = true; bonusRoll = true;
+    $('extra-roll-badge').classList.remove('hidden');
+  }
   if (!extraRollPending && playerBonusRolls[me] > 0) {      // Second Chance
     playerBonusRolls[me]--;
     extraRollPending = true;
-    bonusRoll = true;
+    bonusRoll = true; secondChance = true;
     $('extra-roll-badge').classList.remove('hidden');
   }
   if (extraRollPending) {
-    addLogEntry(me, bonusRoll ? '🎲 Second Chance — <b>extra roll</b>!' : '🔥 Rolled a 6 — <b>extra roll</b>!');
+    addLogEntry(me, secondChance ? '🎲 Second Chance — <b>extra roll</b>!' : bonusRoll ? '🎲 Bonus roll — <b>roll again</b>!' : '🔥 Rolled a 6 — <b>extra roll</b>!');
     isRolling = false;
     updateControls();
     if (isBot(me)) scheduleBot(1000);
@@ -2670,11 +2955,26 @@ function switchTurn() {
   else if (playerMarketBan[prev] === 1) playerMarketBan[prev] = 2;                                      // ...and starts with their next turn
   if (playerEvents[prev]) { playerEvents[prev].prev = playerEvents[prev].cur; playerEvents[prev].cur = []; }
   turnPaid = false;
-  currentPlayer = currentPlayer % NP + 1;
+  let c = currentPlayer, wrapped = false;
+  for (let i = 0; i < NP; i++) {
+    const n = c % NP + 1;
+    if (n <= c) wrapped = true;
+    c = n;
+    if (!(rpgOn() && RP(c).out)) break;
+  }
+  currentPlayer = c;
   shopPurchasedThisTurn = false;
   extraRollPending = false;
   isRolling = false;
+  let ended = false;
+  if (rpgOn()) {
+    RPG.actionUsed = false; RPG.teleHops = 0;
+    if (RP(c).cloak > 0) RP(c).cloak--;
+    if (wrapped) ended = rpgRoundTick();
+  }
   updateTurnUI();
+  if (ended) { rpgEndByRounds(); return; }
+  if (gameOver) return;
   if (isBot(currentPlayer)) scheduleBot(900);
 }
 
@@ -2692,9 +2992,14 @@ async function resolveOnce(p) {
   const cp = playerCheckpoints[p];
 
   // 1. Mines (the owner is safe)
-  if (placedMines[pos] && placedMines[pos] !== p) {
+  if (placedMines[pos] && placedMines[pos] !== p && !(rpgOn() && isAllied(p, placedMines[pos]))) {
+    const mineOwner = placedMines[pos];
     delete placedMines[pos];
     renderTraps();
+    if (rpgOn()) {
+      const g = rpgGuard(p, mineOwner, 'mine');
+      if (g !== 'hit') { if (g === 'reflect') rpgBacklash(mineOwner, p, 'mine'); await sleep(700); return false; }
+    }
     if (playerShields[p]) {
       playerShields[p] = false;
       refreshAll();
@@ -2711,6 +3016,7 @@ async function resolveOnce(p) {
     let back = Math.max(1, pos - 6);
     if (cp > 0) back = Math.min(pos, Math.max(back, cp));
     addLogEntry(p, `💥 Stepped on a <b>mine</b>! Blasted back to tile ${back}.`);
+    if (rpgOn()) { rpgTriggered(p, 'mine'); rpgHit(mineOwner, p, 'mine'); }
     noteMove(p, pos, back);
     floatText(pos, 'BOOM!', '#fb923c');
     movePlayerTo(p, back, 0.7);
@@ -2721,8 +3027,8 @@ async function resolveOnce(p) {
 
   // 2. Ladders
   if (LADDERS[pos]) {
-    let dest = LADDERS[pos];
-    if (playerClasses[p] === 'wizard' && dest + TUNE.wizardLadder <= 100 && !SNAKES[dest + TUNE.wizardLadder]) {
+    let dest = ladderDest(pos, p);
+    if (playerClasses[p] === 'wizard' && dest + TUNE.wizardLadder <= (RPG.cfg.dbl ? 98 : 100) && !SNAKES[dest + TUNE.wizardLadder]) {
       dest += TUNE.wizardLadder;
       addLogEntry(p, `🧙‍♂️ Arcane Affinity: climbed a ladder with +2 bonus tiles to <b>${dest}</b>!`);
     } else {
@@ -2744,6 +3050,25 @@ async function resolveOnce(p) {
       await splash('snakeDodge', { p });
       return false;
     }
+    if (rpgOn()) {
+      const sr = RP(p), owner = customSnakeOwner[pos];
+      sr.st.snakes++; if (sr.st.snakes >= 3) rpgAch(p, 'survivor');
+      if (owner && owner !== p) {
+        if (isAllied(p, owner)) { addLogEntry(p, `🤝 Your ally's serpent trap lets you pass.`); return false; }
+        const g = rpgGuard(p, owner, 'serpent trap');
+        if (g !== 'hit') { if (g === 'reflect') rpgBacklash(owner, p, 'serpent trap'); await sleep(700); return false; }
+      }
+      if (sr.hook) {
+        sr.hook = false;
+        const g = bank(p, 40);
+        if (owner) { delete SNAKES[pos]; delete customSnakeOwner[pos]; generateBoard(); drawBoardElements(); placeTokens(); }
+        addLogEntry(p, `🪝 Snakeslayer Hook: the snake on tile ${pos} is <b>slain</b>${owner ? ' and its lair destroyed' : ''}! +$${g}.`);
+        floatText(pos, '🪝 Slain!', '#bef264'); sfx('hook'); fxEmit(pos, 'heal', 22);
+        refreshAll(); await sleep(600);
+        await quick({ kicker: 'SNAKESLAYER', title: 'Snake Slain', sub: playerName(p), emoji: '🪝', result: `+$${g}`, tint: '#65a30d', rain: ['🐍', '✨'], ms: 1300 });
+        return false;
+      }
+    }
     if (playerBribes[p]) {
       playerBribes[p] = false;
       refreshAll();
@@ -2764,8 +3089,9 @@ async function resolveOnce(p) {
       await splash('snakeDodge', { p });
       return false;
     }
-    let dest = SNAKES[pos];
+    let dest = snakeDest(pos, p);
     let saved = false;
+    if (rpgOn() && RP(p).curse === 'snakebait') { RP(p).curse = null; dest = Math.max(1, dest - 8); addLogEntry(p, '🐍 Your Snake Curse bites: the drop is <b>8 tiles longer</b>!'); }
     if (cp > 0 && dest < cp) {
       dest = Math.min(pos, cp);
       saved = true;
@@ -2773,6 +3099,7 @@ async function resolveOnce(p) {
     } else {
       addLogEntry(p, `▼ Bitten by a snake! Slid down to tile <b>${dest}</b>.`);
     }
+    if (rpgOn()) { rpgTriggered(p, 'snake'); if (customSnakeOwner[pos] && customSnakeOwner[pos] !== p) rpgHit(customSnakeOwner[pos], p, 'serpent trap'); }
     playerStats[p].snakes++;
     noteMove(p, pos, dest);
     playSound('snake');
@@ -2838,6 +3165,7 @@ async function resolveOnce(p) {
       return false;
     }
   }
+  if (rpgOn()) { const rr = await rpgResolveTile(p, pos); if (rr !== undefined) return rr; }
   return false;
 }
 
@@ -2854,15 +3182,18 @@ function renderWinStats(winner) {
   const body = rows.map(([label, key, pre]) => `<tr><td class="sl">${label}</td>${PLAYERS().map(q => `<td class="${q === winner ? 'win' : ''}">${pre || ''}${playerStats[q][key]}</td>`).join('')}</tr>`).join('');
   return `<table class="stat-table"><thead><tr><th></th>${head}</tr></thead><tbody>${body}</tbody></table>`;
 }
-function showWinModal(p) {
+function showWinModal(p, why) {
+  if (gameOver) return;
   gameOver = true;
+  rpgOnWin(p);
+  rpgWinExtras();
   updateControls();
   refreshAll();
   playSound('win');
   burst(100, ['🪙', '✨', '👑', '🎉'], 24);
-  addLogEntry(p, `🏆 <b>${playerName(p)}</b> reached the treasure!`);
+  addLogEntry(p, why ? `🏆 <b>${playerName(p)}</b> wins as ${why}!` : `🏆 <b>${playerName(p)}</b> reached the treasure!`);
   $('win-title').textContent = `${playerName(p).toUpperCase()} WINS!`;
-  $('win-subtitle').textContent = `${CLASSES[playerClasses[p]].name} claimed the treasure on tile 100 with $${playerCash[p]} in the purse.`;
+  $('win-subtitle').textContent = why ? `${CLASSES[playerClasses[p]].name} wins as ${why}, with $${playerCash[p]} in the purse.` : `${CLASSES[playerClasses[p]].name} claimed the treasure on tile 100 with $${playerCash[p]} in the purse.`;
   $('win-stats').innerHTML = renderWinStats(p);
   const gid = gameId;
   splash('win', { p }).then(() => setTimeout(() => { if (gid === gameId && gameOver) openModal('win-modal'); }, 500));
@@ -2916,6 +3247,7 @@ function resetGame() {
   jack = null; jackChosen = false; turnPaid = false; skipSnakeOnce = false;
   shopPurchasedThisTurn = false;
   SNAKES = { ...BASE_SNAKES };
+  rpgReset(modeKey, gameMode === 'ONL' ? ((NET.G && NET.G.seed) || 1) : newSeed());
   customSnakeOwner = {};
   placedMines = {};
   moveHistory = [];
@@ -2925,7 +3257,9 @@ function resetGame() {
 
   if (window.resolvePowerUp) { const r = window.resolvePowerUp; window.resolvePowerUp = null; r(); }
   if (NET.puWait) { const r = NET.puWait; NET.puWait = null; r(); }
-  ['powerup-modal', 'shop-modal', 'target-modal', 'win-modal', 'confirm-modal', 'jack-modal'].forEach(closeModal);
+  NET.decWait = null;
+  stageLocked = false; if (stageFin) stageFin();
+  ['powerup-modal', 'shop-modal', 'target-modal', 'win-modal', 'confirm-modal', 'jack-modal', 'arena-modal', 'loaded-modal'].forEach(closeModal);
 
   $('extra-roll-badge').classList.add('hidden');
   $('fx-layer').innerHTML = '';
@@ -2979,6 +3313,7 @@ function openClassSelectModal() {
   if (isRolling && !gameOver) { toast('Wait for the current turn to finish.', 'warn'); return; }
   pendingClasses = { ...playerClasses };
   pendingMode = gameMode;
+  pendingRpgMode = modeKey;
   pendingBounce = soloBounce;
   buildClassModal();
   openModal('class-modal');
@@ -2989,6 +3324,7 @@ function buildClassModal() {
   $('class-rule-b').classList.toggle('on', pendingBounce);
   $('class-rule-x').classList.toggle('on', !pendingBounce);
   $('class-title-2').textContent = pendingMode === 'PvC' ? 'AI Bot' : 'Player 2';
+  renderModeList('class-mode-list', pendingRpgMode, k => { pendingRpgMode = k; buildClassModal(); });
   [1, 2].forEach(p => {
     const box = $('class-list-' + p);
     box.innerHTML = '';
@@ -3004,6 +3340,7 @@ function buildClassModal() {
 function applyClassSelection() {
   playerClasses = { ...pendingClasses };
   gameMode = pendingMode;
+  modeKey = pendingRpgMode;
   soloBounce = pendingBounce;
   try { localStorage.setItem('sl-rule', soloBounce ? 'bounce' : 'exact'); } catch (e) {}
   classFromMenu = false;
@@ -3123,13 +3460,13 @@ const PU_BY_CODE = Object.fromEntries(Object.entries(PU_CODE).map(([k, v]) => [v
 // Jack of Trader: x0..x2 = bought it and picked card 0..2; y<a-t><0-9> = the outcome (one of 20) and its amount digit, drawn ONCE by the host
 const TCHARS = 'JKLMN';
 const tchar = t => TCHARS[t - 1];
-const LOG_RE = /^(?:[1-6btcHC]|[wfmSF][JKLMN]|[slg][1-8]|x[0-2]|y[a-t][0-9])*$/;
+const LOG_RE = /^(?:[1-6btcHCrikpnevADuqz]|[wfmSFoda][JKLMN]|[slg][1-8]|x[0-2]|y[a-t][0-9])*$/;
 const TOK_RE = /^[a-z0-9]{10}$/;
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
 const NET = {
   on: false, room: undefined, ch: null, ownsRoom: false, code: '', tok: '', nick: '', cls: 'human',
-  want: false, seat: 0, G: null, lobby: null, order: new Map(), applied: 0, puWait: null,
+  want: false, seat: 0, G: null, lobby: null, order: new Map(), applied: 0, puWait: null, decWait: null,
   nicks: ['Player 1', 'Player 2'], connected: true, unsubs: [], pumpTok: 0, joinTok: 0
 };
 
@@ -3155,7 +3492,10 @@ function validG(g) {
   if (!Array.isArray(g.cls) || g.cls.length !== n || !g.cls.every(c => typeof c === 'string' && CLASSES[c])) return null;
   if (!Array.isArray(g.nicks) || g.nicks.length !== n) return null;
   if (typeof g.log !== 'string' || g.log.length > 3000 || !LOG_RE.test(g.log)) return null;
-  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log, rule: g.rule === 'x' ? 'x' : 'b' };
+  // a room record without a mode comes from the original game: play it by the original rules
+  const mode = (typeof g.mode === 'string' && MODES[g.mode]) ? g.mode : 'classic';
+  const seed = (Number.isInteger(g.seed) && g.seed >= 0 && g.seed <= 4294967295) ? g.seed : 1;
+  return { gen: g.gen, by: g.by, seats: g.seats.slice(), cls: g.cls.slice(), nicks: g.nicks.map(cleanNick), log: g.log, mode, seed, rule: g.rule === 'x' ? 'x' : 'b' };
 }
 function fixNicks(G) {
   const seen = new Set();
@@ -3186,7 +3526,8 @@ function pickTarget(kind, cb, strict) {
   const info = {
     swap: ['🔁 Swap places with…', 'Trade tiles with one rival.'],
     freeze: ['❄️ Freeze…', 'They skip their next turn.'],
-    mine: ['💣 Plant a mine ahead of…', 'It lands a few tiles in front of them.']
+    mine: ['💣 Plant a mine ahead of…', 'It lands a few tiles in front of them.'],
+    bounty: ['🎯 Place a bounty on…', 'Earn $70 when they hit a snake, mine or trap.']
   }[kind];
   $('target-title').textContent = info[0];
   $('target-sub').textContent = info[1];
@@ -3247,7 +3588,7 @@ function netPeers() {
 
 function netPublish() {
   if (!NET.on || !NET.ch) return;
-  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log, rule: NET.G.rule } : null;
+  const G = NET.G ? { gen: NET.G.gen, by: NET.G.by, seats: NET.G.seats, cls: NET.G.cls, nicks: NET.G.nicks, log: NET.G.log, mode: NET.G.mode, seed: NET.G.seed, rule: NET.G.rule } : null;
   NET.ch.presence({ app: 'sl1', code: NET.code, tok: NET.tok, nick: NET.nick, cls: NET.cls, want: NET.want ? true : null, G }).catch(() => {});
 }
 
@@ -3305,7 +3646,8 @@ function netSync() {
 }
 
 function netStart(G) {
-  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log, rule: G.rule === 'x' ? 'x' : 'b' };
+  NET.G = { gen: G.gen, by: G.by, seats: G.seats.slice(), cls: G.cls.slice(), nicks: G.nicks.slice(), log: G.log, mode: validMode(G.mode), seed: G.seed >>> 0 || 1, rule: G.rule === 'x' ? 'x' : 'b' };
+  modeKey = NET.G.mode;
   RULES.bounce = NET.G.rule !== 'x';
   NET.seat = G.seats.indexOf(NET.tok) + 1;
   NET.nicks = G.nicks.slice();
@@ -3332,14 +3674,17 @@ function netStart(G) {
 async function netPump() {
   const tok = ++NET.pumpTok, gid = gameId;
   const alive = () => NET.on && tok === NET.pumpTok && gid === gameId && !!NET.G;
+  const idle = () => !isRolling && splashDepth === 0 && !NET.puWait && !NET.decWait;
   while (alive() && NET.applied < NET.G.log.length) {
     const log = NET.G.log, c = log[NET.applied];
-    const targeted = 'wfmSF'.includes(c);
+    const targeted = 'wfmSFoda'.includes(c);
     const dieKey = DICE_BY_CODE[c];                       // 's' / 'l' / 'g': a roll with a special die
     const len = c === 'y' ? 3 : (targeted || dieKey || c === 'x') ? 2 : 1;
     if (NET.applied + len > log.length) break;          // half-written unit: wait for the rest
-    const isPU = !!PU_BY_CODE[c];
-    const ready = c === 'y' ? () => true : isPU ? () => !!NET.puWait : () => !isRolling && splashDepth === 0 && !NET.puWait && !jack;
+    const isPU = !!PU_BY_CODE[c], isDec = 'ADuq'.includes(c);
+    const ready = c === 'y' ? () => true : isPU ? () => !!NET.puWait
+      : isDec ? () => !!NET.decWait || (!isRolling && splashDepth === 0 && !NET.puWait && !jack)
+      : () => idle() && !jack;
     while (alive() && !ready() && !gameOver) await realSleep(fastMode ? 0 : 40);
     if (!alive() || gameOver) break;
     const t = targeted ? TCHARS.indexOf(log[NET.applied + 1]) + 1 : 0;
@@ -3358,11 +3703,16 @@ async function netPump() {
     if (dieKey) executeTurn(dv, true, dieKey);
     else if (c >= '1' && c <= '6') executeTurn(+c, true);
     else if (isPU) netResolvePU(PU_BY_CODE[c], t || undefined);
+    else if (isDec) { const w = NET.decWait; if (w && w.need.includes(c)) netResolveDecision(c); }
+    else if (ARENA_BY_CODE[c]) rpgArena(ARENA_BY_CODE[c], t, true);
     else if (SHOP_BY_CODE[c]) buyShopItem(SHOP_BY_CODE[c], t || undefined);
   }
   if (tok === NET.pumpTok) {
     fastMode = false; updateControls(); netRenderChip();
     if (jack && !jack.out && !jack.ui && !gameOver) { jack.ui = true; jack.dealP = jackShowDeal(jack, true); }     // reloaded mid-deal: show the merchant while the host's outcome is awaited
+    // the log is exhausted and the engine is waiting on MY answer: show the question now
+    const w = NET.decWait;
+    if (w && w.who === NET.seat && NET.G && NET.applied >= NET.G.log.length) { NET.decWait = null; w.show(); }
   }
 }
 
@@ -3378,13 +3728,13 @@ function netNewGame() {
   const here = new Set([NET.tok, ...netPeers().filter(p => !p.isMe).map(p => p.presence.tok)]);
   const keep = NET.G.seats.map((t, i) => i).filter(i => here.has(NET.G.seats[i]));
   if (keep.length < 2) { toast('A rematch needs at least 2 players in the room.', 'warn'); return; }
-  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '', rule: NET.G.rule });
+  netStart({ gen: NET.G.gen + 1, by: NET.tok, seats: keep.map(i => NET.G.seats[i]), cls: keep.map(i => NET.G.cls[i]), nicks: keep.map(i => NET.G.nicks[i]), log: '', mode: NET.G.mode, seed: newSeed(), rule: NET.G.rule });
 }
 
 function netStartMatch() {
   if (!NET.on || !NET.G || NET.G.gen !== 0 || NET.G.seats[0] !== NET.tok) return;
   if (NET.G.seats.length < 2) { netMsg('Wait for at least one more player.'); return; }
-  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '', rule: NET.G.rule };
+  const G = { gen: 1, by: NET.tok, seats: NET.G.seats.slice(), cls: NET.G.cls.slice(), nicks: NET.G.nicks.slice(), log: '', mode: NET.G.mode, seed: newSeed(), rule: NET.G.rule };
   fixNicks(G);
   netStart(G);
 }
@@ -3536,6 +3886,12 @@ function netRenderLobby() {
   if (!G0) { box.innerHTML = ''; btn.classList.add('hidden'); return; }
   const host = !!NET.G && NET.G.gen === 0 && NET.G.seats[0] === NET.tok;
   box.innerHTML = G0.seats.map((t, i) => `<div class="roster-row"><span class="net-dot up"></span><b>${G0.nicks[i] || 'Player ' + (i + 1)}</b><span style="opacity:.75">${CLASS_ICON[G0.cls[i]] || ''} ${CLASSES[G0.cls[i]].name}</span>${i === 0 ? '<span class="roster-tag">host</span>' : ''}${t === NET.tok ? '<span class="roster-tag">you</span>' : ''}</div>`).join('');
+  const wrap = $('net-mode-wrap');
+  if (wrap) {
+    wrap.classList.remove('hidden');
+    $('net-mode-label').textContent = host ? 'Game mode (you choose)' : 'Game mode (chosen by the host)';
+    renderModeList('net-mode-list', validMode(G0.mode), k => { if (host && NET.G && NET.G.gen === 0) { NET.G.mode = k; netPublish(); netRenderLobby(); } }, !host);
+  }
   const exact = G0.rule === 'x';
   $('net-rule-b').classList.toggle('on', !exact);
   $('net-rule-x').classList.toggle('on', exact);
@@ -3631,7 +3987,7 @@ async function netCreate() {
   const code = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
   netMsg('Opening the room…');
   try { await netOpenChannel(code); } catch (e) { netMsg('Could not reach any matchmaking server. Some school/work networks block the WebSocket ports it uses — try another network or mobile data, then try again.'); NET.on = false; return; }
-  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '', rule: soloBounce ? 'b' : 'x' };
+  NET.G = { gen: 0, by: NET.tok, seats: [NET.tok], cls: [NET.cls], nicks: [NET.nick], log: '', mode: pendingRpgMode || 'std', seed: 1, rule: soloBounce ? 'b' : 'x' };
   NET.want = false;
   $('online-code').textContent = code;
   $('online-wait-label').textContent = 'Room code';
@@ -3890,6 +4246,1688 @@ function netBoot() {
   }
 }
 
+
+/* ============================================================
+   RPG LAYER 1/6 — state, seeded PRNG, modes, definitions, layout
+   All new shared state lives in RPG. Shared random outcomes come from R()
+   (a PRNG built from the host's seed) and never from Math.random().
+   ============================================================ */
+const MODES = {
+  std:       { icon: '🏰', name: 'Dungeon RPG',   desc: 'Everything on: new tiles, bosses, world events and the Arena. Recommended.' },
+  classic:   { icon: '📜', name: 'Classic',       desc: 'The original rules only: no new tiles, events, bosses or Arena.' },
+  chaos:     { icon: '🌪️', name: 'Chaos Mode',    desc: 'Many more portals, traps and events (every 2-3 rounds).' },
+  hardcore:  { icon: '💀', name: 'Hardcore',      desc: 'One life. Lose a boss fight and you are out for good. Last survivor wins.' },
+  richest:   { icon: '💎', name: 'Richest Wins',  desc: '20 rounds. Reaching tile 100 pays +$400 and sends you around again. Most gold wins.' },
+  survival:  { icon: '🔥', name: 'Survival',      desc: '3 lives. Only harmful world events and a toll that grows every round. Reach tile 100 alive.' },
+  double:    { icon: '⏩', name: 'Double Trouble', desc: 'Snake drops and ladder climbs are twice as long.' },
+  bounty:    { icon: '🎯', name: 'Bounty Hunter', desc: 'Every successful hit on a rival pays you a bounty.' },
+  nomarket:  { icon: '🚫', name: 'No Market',     desc: 'The Black Market is closed. Tiles, bosses and the Arena only.' },
+  speed:     { icon: '⚡', name: 'Speed Race',    desc: 'Start on tile 21, faster animations, bigger salary, quicker events.' }
+};
+const MODE_CFG = {
+  std: {}, classic: { rpg: false }, chaos: { evMin: 2, evMax: 3, density: 1.7, trapMul: 2, portalMul: 2.2 },
+  hardcore: { lives: 1 }, richest: { rounds: 20 }, survival: { evMin: 2, evMax: 3, harmful: true, lives: 3 },
+  double: { dbl: true }, bounty: { bounty: true }, nomarket: { market: false },
+  speed: { speed: 0.55, startPos: 21, evMin: 3, evMax: 4, salaryMul: 1.5 }
+};
+const BASE_CFG = { rpg: true, evMin: 3, evMax: 5, density: 1, trapMul: 1, portalMul: 1, lives: 0, rounds: 0, market: true, dbl: false, bounty: false, speed: 1, harmful: false, salaryMul: 1, startPos: 1 };
+const validMode = m => (typeof m === 'string' && MODES[m]) ? m : 'std';
+
+const BOSSES = {
+  ice:    { tile: 33, name: 'Ice Titan',      icon: '🧊', tint: '#38bdf8', hp: 16, cry: 'THE FROST AWAKENS' },
+  dragon: { tile: 56, name: 'Ancient Dragon', icon: '🐉', tint: '#f97316', hp: 20, cry: 'FIRE AND RUIN' },
+  lich:   { tile: 82, name: 'Lich King',      icon: '💀', tint: '#a855f7', hp: 22, cry: 'KNEEL, MORTALS' }
+};
+const BOSS_AT = Object.fromEntries(Object.entries(BOSSES).map(([k, b]) => [b.tile, k]));
+
+const TILE_INFO = {
+  chest:  { icon: '🎁', lbl: 'Chest',  cd: 5, tip: 'Treasure Chest: gold, discounts, shields... or a Mimic!' },
+  portal: { icon: '🌀', lbl: 'Portal', cd: 0, tip: 'Mystery Portal: teleport, swap or a secret bonus room' },
+  wheel:  { icon: '🎡', lbl: 'Wheel',  cd: 4, tip: 'Wheel of Fortune: spin for a reward... or a penalty' },
+  altar:  { icon: '🔮', lbl: 'Altar',  cd: 6, tip: 'Cursed Altar: pay $100 for a blessing, or risk a curse' },
+  camp:   { icon: '🏕️', lbl: 'Camp',   cd: 6, tip: 'Rest Camp: cures ailments, restores a shield, small gold' },
+  trap:   { icon: '❓', lbl: '',       cd: 0, tip: 'Hidden trap!' },
+  boss:   { icon: '👹', lbl: 'Boss',   cd: 0, tip: 'Boss tile' }
+};
+const TRAP_KINDS = {
+  spike:  { icon: '🗡️', name: 'Spike Trap' },
+  poison: { icon: '☠️', name: 'Poison Cloud' },
+  steal:  { icon: '🕳️', name: 'Gold-Thief Pit' },
+  jail:   { icon: '⛓️', name: 'Iron Cage' }
+};
+const CURSES = {
+  snakebait: { icon: '🐍', name: 'Snake Curse',  desc: 'Your next snake bite drops you 8 tiles further.' },
+  leaden:    { icon: '🪨', name: 'Leaden Boots', desc: 'Your next roll is 2 lower (min 1).' },
+  hexed:     { icon: '🧿', name: 'Pauper Hex',   desc: 'Your next salary is halved.' }
+};
+const WORLD_EVENTS = {
+  goldrush: { icon: '💰', name: 'Gold Rush',        sub: 'Everyone receives $50!',                    tint: '#eab308', good: true  },
+  awaken:   { icon: '🐍', name: 'Snake Awakening',  sub: 'Snakes bite 4 tiles deeper for 2 rounds!',  tint: '#be123c', good: false },
+  blessing: { icon: '🛡️', name: 'Goddess Blessing', sub: 'Everyone receives a Holy Shield!',          tint: '#22d3ee', good: true  },
+  storm:    { icon: '⛈️', name: 'Dark Storm',       sub: 'Dice are capped at 4 this round!',          tint: '#475569', good: false },
+  festival: { icon: '🎪', name: 'Merchant Festival', sub: 'Black Market prices −30% for 2 rounds!',   tint: '#f97316', good: true  },
+  wrath:    { icon: '🐲', name: "Dragon's Wrath",   sub: 'A random hero is scorched for gold!',       tint: '#dc2626', good: false },
+  lucky:    { icon: '🍀', name: 'Lucky Day',        sub: 'Everyone earns an extra dice roll!',        tint: '#22c55e', good: true  },
+  frozenk:  { icon: '🥶', name: 'Frozen Kingdom',   sub: 'A deep chill: heroes may freeze solid!',    tint: '#38bdf8', good: false },
+  salary:   { icon: '🤑', name: 'Double Salary',    sub: 'Salaries are doubled for 3 rounds!',        tint: '#fbbf24', good: true  },
+  chaosday: { icon: '🎭', name: 'Chaos Day',        sub: 'The dungeon itself lashes out at heroes!',  tint: '#d946ef', good: false }
+};
+const ACH = {
+  firstblood: { icon: '🩸', name: 'First Blood',     desc: 'Land the first successful hit on a rival.' },
+  gambler:    { icon: '🎰', name: 'Lucky Gambler',   desc: 'Win a $200+ jackpot from a gamble.' },
+  survivor:   { icon: '🐍', name: 'Snake Survivor',  desc: 'Survive 3 snake encounters in one match.' },
+  millionaire:{ icon: '💎', name: 'Millionaire',     desc: 'Hold $1000 at once.' },
+  slayer:     { icon: '🐉', name: 'Dragon Slayer',   desc: 'Land the final blow on the Ancient Dragon.' },
+  unstoppable:{ icon: '🔥', name: 'Unstoppable',     desc: 'Play 6 turns in a row without suffering a setback.' },
+  comeback:   { icon: '👑', name: 'Comeback King',   desc: 'Win after trailing the leader by 25+ tiles.' },
+  trader:     { icon: '🛒', name: 'Master Trader',   desc: 'Buy 5 different Black Market items in one match.' }
+};
+const TITLE_DEFS = [   // later = more prestigious; shown title is the latest earned
+  ['gambler',  '🎰 Gambler',      p => p.st.risk >= 4],
+  ['lucky',    '🍀 Lucky One',    p => p.st.lucky >= 4],
+  ['guardian', '🛡️ Guardian',     p => p.st.block >= 3],
+  ['snake',    '🐍 Snake Master', p => p.st.snakes >= 3],
+  ['merchant', '💰 Merchant',     p => p.st.spent >= 600],
+  ['villain',  '😈 Villain',      p => p.st.sab >= 3],
+  ['champion', '🏆 Champion',     p => p.st.won]
+];
+const ITEM_LIMITS = {   // per-match caps and cooldowns (in rounds) for the new Black Market items
+  rewind:    { max: 2, cd: 3 }, mirror: { max: 3, cd: 0 }, loaded: { max: 1, cd: 0 }, cloak: { max: 3, cd: 2 },
+  hook:      { max: 3, cd: 0 }, bounty: { max: 2, cd: 3 }, lightning: { max: 2, cd: 4 }
+};
+
+function blankP(lives) {
+  return { out: false, lives, skip: 0, why: '', poison: 0, curse: null, mirror: false, loaded: false, cloak: 0, hook: false, disc: 0, hurt: false, twin: false, laps: 0,
+    lastFrom: 0, lightAt: -9, rewindAt: -9, contract: null, bonusRoll: false, slow: 0, gear: null, gearN: 0, allyGuard: 1, allyCd: 0,
+    bought: {}, boughtAt: {}, duelAt: -9, hits: 0, wantedPaid: -9, behind: 0,
+    st: { spent: 0, snakes: 0, sab: 0, block: 0, lucky: 0, risk: 0, kinds: {}, streak: 0, won: false, trapsHit: 0 }, ach: {} };
+}
+function rpgBlank(modeKey, seed) {
+  modeKey = validMode(modeKey);
+  const cfg = Object.assign({}, BASE_CFG, MODE_CFG[modeKey]);
+  return { mode: modeKey, cfg, seed: (seed >>> 0) || 1, s: (seed >>> 0) || 1, round: 1, speed: cfg.speed,
+    tiles: {}, cool: {}, boss: {}, ev: null, evLeft: 0, nextEv: 99, evCount: 0, danger: 0,
+    mods: { snake: 0, storm: 0, fest: 0, sal: 0 }, p: {}, allies: [], offers: [], compAt: -9, wanted: 0, wantedHits: 0, wantedAt: -9, wantedCd: 0,
+    teleHops: 0, actionUsed: false, fromLog: false, firstBlood: false, bountyTurn: 0, lastRoundEvent: 0 };
+}
+let RPG = rpgBlank('std', 1);
+const RP = p => RPG.p[p] || (RPG.p[p] = blankP(RPG.cfg.lives || 1));      // lazily created, so a stale bot turn can never hit a missing record
+const rpgOn = () => !!RPG.cfg.rpg;
+const alive = () => PLAYERS().filter(p => !RP(p).out);
+
+/* ---- seeded PRNG (mulberry32): identical on every client that replays the same log ---- */
+function R() {
+  RPG.s = (RPG.s + 0x6D2B79F5) | 0;
+  let t = Math.imul(RPG.s ^ (RPG.s >>> 15), 1 | RPG.s);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+const Ri = n => Math.floor(R() * n);                  // 0..n-1
+const Rd6 = () => 1 + Ri(6);
+const Rpick = a => a[Ri(a.length)];
+function Rweighted(pairs) {                          // [[value, weight], ...]
+  let tot = 0; pairs.forEach(x => { tot += x[1]; });
+  let r = R() * tot;
+  for (const [v, w] of pairs) { if ((r -= w) < 0) return v; }
+  return pairs[pairs.length - 1][0];
+}
+function Rshuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Ri(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const newSeed = () => ((typeof crypto !== 'undefined' && crypto.getRandomValues) ? crypto.getRandomValues(new Uint32Array(1))[0] : Math.floor(Math.random() * 4294967295)) >>> 0 || 7;
+
+/* ---- reset: called from resetGame() ---- */
+function rpgReset(modeKey, seed) {
+  RPG = rpgBlank(modeKey, seed);
+  const C = RPG.cfg;
+  PLAYERS().forEach(p => { RPG.p[p] = blankP(C.lives); });
+  document.body.classList.toggle('rpg-off', !C.rpg);
+  if (!C.rpg) { renderHudChips(); return; }
+  if (C.startPos > 1) PLAYERS().forEach(p => { playerPositions[p] = C.startPos; });
+  rpgLayout();
+  Object.entries(BOSSES).forEach(([k, b]) => {
+    const hp = b.hp + Math.max(0, NP - 2) * 4;
+    RPG.boss[k] = { hp, max: hp, alive: true, dmg: {} };
+    RPG.tiles[b.tile] = { t: 'boss', k };
+  });
+  RPG.nextEv = 1 + C.evMin + Ri(C.evMax - C.evMin + 1);
+  renderHudChips();
+}
+
+function rpgLayout() {
+  const taken = new Set([1, 100]);
+  Object.entries(LADDERS).forEach(([a, b]) => { taken.add(+a); taken.add(+b); });
+  Object.entries(BASE_SNAKES).forEach(([a, b]) => { taken.add(+a); taken.add(+b); });
+  Object.keys(SPECIAL_TILES).forEach(k => taken.add(+k));
+  Object.keys(BOSS_AT).forEach(k => taken.add(+k));
+  const pool = Rshuffle(Array.from({ length: 95 }, (_, i) => i + 4).filter(n => !taken.has(n)));
+  const C = RPG.cfg, d = C.density;
+  const plan = [['chest', Math.round(4 * d)], ['portal', Math.round(3 * C.portalMul)], ['wheel', Math.round(2 * d)],
+    ['altar', Math.round(2 * d)], ['camp', Math.round(3 * d)], ['trap', Math.round(6 * C.trapMul)]];
+  plan.forEach(([t, n]) => {
+    for (let i = 0; i < n && pool.length; i++) {
+      const tile = pool.pop();
+      RPG.tiles[tile] = t === 'trap' ? { t, k: Rweighted([['spike', 3], ['poison', 3], ['steal', 3], ['jail', 2]]), hidden: true, rev: false } : { t };
+    }
+  });
+}
+// traps are topped back up every 5 rounds so the dungeon keeps some bite (never more than the starting count)
+function rpgRespawnTraps() {
+  const want = Math.round(6 * RPG.cfg.trapMul);
+  let have = Object.values(RPG.tiles).filter(x => x.t === 'trap').length;
+  if (have >= want) return;
+  const taken = new Set([1, 100, ...Object.keys(LADDERS).map(Number), ...Object.values(LADDERS), ...Object.keys(SNAKES).map(Number), ...Object.values(SNAKES),
+    ...Object.keys(SPECIAL_TILES).map(Number), ...Object.keys(RPG.tiles).map(Number), ...Object.keys(placedMines).map(Number), ...PLAYERS().map(p => playerPositions[p])]);
+  for (let tries = 0; tries < 40 && have < Math.min(want, have + 2); tries++) {
+    const n = 4 + Ri(94);
+    if (taken.has(n)) continue;
+    taken.add(n); have++;
+    RPG.tiles[n] = { t: 'trap', k: Rweighted([['spike', 3], ['poison', 3], ['steal', 3], ['jail', 2]]), hidden: true, rev: false };
+  }
+}
+
+/* ---- small shared helpers ---- */
+const allyOf = p => { const a = RPG.allies.find(x => x.a === p || x.b === p); return a ? (a.a === p ? a.b : a.a) : 0; };
+const isAllied = (p, q) => allyOf(p) === q && q !== 0;
+const leaderPos = () => Math.max(...alive().map(p => playerPositions[p]));
+const dormant = n => RPG.round < (RPG.cool[n] || 0);
+const clampGold = p => { if (playerCash[p] < 0) playerCash[p] = 0; };
+function titleOf(p) {
+  const r = RP(p); if (!r) return '';
+  let t = '';
+  TITLE_DEFS.forEach(d => { if (d[2](r)) t = d[1]; });
+  return t;
+}
+const eligibleTarget = (me, q) => q !== me && !RP(q).out;
+function rpgTarget(me) { const r = alive().filter(q => q !== me); return r.length === 1 ? r[0] : 0; }
+function bank(p, amt, label, color) {              // every free gold payout goes through here (rounded, floored, visible)
+  amt = Math.max(0, Math.round(amt));
+  if (!amt) return 0;
+  gain(p, amt);
+  if (playerCash[p] >= 1000) rpgAch(p, 'millionaire');
+  if (!fastMode) { floatAtPlayer(p, `+$${amt}`, color || '#fde68a'); coinFly(p); }
+  return amt;
+}
+function lose(p, amt) {                            // returns what was actually lost
+  amt = loseGold(p, Math.min(Math.max(0, Math.round(amt)), playerCash[p]));
+  if (amt && !fastMode) floatAtPlayer(p, `-$${amt}`, '#fb7185');
+  return amt;
+}
+function rpgLog(p, html) { addLogEntry(p, html); }
+
+/* ============================================================
+   RPG LAYER 2/6 — FX engine (canvas particles), screen shake, sound, cinematic stage
+   Visual only: nothing here may change game state, and everything is skipped while fastMode (log replay).
+   ============================================================ */
+const REDUCED = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+let fxLow = false;
+try { fxLow = localStorage.getItem('sl-fx') === 'low'; } catch (e) {}
+const FXE = { cv: null, cx: null, ps: [], on: false, w: 0, h: 0, dpr: 1, slow: 0, last: 0 };
+const FX_COL = {
+  gold:  ['#fde047', '#fbbf24', '#f59e0b', '#fff7c2'], magic: ['#a78bfa', '#22d3ee', '#f0abfc', '#ffffff'], fire: ['#fb923c', '#f97316', '#fde047', '#ef4444'],
+  ice:   ['#e0f2fe', '#7dd3fc', '#38bdf8', '#ffffff'], boom: ['#ef4444', '#f97316', '#fde047', '#ffffff'], heal: ['#86efac', '#4ade80', '#bbf7d0', '#ffffff'],
+  dark:  ['#7e22ce', '#a855f7', '#1e1b4b', '#e9d5ff'], blood: ['#fb7185', '#e11d48', '#9f1239', '#ffffff']
+};
+function fxInit() {
+  FXE.cv = $('fx-canvas'); if (!FXE.cv) return;
+  try { FXE.cx = FXE.cv.getContext ? FXE.cv.getContext('2d') : null; } catch (e) { FXE.cx = null; }
+  fxResize();
+  window.addEventListener('resize', fxResize);
+  document.body.classList.toggle('fx-low', fxLow);
+  syncFxButton();
+}
+function fxResize() {
+  const cv = FXE.cv; if (!cv || !cv.parentElement) return;
+  FXE.dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const r = cv.parentElement.getBoundingClientRect();
+  FXE.w = Math.max(1, r.width); FXE.h = Math.max(1, r.height);
+  cv.width = Math.round(FXE.w * FXE.dpr); cv.height = Math.round(FXE.h * FXE.dpr);
+}
+function toggleFx() {
+  fxLow = !fxLow;
+  try { localStorage.setItem('sl-fx', fxLow ? 'low' : 'high'); } catch (e) {}
+  document.body.classList.toggle('fx-low', fxLow);
+  syncFxButton();
+  toast(fxLow ? 'Effects: low (smoother on slow phones)' : 'Effects: high');
+}
+function syncFxButton() { const t = $('fx-text'); if (t) t.textContent = fxLow ? 'FX Low' : 'FX High'; }
+// emit n particles at a board tile (or {x,y} in board %)
+function fxEmit(where, kind, n, o) {
+  if (fastMode || REDUCED || !FXE.cx) return;
+  o = o || {};
+  const c = typeof where === 'number' ? getTileCoordinates(where) : where;
+  const cols = FX_COL[kind] || FX_COL.magic;
+  const cap = fxLow ? 70 : 220;
+  n = Math.round(n * (fxLow ? 0.4 : 1));
+  for (let i = 0; i < n && FXE.ps.length < cap; i++) {
+    const a = (o.up ? -Math.PI / 2 + (R_vis() - .5) * 1.2 : R_vis() * Math.PI * 2), sp = (o.speed || 1) * (30 + R_vis() * 110);
+    FXE.ps.push({ x: c.x / 100 * FXE.w, y: c.y / 100 * FXE.h, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (o.lift || 0), g: o.g == null ? 140 : o.g,
+      life: 0, max: (o.life || .9) * (.6 + R_vis() * .8), s: (o.size || 3.2) * (.6 + R_vis() * .9), c: cols[Math.floor(R_vis() * cols.length)], kind });
+  }
+  if (!FXE.on) { FXE.on = true; FXE.last = performance.now(); requestAnimationFrame(fxFrame); }
+}
+const R_vis = () => Math.random();          // cosmetic randomness only (never used for game outcomes)
+function fxFrame(t) {
+  const cx = FXE.cx; if (!cx) { FXE.on = false; return; }
+  const dt = Math.min(0.05, (t - FXE.last) / 1000); FXE.last = t;
+  if (dt > 0.034) FXE.slow++; else if (FXE.slow > 0) FXE.slow--;
+  if (FXE.slow > 70 && !fxLow) { fxLow = true; document.body.classList.add('fx-low'); syncFxButton(); toast('Effects lowered for smoother play (use ✨ to change).'); FXE.slow = 0; }
+  cx.setTransform(FXE.dpr, 0, 0, FXE.dpr, 0, 0);
+  cx.clearRect(0, 0, FXE.w, FXE.h);
+  cx.globalCompositeOperation = 'lighter';
+  const ps = FXE.ps;
+  for (let i = ps.length - 1; i >= 0; i--) {
+    const p = ps[i]; p.life += dt;
+    if (p.life >= p.max) { ps.splice(i, 1); continue; }
+    p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    const k = 1 - p.life / p.max;
+    cx.globalAlpha = Math.max(0, k);
+    cx.fillStyle = p.c;
+    cx.beginPath(); cx.arc(p.x, p.y, Math.max(.4, p.s * (.4 + k * .6)), 0, 6.283); cx.fill();
+  }
+  cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over';
+  if (ps.length) requestAnimationFrame(fxFrame); else { FXE.on = false; cx.clearRect(0, 0, FXE.w, FXE.h); }
+}
+function shakeBoard(big) {
+  if (fastMode || REDUCED) return;
+  const el = document.querySelector('.board-frame'); if (!el) return;
+  el.classList.remove('board-shake', 'board-shake-big'); void el.offsetWidth;
+  el.classList.add(big ? 'board-shake-big' : 'board-shake');
+  setTimeout(() => el.classList.remove('board-shake', 'board-shake-big'), 1000);
+  try { if (navigator.vibrate) navigator.vibrate(big ? [60, 30, 90] : 40); } catch (e) {}
+}
+function hotTile(n) { if (fastMode || !tileEls[n]) return; tileEls[n].classList.remove('hot'); void tileEls[n].offsetWidth; tileEls[n].classList.add('hot'); }
+function dmgText(tile, text, crit) {
+  if (fastMode) return;
+  const c = typeof tile === 'number' ? getTileCoordinates(tile) : tile;
+  const el = document.createElement('div');
+  el.className = 'float-text dmg' + (crit ? ' crit' : '');
+  el.style.left = (c.x + (R_vis() * 6 - 3)) + '%'; el.style.top = (c.y - 3) + '%'; el.style.color = crit ? '#fde047' : '#fb7185';
+  el.textContent = text; $('fx-layer').appendChild(el); setTimeout(() => el.remove(), 1200);
+}
+// a coin flies from the player's token to their gold counter
+function coinFly(p) {
+  if (fastMode || REDUCED || fxLow) return;
+  const t = $('token-' + p), dst = $(`p${p}-cash`); if (!t || !dst) return;
+  const a = t.getBoundingClientRect(), b = dst.getBoundingClientRect();
+  for (let i = 0; i < 3; i++) {
+    const el = document.createElement('div'); el.className = 'coin-fly'; el.textContent = '🪙';
+    el.style.left = (a.left + a.width / 2 + (i - 1) * 10) + 'px'; el.style.top = (a.top + a.height / 3) + 'px'; el.style.opacity = '1';
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.transform = `translate(${b.left - a.left - a.width / 2}px,${b.top - a.top - a.height / 3}px) scale(.5)`; el.style.opacity = '.1'; }, 30 + i * 90);
+    setTimeout(() => { el.remove(); dst.classList.remove('cash-pop'); void dst.offsetWidth; dst.classList.add('cash-pop'); }, 950 + i * 90);
+  }
+}
+
+/* ---- extra sound effects (Tone.js), layered on the existing synths ---- */
+function sfx(type) {
+  if (fastMode || !soundEnabled || !polySynth) return;
+  try {
+    if (Tone.context.state !== 'running') Tone.start();
+    const t0 = Tone.now() + 0.02;
+    const seq = (notes, step, dur) => notes.forEach((n, i) => polySynth.triggerAttackRelease(n, dur || '16n', t0 + i * (step || .09)));
+    const chord = (notes, d) => polySynth.triggerAttackRelease(notes, d || '8n', t0);
+    const noise = d => { if (noiseSynth) noiseSynth.triggerAttackRelease(d || '8n', t0); };
+    switch (type) {
+      case 'chest':     seq(['C5', 'E5', 'G5', 'C6', 'E6'], .08); break;
+      case 'mimic':     chord(['C2', 'Db2', 'F#2'], '4n'); noise('4n'); break;
+      case 'portal':    seq(['C4', 'G4', 'D5', 'A5', 'E6'], .07); break;
+      case 'tick':      chord(['A5'], '64n'); break;
+      case 'wheelwin':  seq(['C5', 'E5', 'G5', 'C6'], .08); chord(['C4', 'G4'], '2n'); break;
+      case 'wheellose': seq(['E4', 'C4', 'A3', 'F3'], .14); break;
+      case 'altar':     chord(['D3', 'A3', 'F4'], '2n'); break;
+      case 'camp':      seq(['G4', 'B4', 'D5', 'G5'], .12, '8n'); break;
+      case 'trap':      noise('8n'); chord(['B2', 'F3'], '8n'); break;
+      case 'rewind':    seq(['C6', 'A5', 'F5', 'D5', 'Bb4', 'G4'], .06); break;
+      case 'mirror':    seq(['E6', 'B6', 'E7'], .05, '32n'); break;
+      case 'loaded':    seq(['C5', 'C5', 'G5'], .09); break;
+      case 'cloak':     chord(['D3', 'F3', 'A3'], '4n'); break;
+      case 'hook':      noise('16n'); seq(['G4', 'D5'], .08); break;
+      case 'bounty':    seq(['E5', 'E5', 'B5'], .1); break;
+      case 'lightning': noise('8n'); seq(['C7', 'G6', 'C7', 'E7'], .04, '32n'); break;
+      case 'event':     chord(['C3', 'G3'], '2n'); seq(['C4', 'E4', 'G4', 'C5', 'E5'], .13, '8n'); break;
+      case 'evbad':     chord(['C2', 'Eb2', 'Gb2'], '2n'); seq(['C3', 'Eb3', 'Gb3', 'A3'], .16, '8n'); noise('4n'); break;
+      case 'boss':      chord(['C2', 'G2', 'Db3'], '1n'); noise('2n'); seq(['C3', 'Db3', 'C3', 'Db3'], .22, '8n'); break;
+      case 'hit':       noise('16n'); chord(['C3'], '16n'); break;
+      case 'crit':      noise('8n'); seq(['C5', 'G5', 'C6'], .05, '16n'); break;
+      case 'bossdown':  seq(['C4', 'E4', 'G4', 'C5', 'E5', 'G5', 'C6'], .1, '8n'); chord(['C3', 'G3', 'C4'], '1n'); break;
+      case 'defeat':    seq(['C4', 'Bb3', 'Gb3', 'C3'], .2, '4n'); break;
+      case 'ach':       seq(['E5', 'G5', 'C6', 'E6'], .07); break;
+      case 'duel':      seq(['C4', 'C4', 'G4'], .1); noise('16n'); break;
+      case 'ally':      seq(['C4', 'E4', 'G4', 'C5'], .09, '8n'); break;
+      case 'betray':    seq(['C3', 'Db3'], .22, '4n'); noise('4n'); break;
+      case 'freeze':    seq(['E6', 'C6', 'A5'], .05, '16n'); break;
+    }
+  } catch (e) { /* audio is optional */ }
+}
+
+/* ---- Stage: one overlay that every cinematic uses; joins the meme-splash queue so the move pump waits for it ---- */
+let stageSkip = null, stageLocked = false, stageFin = null;
+function stage(build, opt) {
+  if (fastMode) return Promise.resolve();
+  const gid = gameId;
+  splashDepth++;
+  const run = () => showStage(build, opt || {}, gid);
+  const p = splashQueue.then(run, run).catch(() => {}).then(() => { splashDepth--; });
+  splashQueue = p;
+  return p;
+}
+function showStage(build, opt, gid) {
+  return new Promise(resolve => {
+    if (gid !== gameId) { resolve(); return; }
+    const el = $('stage'), card = $('stage-card');
+    el.style.setProperty('--tint', opt.tint || '#7c3aed');
+    el.classList.toggle('shake', !!opt.shake);
+    card.innerHTML = '';
+    const rain = $('stage-rain'); rain.innerHTML = ''; rain.classList.toggle('up', !!opt.up);
+    if (opt.rain && !fxLow) for (let i = 0; i < 18; i++) {
+      const s = document.createElement('span'); s.textContent = opt.rain[i % opt.rain.length];
+      s.style.left = (R_vis() * 96) + '%'; s.style.animationDuration = (1.4 + R_vis() * 1.2) + 's'; s.style.animationDelay = (R_vis() * .8) + 's';
+      s.style.setProperty('--rot', (R_vis() * 540 - 270) + 'deg'); rain.appendChild(s);
+    }
+    el.classList.remove('hidden');
+    let skipped = false, done = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (!done) el.classList.add('show'); })); const waiters = new Set(); const timers = new Set();
+    const wait = ms => new Promise(r => {
+      if (skipped) { r(); return; }
+      const t = setTimeout(() => { timers.delete(t); waiters.delete(r); r(); }, ms * RPG.speed);
+      timers.add(t); waiters.add(r);
+    });
+    const finish = () => {
+      if (done) return; done = true;
+      clearTimeout(gt); timers.forEach(clearTimeout); stageSkip = null; stageFin = null; el.onclick = null; stageLocked = false;
+      el.classList.remove('show');
+      setTimeout(() => { if (!el.classList.contains('show')) { el.classList.add('hidden'); card.innerHTML = ''; rain.innerHTML = ''; } resolve(); }, 220);
+    };
+    const skip = () => { if (stageLocked) return; skipped = true; waiters.forEach(r => r()); waiters.clear(); };
+    const ctx = { el, card, wait, skipped: () => skipped, lock: v => { stageLocked = !!v; }, boardShake: shakeBoard };
+    stageSkip = skip; stageFin = finish; el.onclick = skip;
+    let gt; const arm = () => { gt = setTimeout(() => { if (stageLocked) arm(); else finish(); }, 60000); }; arm();
+    Promise.resolve().then(() => build(ctx)).catch(e => { try { console.error('stage error:', e && e.stack || e); } catch (_) {} }).then(async () => { await wait(opt.hold == null ? 350 : opt.hold); finish(); });
+  });
+}
+// prompts the local player with buttons on the stage; resolves with the picked key
+function stageChoice(ctx, choices) {
+  return new Promise(res => {
+    ctx.lock(true);
+    const box = document.createElement('div'); box.className = 'st-choices';
+    choices.forEach(c => {
+      const b = document.createElement('button'); b.className = 'btn ' + (c.cls || 'btn-primary'); b.innerHTML = c.label; b.disabled = !!c.off;
+      b.onclick = e => { e.stopPropagation(); ctx.lock(false); box.remove(); res(c.key); };
+      box.appendChild(b);
+    });
+    ctx.card.appendChild(box);
+  });
+}
+const stHead = (kicker, title, sub) => `${kicker ? `<div class="st-kicker">${kicker}</div>` : ''}<div class="st-title">${title}</div><div class="st-sub" id="st-sub">${sub || ''}</div>`;
+const stSet = (id, html) => { const e = $(id); if (e) e.innerHTML = html; };
+
+/* ============================================================
+   RPG LAYER 3/6 — HUD chips, tile art, mode pickers, guide
+   ============================================================ */
+let modeKey = 'std';                 // game mode used by the next resetGame()
+let pendingRpgMode = 'std';
+let lastChips = '';
+
+function renderHudChips() {
+  const box = $('hud-chips'); if (!box) return;
+  const m = MODES[RPG.mode];
+  let h = `<span class="chip mode" title="${m.desc}">${m.icon} ${m.name}</span>`;
+  if (rpgOn()) {
+    h += `<span class="chip">⏱ Round ${RPG.round}${RPG.cfg.rounds ? '/' + RPG.cfg.rounds : ''}</span>`;
+    if (RPG.mods.snake > 0) h += `<span class="chip evt">🐍 Snakes +4 · ${RPG.mods.snake}r</span>`;
+    if (RPG.mods.storm > 0) h += `<span class="chip evt">⛈️ Dice ≤4 · ${RPG.mods.storm}r</span>`;
+    if (RPG.mods.fest > 0)  h += `<span class="chip evt">🎪 Market −30% · ${RPG.mods.fest}r</span>`;
+    if (RPG.mods.sal > 0)   h += `<span class="chip evt">🤑 Salary ×2 · ${RPG.mods.sal}r</span>`;
+    if (RPG.wanted) h += `<span class="chip wanted" title="Sabotage the leader to earn a bounty">🎯 Wanted: ${playerName(RPG.wanted)}</span>`;
+    if (RPG.cfg.danger || RPG.mode === 'survival') h += `<span class="chip evt">☠️ Danger ${RPG.danger}</span>`;
+  }
+  if (h !== lastChips) { box.innerHTML = h; lastChips = h; }
+}
+
+function rpgDecorateTiles() {
+  for (let n = 1; n <= 100; n++) { const el = tileEls[n]; if (el) { el.querySelectorAll('.rt').forEach(x => x.remove()); el.title = ''; } }
+  if (!rpgOn()) return;
+  Object.entries(RPG.tiles).forEach(([ns, t]) => {
+    const n = +ns, el = tileEls[n]; if (!el) return;
+    if (t.t === 'trap' && !t.rev) return;
+    const info = TILE_INFO[t.t];
+    let icon = info.icon, lbl = info.lbl, extra = '', cls = 'rt rt-' + t.t, tip = info.tip;
+    if (t.t === 'trap') { const k = TRAP_KINDS[t.k]; icon = k.icon; lbl = 'trap'; tip = k.name + ' (revealed)'; }
+    if (t.t === 'boss') {
+      const b = BOSSES[t.k], bs = RPG.boss[t.k]; icon = b.icon; lbl = b.name.split(' ')[0]; tip = b.name + (bs.alive ? ` — ${bs.hp}/${bs.max} HP` : ' (defeated)');
+      if (!bs.alive) cls += ' boss-dead'; else extra = `<div class="rt-hp"><i style="width:${Math.max(3, bs.hp / bs.max * 100)}%"></i></div>`;
+    }
+    if (dormant(n)) { cls += ' dormant'; tip += ' — resting'; }
+    const d = document.createElement('div');
+    d.className = cls;
+    d.innerHTML = `<span class="rt-ico">${icon}</span>${lbl ? `<span class="rt-lbl">${lbl}</span>` : ''}${extra}`;
+    el.appendChild(d); el.title = tip;
+  });
+}
+
+function rpgHudBuffs(p) {
+  const r = RP(p), b = [];
+  if (!r || !rpgOn()) return b;
+  if (r.out) b.push('<span class="buff red">☠️ Fallen</span>');
+  if (RPG.cfg.lives && !r.out) b.push(`<span class="buff red">❤️ ${r.lives} ${r.lives === 1 ? 'life' : 'lives'}</span>`);
+  if (RPG.wanted === p) b.push('<span class="buff red">🎯 WANTED</span>');
+  if (r.cloak > 0) b.push(`<span class="buff violet">👻 Cloak ${r.cloak}</span>`);
+  if (r.mirror) b.push('<span class="buff violet">🪞 Mirror</span>');
+  if (r.hook) b.push('<span class="buff lime">🪝 Hook</span>');
+  if (r.loaded) b.push('<span class="buff amber">🎲 Loaded</span>');
+  if (r.disc) b.push(`<span class="buff amber">🏷️ ${r.disc >= 1 ? 'FREE item' : '−' + Math.round(r.disc * 100) + '%'}</span>`);
+  if (r.poison > 0) b.push(`<span class="buff lime">☠️ Poison ${r.poison}</span>`);
+  if (r.curse) b.push(`<span class="buff red">${CURSES[r.curse].icon} ${CURSES[r.curse].name}</span>`);
+  if (r.skip > 0) b.push(`<span class="buff blue">${r.why === 'jail' ? '⛓️ Caged' : '⏳ Lost turn'}</span>`);
+  if (r.slow > 0) b.push('<span class="buff blue">🥶 Slowed</span>');
+  if (r.contract) b.push(`<span class="buff amber">🎯 Bounty→${playerName(r.contract.on)}</span>`);
+  if (r.gear) b.push(`<span class="buff cyan">${GEAR[r.gear].icon} ${GEAR[r.gear].name} ×${r.gearN}</span>`);
+  const al = allyOf(p); if (al) b.push(`<span class="buff green">🤝 ${playerName(al)}</span>`);
+  return b;
+}
+function rpgHudMeta(p) {
+  const r = RP(p); if (!r || !rpgOn()) return { title: '', ach: '' };
+  const t = titleOf(p);
+  const ach = Object.keys(r.ach).map(k => `<span class="ach" title="${ACH[k].name}: ${ACH[k].desc}">${ACH[k].icon}</span>`).join('');
+  return { title: t ? `<span class="rep-title">${t}</span>` : '', ach };
+}
+
+/* ---- mode pickers ---- */
+function renderModeList(boxId, sel, pick, locked) {
+  const box = $(boxId); if (!box) return;
+  box.innerHTML = '';
+  Object.entries(MODES).forEach(([k, m]) => {
+    const b = document.createElement('button');
+    b.className = 'mode-card' + (k === sel ? ' selected' : '');
+    b.disabled = !!locked;
+    b.innerHTML = `<span class="mi">${m.icon}</span><span><b>${m.name}</b><small>${m.desc}</small></span>`;
+    b.onclick = () => pick(k);
+    box.appendChild(b);
+  });
+}
+
+function openGuide() {
+  $('guide-body').innerHTML = `
+  <div class="guide-sec"><h4>🎯 Goal</h4><p>Reach tile 100 with an <b>exact roll</b>. Gold and items help you get there (or stop rivals getting there first).</p></div>
+  <div class="guide-sec"><h4>🗺️ New tiles</h4><ul>
+    <li>🎁 <b>Chest</b> — gold, a half-price coupon, a shield, a free power-up… or a Mimic that bites.</li>
+    <li>🌀 <b>Portal</b> — jump forward/back, swap with a rival, or reach a secret bonus room.</li>
+    <li>🎡 <b>Wheel of Fortune</b> — spin for $200, extra rolls, shields… or a curse / lost turn.</li>
+    <li>🔮 <b>Cursed Altar</b> — pay $100 for a blessing, or refuse and risk a curse.</li>
+    <li>🏕️ <b>Rest Camp</b> — cures poison, curses and freezes; restores a shield; a little gold.</li>
+    <li>❓ <b>Hidden traps</b> — spikes, poison, gold-thieving pits, cages. 🧙 Wizards sense them ahead, 🧑 Humans may disarm them, 😇 Angels shrug off poison and cages, 😈 Demons ignore spikes.</li>
+    <li>👹 <b>Bosses</b> block the way: 🧊 Ice Titan (33), 🐉 Ancient Dragon (56), 💀 Lich King (82). Their health is shared — chip away, land the final blow for the best loot.</li></ul></div>
+  <div class="guide-sec"><h4>🛒 New Black Market items</h4><p>⏪ Time Rewind · 🪞 Mirror Curse · 🎲 Loaded Dice (1/match) · 👻 Phantom Cloak · 🪝 Snakeslayer Hook · 🎯 Bounty Contract · ⚡ Chain Lightning. Still one purchase per turn, with match limits and cooldowns.</p></div>
+  <div class="guide-sec"><h4>🌍 World events</h4><p>Every 3–5 rounds the dungeon announces an event (Gold Rush, Dark Storm, Dragon's Wrath…). Everyone sees the same event.</p></div>
+  <div class="guide-sec"><h4>⚔️ The Arena</h4><p>Duel a rival (higher roll wins $50), start a Treasure Competition, form a 3-round Alliance (and betray it if you dare). The player in the lead is <b>Wanted</b>: sabotaging them pays a bounty.</p></div>
+  <div class="guide-sec"><h4>🏅 Titles &amp; achievements</h4><p>Earned by how you play and shown beside your name. They are cosmetic: they never change the numbers.</p></div>
+  <div class="guide-sec"><h4>🎮 Modes</h4><ul>${Object.values(MODES).map(m => `<li>${m.icon} <b>${m.name}</b> — ${m.desc}</li>`).join('')}</ul></div>`;
+  openModal('guide-modal');
+}
+
+
+/* ============================================================
+   RPG LAYER 4/6 — shared services (guards, credit, decisions) and board tiles
+   ============================================================ */
+function rpgAch(p, key) {
+  const r = RP(p); if (!r || !rpgOn() || r.ach[key]) return;
+  r.ach[key] = true;
+  rpgLog(p, `🏅 Achievement: <b>${ACH[key].icon} ${ACH[key].name}</b>`);
+  if (!fastMode) { sfx('ach'); toast(`🏅 ${playerName(p)}: ${ACH[key].icon} ${ACH[key].name}!`, 'good'); }
+  const mine = NET.on ? NET.seat : 1;
+  if (p === mine && !fastMode) { try { const o = JSON.parse(localStorage.getItem('sl-ach') || '{}'); o[key] = (o[key] || 0) + 1; localStorage.setItem('sl-ach', JSON.stringify(o)); } catch (e) {} }
+}
+const rpgLucky = p => { if (rpgOn()) RP(p).st.lucky++; };
+const rpgRisk = p => { if (rpgOn()) RP(p).st.risk++; };
+const isLeader = p => { const o = alive().filter(q => q !== p); return o.length > 0 && playerPositions[p] >= Math.max(...o.map(q => playerPositions[q])) + 8; };
+const isTrailing = p => rpgOn() && leaderPos() - playerPositions[p] >= 25;
+const sharePct = 0.25;
+function rpgShare(p, amt) {                        // allies share part of selected rewards (paid by the bank, capped)
+  const a = allyOf(p);
+  if (!a || RP(a).out) return;
+  const g = bank(a, Math.min(30, amt * sharePct), '', '#86efac');
+  if (g) rpgLog(a, `🤝 Alliance share: <b>+$${g}</b> from ${playerName(p)}'s reward.`);
+}
+function rpgSetback(p) { const r = RP(p); if (r) r.hurt = true; }
+
+/* what happens when `source` tries a hostile action on `victim`: 'hit' | 'blocked' | 'reflect' */
+function rpgGuard(victim, source, kind) {
+  if (!rpgOn() || !source || source === victim) return 'hit';
+  const v = RP(victim);
+  if (isAllied(victim, source)) { rpgLog(source, `🤝 The alliance with ${playerName(victim)} stops the ${kind}.`); return 'blocked'; }
+  if (v.cloak > 0) { v.st.block++; rpgLog(victim, `👻 Phantom Cloak <b>blocked</b> ${playerName(source)}'s ${kind}!`); floatAtPlayer(victim, 'Cloaked!', '#c4b5fd'); sfx('cloak'); return 'blocked'; }
+  if (v.gear === 'frost' && kind === 'freeze' && v.gearN > 0) { v.gearN--; if (!v.gearN) v.gear = null; v.st.block++; rpgLog(victim, `🧊 Frost Armor <b>shattered</b>, shrugging off the freeze!`); return 'blocked'; }
+  if (v.mirror) { v.mirror = false; v.st.block++; rpgLog(victim, `🪞 Mirror Curse <b>reflected</b> ${playerName(source)}'s ${kind} back at them!`); floatAtPlayer(victim, 'Reflected!', '#e9d5ff'); sfx('mirror'); return 'reflect'; }
+  const ally = allyOf(victim);
+  if (ally && !RP(ally).out && v.allyGuard > 0) { v.allyGuard--; RP(ally).st.block++; rpgLog(ally, `🤝 ${playerName(ally)} <b>covered</b> ${playerName(victim)} against the ${kind}!`); return 'blocked'; }
+  return 'hit';
+}
+/* credit for a successful hostile action (reputation, First Blood, Wanted bounty, Bounty Hunter mode, Soul Reaver) */
+function rpgHit(src, victim, kind) {
+  if (!rpgOn() || !src || src === victim || RP(src).out) return;
+  const a = RP(src); a.st.sab++; a.hits++; rpgSetback(victim);
+  if (!RPG.firstBlood) { RPG.firstBlood = true; rpgAch(src, 'firstblood'); }
+  if (RPG.wanted === victim && RPG.wantedHits < 3 && a.wantedPaid <= RPG.round - 3 && !isAllied(src, victim)) {
+    const g = bank(src, 75); a.wantedPaid = RPG.round; RPG.wantedHits++;
+    rpgLog(src, `🎯 Wanted bounty! ${playerName(src)} collects <b>$${g}</b> for sabotaging ${playerName(victim)}.`);
+    if (RPG.wantedHits >= 3) { rpgLog(victim, `🎯 The bounty on ${playerName(victim)} is lifted — they are granted a Holy Shield.`); playerShields[victim] = true; RPG.wanted = 0; RPG.wantedCd = RPG.round + 4; }
+  }
+  if (RPG.cfg.bounty) {
+    if (RPG.bhRound !== RPG.round) { RPG.bhRound = RPG.round; RPG.bhCount = 0; }
+    if (RPG.bhCount < 3) { RPG.bhCount++; const g = bank(src, 60); rpgLog(src, `🎯 Bounty Hunter: <b>+$${g}</b> for the hit on ${playerName(victim)}.`); }
+  }
+  if (a.gear === 'reaver' && a.gearN > 0) { a.gearN--; if (!a.gearN) a.gear = null; const g = Math.min(40, lose(victim, 40)); bank(src, g); rpgLog(src, `🗡️ Soul Reaver drinks <b>$${g}</b> from ${playerName(victim)}!`); }
+}
+/* the victim walked into a snake, mine or trap: pay out Bounty Contracts, track streaks */
+function rpgTriggered(p, kind) {
+  if (!rpgOn()) return;
+  rpgSetback(p);
+  PLAYERS().forEach(q => {
+    const c = RP(q).contract;
+    if (!c || c.on !== p || RP(q).out) return;
+    if (RPG.round > c.exp || c.paid >= 2) { RP(q).contract = null; return; }
+    c.paid++;
+    const g = bank(q, 70);
+    rpgLog(q, `🎯 Bounty Contract pays <b>$${g}</b>: ${playerName(p)} triggered a ${kind}!`);
+    rpgHit(q, p, 'contract');
+    if (c.paid >= 2) RP(q).contract = null;
+  });
+}
+
+/* ---- decisions that arrive through the move log (altar, alliance offers) ---- */
+function promptDecision(kind, need, ui, botPick, who) {
+  who = who || currentPlayer;
+  return new Promise(resolve => {
+    const w = { kind, need, who, res: resolve, show: null };
+    w.show = () => { const r = ui(ch => { if (NET.on) netPush(ch); if (NET.decWait === w) NET.decWait = null; resolve(ch); }); return r; };
+    if (isBot(who) && !NET.on) { resolve(botPick()); return; }
+    if (NET.on) {
+      const logHas = !!NET.G && NET.applied < NET.G.log.length;
+      if (who !== NET.seat || logHas || fastMode) {        // the answer comes through the shared move log
+        NET.decWait = w;
+        if (!fastMode) setBanner(`<p class="text-xs font-bold text-violet-300">${playerName(who)} is deciding…</p>`);
+        updateControls();
+        return;
+      }
+    }
+    w.show();
+  });
+}
+function netResolveDecision(ch) { const w = NET.decWait; NET.decWait = null; if (w) w.res(ch); }
+
+/* ---- free landing spots, so teleports can never create chains or loops ---- */
+function plainTile(n) {
+  return n > 1 && n < 100 && !LADDERS[n] && !SNAKES[n] && !SPECIAL_TILES[n] && !placedMines[n] && !RPG.tiles[n] && !Object.values(LADDERS).includes(n) && !Object.values(SNAKES).includes(n);
+}
+function nearestPlain(n, dir) {                    // nearest plain tile to n (preferring `dir` first), never 1 or 100
+  n = Math.max(2, Math.min(99, n));
+  for (let d = 0; d < 20; d++) {
+    for (const t of (dir < 0 ? [n - d, n + d] : [n + d, n - d])) if (plainTile(t)) return t;
+  }
+  return Math.max(2, Math.min(99, n));
+}
+function playersOn(n) { return PLAYERS().filter(q => playerPositions[q] === n); }
+
+/* ---- dispatcher called from resolveOnce ---- */
+async function rpgResolveTile(p, pos) {
+  if (!rpgOn()) return undefined;
+  const t = RPG.tiles[pos]; if (!t) return undefined;
+  if (RP(p).out) return false;
+  if (t.t === 'boss') return rpgBossTile(p, pos, t);
+  if (t.t === 'trap') return rpgTrap(p, pos, t);
+  if (dormant(pos)) { floatText(pos, 'resting…', '#9ca3af'); return false; }
+  const cd = TILE_INFO[t.t].cd;
+  if (cd) { RPG.cool[pos] = RPG.round + cd; if (!fastMode) setTimeout(rpgDecorateTiles, 50); }
+  hotTile(pos);
+  if (t.t === 'chest')  return rpgChest(p, pos);
+  if (t.t === 'portal') return rpgPortal(p, pos);
+  if (t.t === 'wheel')  return rpgWheel(p, pos);
+  if (t.t === 'altar')  return rpgAltar(p, pos);
+  if (t.t === 'camp')   return rpgCamp(p, pos);
+  return undefined;
+}
+
+/* lightweight cinematic for small events (skipped when the player turned meme splashes off) */
+function quick(o) {
+  if (!memesOn) return Promise.resolve();
+  return stage(async c => {
+    c.card.innerHTML = stHead(o.kicker, o.title, o.sub) + `<div class="st-art"><div class="st-ring"></div><div class="st-ring"></div><div class="st-emoji">${o.emoji}</div></div>${o.result ? `<div class="st-result">${o.result}</div>` : ''}`;
+    if (o.shake) c.boardShake(o.shake === 'big');
+    await c.wait(o.ms || 1500);
+  }, { tint: o.tint, rain: o.rain, shake: !!o.shake });
+}
+
+/* ---------------------------------------------------------------- CHEST ---- */
+function chestSVG() {
+  return `<svg class="chest-svg" viewBox="0 0 120 100">
+    <ellipse cx="60" cy="94" rx="46" ry="6" fill="rgba(0,0,0,.45)"/>
+    <rect x="14" y="46" width="92" height="44" rx="6" fill="#92501a" stroke="#2a1505" stroke-width="3"/>
+    <rect x="14" y="58" width="92" height="8" fill="#c58b4a" opacity=".85"/><rect x="26" y="46" width="8" height="44" fill="#4b5563"/><rect x="86" y="46" width="8" height="44" fill="#4b5563"/>
+    <g class="mimicbits" style="display:none"><path d="M16 46 l7 12 l7 -12 l7 12 l7 -12 l7 12 l7 -12 l7 12 l7 -12 l7 12 l7 -12" fill="#fff" stroke="#450a0a" stroke-width="1.5"/><path d="M20 90 l6 -12 l6 12 l6 -12 l6 12 l6 -12 l6 12 l6 -12 l6 12 l6 -12" fill="#fff" stroke="#450a0a" stroke-width="1.5"/><path d="M60 68 q22 -6 40 -2 l2 10 q-22 8 -42 -2z" fill="#be123c" opacity=".95"/></g>
+    <g class="lid"><path d="M12 48 Q12 12 60 12 Q108 12 108 48 Z" fill="#a85f22" stroke="#2a1505" stroke-width="3"/><path d="M12 48 Q12 24 40 16 L40 48 Z M80 16 Q108 24 108 48 L80 48 Z" fill="#4b5563" opacity=".85"/>
+    <rect x="52" y="38" width="16" height="16" rx="3" fill="#fbbf24" stroke="#78350f" stroke-width="2"/><circle cx="60" cy="46" r="2.6" fill="#78350f"/>
+    <g class="eyes" style="display:none"><circle cx="42" cy="32" r="5" fill="#fde047"/><circle cx="78" cy="32" r="5" fill="#fde047"/><circle cx="42" cy="32" r="2" fill="#000"/><circle cx="78" cy="32" r="2" fill="#000"/></g></g></svg>`;
+}
+function rollChest(p) {
+  const r = RP(p);
+  const w = [['gold', 38], ['coupon', r.disc ? 4 : 14], ['shield', playerShields[p] ? 4 : 14], ['cloak', 8], ['extra', 8], ['mimic', isLeader(p) ? 10 : 5]];
+  let k = Rweighted(w);
+  if ((k === 'coupon' && r.disc) || (k === 'shield' && playerShields[p])) k = 'gold';
+  return k;
+}
+async function rpgChest(p, pos) {
+  const r = RP(p), kind = rollChest(p);
+  let amt = 0, res = '', loot = '🪙', mimic = false;
+  if (kind === 'gold') {
+    amt = 60 + Ri(7) * 20 + (isTrailing(p) ? 30 : 0);
+    bank(p, amt); rpgShare(p, amt); rpgLucky(p);
+    res = `+$${amt} gold!`; rpgLog(p, `🎁 Treasure chest: <b>+$${amt}</b> gold!`);
+  } else if (kind === 'coupon') {
+    r.disc = Math.max(r.disc, 0.5); rpgLucky(p); loot = '🏷️'; res = 'Black Market coupon: 50% off your next purchase!';
+    rpgLog(p, '🎁 Treasure chest: a <b>50% Black Market coupon</b>!');
+  } else if (kind === 'shield') {
+    playerShields[p] = true; rpgLucky(p); loot = '🛡️'; res = 'A Holy Shield!'; rpgLog(p, '🎁 Treasure chest: a <b>Holy Shield</b>!');
+  } else if (kind === 'cloak') {
+    r.cloak = Math.max(r.cloak, 2); rpgLucky(p); loot = '👻'; res = 'Phantom Cloak (2 turns)!'; rpgLog(p, '🎁 Treasure chest: a <b>Phantom Cloak</b> for 2 turns!');
+  } else if (kind === 'extra') {
+    r.bonusRoll = true; rpgLucky(p); loot = '🎲'; res = 'An extra dice roll!'; rpgLog(p, '🎁 Treasure chest: an <b>extra dice roll</b> next turn!');
+  } else {
+    mimic = true; loot = '🦷';
+    if (playerShields[p]) { playerShields[p] = false; res = 'MIMIC! Your shield absorbed the bite.'; rpgLog(p, '👹 A <b>Mimic</b> lunged — your Holy Shield took the bite!'); r.st.block++; }
+    else { const l = lose(p, 70); res = `MIMIC! It bit off $${l}!`; rpgLog(p, `👹 A <b>Mimic</b> chomped <b>$${l}</b> out of your purse!`); rpgSetback(p); rpgTriggered(p, 'trap'); }
+  }
+  refreshAll();
+  if (mimic) { sfx('mimic'); shakeBoard(true); } else sfx('chest');
+  fxEmit(pos, mimic ? 'blood' : 'gold', 26);
+  await stage(async c => {
+    c.card.innerHTML = stHead(mimic ? 'IT WAS A TRAP' : 'TREASURE', mimic ? 'Mimic!' : 'Treasure Chest', `${playerName(p)} approaches…`) +
+      `<div class="st-art"><div class="chest-rays ${mimic ? 'mimic' : ''}" id="cr"></div>${chestSVG()}<div class="chest-loot" id="cl">${loot}</div></div><div class="st-result" id="st-res" style="opacity:0">.</div>`;
+    const svg = c.card.querySelector('.chest-svg');
+    await c.wait(350); svg.classList.add('rattle'); await c.wait(900); svg.classList.remove('rattle');
+    svg.classList.add('open');
+    if (mimic) { svg.querySelector('.mimicbits').style.display = ''; svg.querySelector('.eyes').style.display = ''; c.boardShake(true); }
+    $('cr').classList.add('on'); $('cl').classList.add('go');
+    await c.wait(500);
+    const re = $('st-res'); re.textContent = res; re.style.opacity = 1;
+    await c.wait(1300);
+  }, { tint: mimic ? '#be123c' : '#f59e0b', rain: mimic ? ['🦷', '💀'] : ['🪙', '✨'], shake: mimic });
+  return false;
+}
+
+/* --------------------------------------------------------------- PORTAL ---- */
+async function rpgPortal(p, pos) {
+  if (RPG.teleHops >= 2) { floatText(pos, 'portal fizzles', '#a78bfa'); return false; }
+  RPG.teleHops++;
+  const lead = isLeader(p);
+  const k = Rweighted([['fwd', lead ? 18 : 30], ['back', lead ? 34 : 25], ['swap', 20], ['secret', 15]]);
+  const others = alive().filter(q => q !== p && playerPositions[q] !== pos && !isAllied(p, q));
+  let dest = pos, res = '', kind = k, swapWith = 0, bonus = 0;
+  if (k === 'fwd') { dest = nearestPlain(Math.min(98, pos + 6 + Ri(9)), 1); res = `Warped forward to tile ${dest}!`; }
+  else if (k === 'back') { dest = nearestPlain(Math.max(2, pos - (4 + Ri(9))), -1); res = `Hurled back to tile ${dest}!`; rpgSetback(p); }
+  else if (k === 'swap' && others.length) {
+    swapWith = Rpick(others);
+    const g = rpgGuard(swapWith, p, 'portal swap');
+    if (g === 'hit') { dest = playerPositions[swapWith]; res = `Swapped places with ${playerName(swapWith)}!`; rpgHit(p, swapWith, 'portal'); }
+    else { kind = 'fwd'; swapWith = 0; dest = nearestPlain(Math.min(98, pos + 5), 1); res = `The swap was repelled — shoved to tile ${dest}!`; }
+  } else if (k === 'swap') { kind = 'fwd'; dest = nearestPlain(Math.min(98, pos + 5), 1); res = `Warped forward to tile ${dest}!`; }
+  else { // secret bonus location: a random quiet corridor in the middle of the map
+    const cands = []; for (let n = 30; n <= 80; n++) if (plainTile(n)) cands.push(n);
+    dest = cands.length ? Rpick(cands) : pos; bonus = 120 + (isTrailing(p) ? 40 : 0); res = `Secret vault on tile ${dest}! +$${bonus}`; rpgLucky(p);
+  }
+  if (dest > 99) dest = 99;
+  sfx('portal'); fxEmit(pos, 'magic', 30);
+  await stage(async c => {
+    c.card.innerHTML = stHead('MYSTERY PORTAL', 'The Portal Opens', `${playerName(p)} steps into the swirl…`) +
+      `<div class="st-art"><div class="portal-art" id="pa"><div class="ring"></div><div class="ring r2"></div><div class="core"></div><div class="hero">${pieceSVG(playerClasses[p], p)}</div></div></div><div class="st-result" id="st-res" style="opacity:0">.</div>`;
+    await c.wait(900); $('pa').classList.add('sucked'); await c.wait(1100);
+    const re = $('st-res'); re.textContent = res; re.style.opacity = 1; await c.wait(1300);
+  }, { tint: '#7c3aed', rain: ['✨', '🌀', '⭐'] });
+  if (swapWith) { const t = playerPositions[p]; playerPositions[p] = playerPositions[swapWith]; playerPositions[swapWith] = t; refreshAll(0.9); }
+  else movePlayerTo(p, dest, 0.9);
+  rpgLog(p, `🌀 Mystery portal: <b>${res}</b>`);
+  if (bonus) { bank(p, bonus); rpgShare(p, bonus); }
+  fxEmit(playerPositions[p], 'magic', 22);
+  await sleep(900);
+  return playerPositions[p] !== pos;
+}
+
+/* ---------------------------------------------------------------- WHEEL ---- */
+const WHEEL = [
+  { k: 'gold200', ico: '💰', lbl: '$200', col: '#f59e0b', w: 0.7 }, { k: 'extra', ico: '🎲', lbl: 'ROLL+', col: '#16a34a', w: 1 },
+  { k: 'shield', ico: '🛡️', lbl: 'SHIELD', col: '#0891b2', w: 1 }, { k: 'free', ico: '🎁', lbl: 'ITEM', col: '#9333ea', w: 1 },
+  { k: 'gold75', ico: '🪙', lbl: '$75', col: '#ca8a04', w: 1.3 }, { k: 'curse', ico: '🐍', lbl: 'CURSE', col: '#be123c', w: 1 },
+  { k: 'lost', ico: '⏳', lbl: 'SKIP', col: '#475569', w: 1 }, { k: 'gold120', ico: '💎', lbl: '$120', col: '#2563eb', w: 1 }
+];
+function wheelSVG() {
+  const pt = (a, r) => { const t = (a - 90) * Math.PI / 180; return [100 + r * Math.cos(t), 100 + r * Math.sin(t)]; };
+  let seg = '';
+  WHEEL.forEach((s, i) => {
+    const a0 = i * 45 - 22.5, a1 = i * 45 + 22.5, [x0, y0] = pt(a0, 96), [x1, y1] = pt(a1, 96);
+    seg += `<path d="M100 100 L${x0} ${y0} A96 96 0 0 1 ${x1} ${y1} Z" fill="${s.col}" stroke="#1c1917" stroke-width="2"/>` +
+      `<g transform="rotate(${i * 45} 100 100)"><text x="100" y="38" text-anchor="middle" font-size="22">${s.ico}</text><text x="100" y="55" text-anchor="middle" font-size="9" font-weight="800" fill="#fff" style="paint-order:stroke" stroke="#000" stroke-width="2">${s.lbl}</text></g>`;
+  });
+  return `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="99" fill="#fbbf24" stroke="#78350f" stroke-width="2"/><g class="wheel-spin" id="wspin">${seg}</g><circle cx="100" cy="100" r="15" fill="#1c1917" stroke="#fbbf24" stroke-width="3"/><circle cx="100" cy="100" r="5" fill="#fbbf24"/></svg>
+  <svg class="wheel-ptr" id="wptr" viewBox="0 0 26 34"><path d="M13 34 L2 8 Q13 -4 24 8 Z" fill="#ef4444" stroke="#fff" stroke-width="2"/></svg>`;
+}
+async function rpgWheel(p, pos) {
+  const r = RP(p);
+  const idx = Rweighted(WHEEL.map((s, i) => [i, s.w])), seg = WHEEL[idx];
+  let res = '', good = true;
+  rpgRisk(p);
+  if (seg.k === 'gold200' || seg.k === 'gold75' || seg.k === 'gold120') {
+    const amt = seg.k === 'gold200' ? 200 : seg.k === 'gold120' ? 120 : 75; bank(p, amt); rpgShare(p, amt); rpgLucky(p);
+    res = `${seg.ico} +$${amt}!`; if (amt >= 200) rpgAch(p, 'gambler');
+  } else if (seg.k === 'extra') { r.bonusRoll = true; rpgLucky(p); res = '🎲 An extra dice roll!'; }
+  else if (seg.k === 'shield') { if (playerShields[p]) { bank(p, 80); res = '🛡️ Already shielded: +$80 instead!'; } else { playerShields[p] = true; rpgLucky(p); res = '🛡️ A Holy Shield!'; } }
+  else if (seg.k === 'free') { r.disc = 1; rpgLucky(p); res = '🎁 Your next Black Market item is FREE!'; }
+  else if (seg.k === 'curse') { r.curse = 'snakebait'; rpgSetback(p); good = false; res = '🐍 Snake Curse! Your next bite drops 8 tiles deeper.'; }
+  else { r.skip++; r.why = 'lost'; rpgSetback(p); good = false; res = '⏳ Lost turn! You will skip your next turn.'; }
+  rpgLog(p, `🎡 Wheel of Fortune: <b>${res}</b>`);
+  refreshAll();
+  await stage(async c => {
+    c.card.innerHTML = stHead('WHEEL OF FORTUNE', 'Spin!', `${playerName(p)} spins the wheel…`) + `<div class="st-art"><div class="wheel-wrap">${wheelSVG()}</div></div><div class="st-result" id="st-res" style="opacity:0">.</div>`;
+    await c.wait(500);
+    const spin = $('wspin'), ptr = $('wptr');
+    const turns = 5, jitter = (R_vis() - .5) * 26, deg = turns * 360 + (360 - idx * 45) + jitter;
+    spin.style.transform = `rotate(${deg}deg)`;
+    let d = 90; const t0 = Date.now(), total = 4600 * RPG.speed;
+    while (Date.now() - t0 < total && !c.skipped()) { sfx('tick'); ptr.classList.remove('tick'); void ptr.offsetWidth; ptr.classList.add('tick'); await c.wait(d); d = Math.min(420, d * 1.1); }
+    if (c.skipped()) { spin.style.transition = 'none'; spin.style.transform = `rotate(${deg}deg)`; }
+    sfx(good ? 'wheelwin' : 'wheellose'); if (!good) c.boardShake();
+    const re = $('st-res'); re.textContent = res; re.style.opacity = 1; await c.wait(1500);
+  }, { tint: good ? '#c026d3' : '#475569', rain: good ? ['🎉', '✨', '🪙'] : ['💨'] });
+  fxEmit(pos, good ? 'gold' : 'dark', 24);
+  return false;
+}
+
+/* ---------------------------------------------------------------- ALTAR ---- */
+const BLESSINGS = [
+  ['aegis', 3, '🛡️ Aegis: Holy Shield + Phantom Cloak (2 turns) + Mirror'], ['fortune', 2, '💰 Fortune: $250 poured onto the altar'],
+  ['dash', 3, '🚀 Dash: carried forward ~8 tiles'], ['twin', 2, '🎲 Twin Fates: two extra dice rolls']
+];
+async function rpgAltar(p, pos) {
+  const r = RP(p), can = playerCash[p] >= 100;
+  if (!can) { rpgLog(p, '🔮 The Cursed Altar demands $100… you cannot pay, and it ignores you.'); floatText(pos, 'Need $100', '#c4b5fd'); return false; }
+  const choice = await promptDecision('altar', 'AD',
+    done => stage(async c => {
+      c.card.innerHTML = stHead('CURSED ALTAR', 'The Altar Whispers', `Sacrifice <b>$100</b> for a powerful blessing — or refuse and risk a curse (40%).`) +
+        `<div class="st-art"><div class="st-ring"></div><div class="st-ring"></div><div class="st-emoji">🔮</div></div>`;
+      sfx('altar');
+      const k = await stageChoice(c, [{ key: 'A', label: '🩸 Sacrifice $100', cls: 'btn-primary' }, { key: 'D', label: '🚪 Refuse', cls: 'btn-ghost' }]);
+      done(k);
+    }, { tint: '#7e22ce', rain: ['🔮', '✨'], hold: 0 }),
+    () => (playerCash[p] >= 250 ? 'A' : 'D'));
+  rpgRisk(p);
+  let res, good = true, kicker = 'BLESSED';
+  if (choice === 'A') {
+    lose(p, 100);
+    const b = Rweighted(BLESSINGS.map(x => [x[0], x[1]])), label = BLESSINGS.find(x => x[0] === b)[2];
+    if (b === 'aegis') { playerShields[p] = true; r.cloak = Math.max(r.cloak, 2); r.mirror = true; }
+    else if (b === 'fortune') { bank(p, 250); rpgShare(p, 250); }
+    else if (b === 'dash') { const d = nearestPlain(Math.min(98, pos + 8), 1); movePlayerTo(p, d, 0.8); }
+    else { r.bonusRoll = true; RPG.extraTwin = (RPG.extraTwin || 0); r.twin = true; }
+    rpgLucky(p); res = label; rpgLog(p, `🔮 Cursed Altar: sacrificed $100 → <b>${label}</b>`);
+  } else {
+    if (R() < 0.4) {
+      const k = Rpick(Object.keys(CURSES)); r.curse = k; res = `${CURSES[k].icon} Cursed: ${CURSES[k].name}! ${CURSES[k].desc}`; good = false; kicker = 'CURSED'; rpgSetback(p);
+      rpgLog(p, `🔮 Cursed Altar: refused → <b>${res}</b>`);
+    } else { res = '😮‍💨 The altar lets you go… this time.'; rpgLog(p, '🔮 Cursed Altar: refused and <b>escaped unharmed</b>.'); }
+  }
+  refreshAll();
+  sfx(good ? 'wheelwin' : 'wheellose'); if (!good) shakeBoard();
+  fxEmit(pos, good ? 'magic' : 'dark', 26);
+  await quick({ kicker, title: choice === 'A' ? 'Blessing Granted' : (good ? 'Spared' : 'Cursed'), sub: playerName(p), emoji: good ? '✨' : '🧿', result: res, tint: good ? '#a855f7' : '#7f1d1d', rain: good ? ['✨', '🔮'] : ['🧿', '💀'], ms: 2000, shake: !good });
+  await sleep(300);
+  return choice === 'A' && playerPositions[p] !== pos;
+}
+
+/* ----------------------------------------------------------------- CAMP ---- */
+async function rpgCamp(p, pos) {
+  const r = RP(p), cured = [];
+  if (playerPoisoned[p]) { playerPoisoned[p] = false; cured.push('frozen'); }
+  if (r.poison > 0) { r.poison = 0; cured.push('poison'); }
+  if (r.curse) { r.curse = null; cured.push('curse'); }
+  if (r.slow > 0) { r.slow = 0; cured.push('slow'); }
+  let shieldBack = false;
+  if (!playerShields[p]) { playerShields[p] = true; shieldBack = true; }
+  const gold = 30 + (isTrailing(p) ? 30 : 0); bank(p, gold);
+  const parts = [...cured.map(c => `cured ${c}`), shieldBack ? 'shield restored' : '', `+$${gold}`].filter(Boolean);
+  rpgLog(p, `🏕️ Rest camp: <b>${parts.join(', ')}</b>.`);
+  refreshAll(); sfx('camp'); fxEmit(pos, 'heal', 22, { up: true, g: -20 });
+  await quick({ kicker: 'REST CAMP', title: 'A Warm Fire', sub: playerName(p), emoji: '🏕️', result: parts.join(' · '), tint: '#16a34a', rain: ['🔥', '✨'], ms: 1500 });
+  return false;
+}
+
+/* ---------------------------------------------------------------- TRAPS ---- */
+function rpgDetect(p) {                            // Wizards sense hidden traps up to 6 tiles ahead (visible to everyone)
+  if (!rpgOn() || playerClasses[p] !== 'wizard') return;
+  let found = 0;
+  for (let n = playerPositions[p] + 1; n <= Math.min(99, playerPositions[p] + 6); n++) {
+    const t = RPG.tiles[n]; if (t && t.t === 'trap' && !t.rev) { t.rev = true; found++; }
+  }
+  if (found) { rpgLog(p, `🧙 Arcane Sight: sensed <b>${found}</b> hidden trap${found > 1 ? 's' : ''} ahead!`); rpgDecorateTiles(); if (!fastMode) toast(`🧙 ${playerName(p)} revealed ${found} trap${found > 1 ? 's' : ''}!`); }
+}
+async function rpgTrap(p, pos, t) {
+  const r = RP(p), k = TRAP_KINDS[t.k], cls = playerClasses[p];
+  const seen = !!t.rev;
+  delete RPG.tiles[pos];
+  t.rev = true;
+  let res = '', hurt = true;
+  const disarm = cls === 'human' ? R() < 0.5 : (cls === 'wizard' && seen);
+  if (disarm) { const g = bank(p, 25); res = `${cls === 'wizard' ? '🧙 You sensed it and' : '🧑 You'} disarmed the ${k.name}! (+$${g} salvage)`; hurt = false; rpgLucky(p); }
+  else if (playerShields[p]) { playerShields[p] = false; res = `🛡️ Your shield absorbed the ${k.name}!`; hurt = false; r.st.block++; }
+  else if (r.gear === 'dragon' && r.gearN > 0) { r.gearN--; if (!r.gearN) r.gear = null; res = `🐲 Dragonscale armour shrugged off the ${k.name}!`; hurt = false; r.st.block++; }
+  else if (t.k === 'spike') {
+    if (cls === 'demon') { res = '😈 The spikes bounce off your hellforged skin!'; hurt = false; }
+    else { const l = lose(p, 30); const to = Math.max(1, nearestPlain(pos - 3, -1)); movePlayerTo(p, to, 0.6); res = `🗡️ Spikes! −$${l} and thrown back to tile ${to}.`; }
+  } else if (t.k === 'poison') {
+    if (cls === 'angel') { res = '😇 Divine Grace purifies the poison cloud!'; hurt = false; }
+    else { r.poison = 2; res = '☠️ Poison cloud! You lose $20 at the start of your next 2 turns.'; }
+  } else if (t.k === 'steal') { const l = lose(p, Math.min(120, Math.max(40, Math.round(playerCash[p] * 0.15)))); res = `🕳️ A gold-thief pit swallowed <b>$${l}</b>!`; }
+  else { if (cls === 'angel') { res = '😇 The cage cannot hold an angel!'; hurt = false; } else { r.skip++; r.why = 'jail'; res = '⛓️ Iron cage! You lose your next turn.'; } }
+  rpgLog(p, `❓ Hidden <b>${k.name}</b>: ${res}`);
+  rpgDecorateTiles(); refreshAll();
+  if (hurt) { rpgTriggered(p, 'trap'); r.st.trapsHit++; }
+  sfx(hurt ? 'trap' : 'camp'); if (hurt) { shakeBoard(); fxEmit(pos, t.k === 'poison' ? 'dark' : 'boom', 22); }
+  await quick({ kicker: hurt ? 'HIDDEN TRAP' : 'TRAP AVOIDED', title: k.name, sub: playerName(p), emoji: k.icon, result: res, tint: hurt ? '#be123c' : '#16a34a', rain: [k.icon], ms: 1700, shake: hurt });
+  return hurt && t.k === 'spike' && playerPositions[p] !== pos;
+}
+
+/* ============================================================
+   RPG LAYER 5/6 — Black Market additions, roll modifiers, snake/ladder rules
+   ============================================================ */
+const GEAR = {
+  frost:  { icon: '🧊', name: 'Frost Armor',  desc: 'Shatters to block the next freeze.', n: 1 },
+  dragon: { icon: '🐲', name: 'Dragonscale',  desc: 'Shrugs off the next 2 hidden traps.', n: 2 },
+  reaver: { icon: '🗡️', name: 'Soul Reaver',  desc: 'Your next 2 hits on a rival steal $40.', n: 2 }
+};
+
+// the new Black Market items (the six originals above are untouched)
+Object.assign(SHOP_ITEMS, {
+  rewind:    { icon: '⏪', name: 'Time Rewind',        desc: 'Undo a setback: return to where you stood before your last roll.',                cost: 150, accent: '#22d3ee', rpg: true },
+  mirror:    { icon: '🪞', name: 'Mirror Curse',       desc: 'The next hostile action against you is reflected back at the attacker.',         cost: 120, accent: '#c084fc', rpg: true },
+  loaded:    { icon: '🎲', name: 'Loaded Dice',        desc: 'Pick your next roll yourself. One use per match.',                                cost: 200, accent: '#fbbf24', rpg: true },
+  cloak:     { icon: '👻', name: 'Phantom Cloak',      desc: 'Rivals cannot target you with anything for 2 turns.',                             cost: 160, accent: '#a5b4fc', rpg: true },
+  hook:      { icon: '🪝', name: 'Snakeslayer Hook',   desc: 'Slay the next snake you meet: no slide, +$40. Destroys a summoned serpent trap.', cost: 130, accent: '#a3e635', rpg: true },
+  bounty:    { icon: '🎯', name: 'Bounty Contract',    desc: 'Pick a rival: earn $70 (twice, 5 rounds) when they hit a snake, mine or trap.',   cost: 100, accent: '#fb923c', rpg: true },
+  lightning: { icon: '⚡', name: 'Chain Lightning',    desc: 'Steal $30 from every rival in one strike.',                                       cost: 180, accent: '#facc15', rpg: true }
+});
+Object.assign(SHOP_CODE, { rewind: 'r', mirror: 'i', loaded: 'z', cloak: 'p', hook: 'k', bounty: 'o', lightning: 'n' });
+Object.keys(SHOP_CODE).forEach(k => { SHOP_BY_CODE[SHOP_CODE[k]] = k; });
+TARGET_SHOP.add('bounty');
+
+/* ---- prices ---- */
+function getCost(p, key) {
+  if (playerFreeBuy[p]) return 0;                      // Merchant's Blessing: the next purchase is on the house
+  let c = SHOP_ITEMS[key].cost;
+  if (playerClasses[p] === 'wizard') c = Math.round(c * (1 - TUNE.wizardDiscount));
+  if (rpgOn()) {
+    if (RPG.mods.fest > 0) c = Math.round(c * 0.7);
+    const d = RP(p).disc; if (d) c = Math.round(c * (1 - Math.min(1, d)));
+  }
+  return Math.max(0, c);
+}
+const marketOpen = () => !rpgOn() || RPG.cfg.market;
+function itemStatus(p, key) {                  // '' when buyable, otherwise the reason it is not
+  if (!rpgOn() || !SHOP_ITEMS[key].rpg) return '';
+  const lim = ITEM_LIMITS[key], r = RP(p); if (!lim) return '';
+  const n = r.bought[key] || 0;
+  if (n >= lim.max) return 'sold out';
+  const wait = lim.cd - (RPG.round - (r.boughtAt[key] === undefined ? -99 : r.boughtAt[key]));
+  if (lim.cd && n > 0 && wait > 0) return `restocks in ${wait} round${wait > 1 ? 's' : ''}`;
+  return '';
+}
+function itemUsable(p, key, opp) {             // one-line reason an item cannot be used right now ('' = ok)
+  const r = RP(p);
+  if (key === 'rewind') return (r.lastFrom > playerPositions[p]) ? '' : 'nothing to undo (you have not lost ground)';
+  if (key === 'mirror') return r.mirror ? 'a mirror is already up' : '';
+  if (key === 'loaded') return r.loaded ? 'already loaded' : '';
+  if (key === 'cloak') return r.cloak > 0 ? 'already cloaked' : '';
+  if (key === 'hook') return r.hook ? 'already holding a hook' : '';
+  if (key === 'bounty') {
+    if (r.contract && RPG.round <= r.contract.exp) return 'you already hold a contract';
+    if (!opp || opp === p || RP(opp).out) return 'pick a rival';
+    if (isAllied(p, opp)) return 'not against your ally';
+    return '';
+  }
+  if (key === 'lightning') return alive().some(q => q !== p) ? '' : 'no rivals left';
+  return '';
+}
+
+function renderShop() {
+  const p = currentPlayer;
+  $('shop-purse').textContent = playerCash[p];
+  const open = marketOpen();
+  const banned = playerMarketBan[p] === 2;
+  $('shop-note').textContent = !open ? 'The market is closed in this mode' : banned ? 'closed to you this turn (Cursed Fortune)' : shopPurchasedThisTurn ? 'already traded this turn'
+    : playerFreeBuy[p] ? 'your next purchase is FREE'
+    : ((playerClasses[p] === 'wizard' ? `Wizard −${Math.round(TUNE.wizardDiscount * 100)}% · ` : '') + (rpgOn() && RPG.mods.fest > 0 ? '🎪 Festival −30% · ' : '') + '1 purchase per turn');
+  const list = $('shop-items');
+  list.innerHTML = '';
+  Object.entries(SHOP_ITEMS).forEach(([key, item]) => {
+    if (item.rpg && !rpgOn()) return;
+    const price = getCost(p, key), full = SHOP_ITEMS[key].cost;
+    const poor = playerCash[p] < price, why = itemStatus(p, key);
+    const lim = rpgOn() && item.rpg ? ITEM_LIMITS[key] : null, left = lim ? Math.max(0, lim.max - (RP(p).bought[key] || 0)) : 0;
+    const btn = document.createElement('button');
+    btn.className = 'shop-item' + ((poor || shopPurchasedThisTurn || why || !open || banned) ? ' disabled' : '');
+    btn.style.setProperty('--accent', item.accent);
+    btn.innerHTML = `
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="shop-ico">${item.icon}</div>
+        <div class="min-w-0"><div class="text-xs font-extrabold text-white">${item.name}${item.rpg ? ' <span class="item-new">NEW</span>' : ''}</div><div class="text-[11px] text-slate-400 leading-snug">${item.desc}</div>
+        ${lim ? `<div class="text-[10px] text-amber-200/80">${why || `${left}/${lim.max} left this match`}</div>` : ''}</div>
+      </div>
+      <span class="price${poor ? ' poor' : ''}">${price === 0 ? 'FREE' : '$' + price}${price < full ? `<s style="display:block;font-size:9px;opacity:.6">$${full}</s>` : ''}</span>`;
+    btn.onclick = () => uiBuy(key);
+    list.appendChild(btn);
+  });
+}
+function openShopModal() {
+  if (isRolling || gameOver || isBot(currentPlayer) || !canAct()) return;
+  if (!marketOpen()) { toast('🚫 The Black Market is closed in this mode.', 'warn'); return; }
+  renderShop();
+  openModal('shop-modal');
+}
+
+/* ---- purchase flow: wraps the original buyShopItem so the six original items behave exactly as before ---- */
+const buyShopItemOriginal = buyShopItem;
+buyShopItem = function (key, target) {
+  const me = currentPlayer, bot = isBot(me), warn = m => { if (!bot) toast(m, 'warn'); };
+  if (!rpgOn() && SHOP_ITEMS[key] && SHOP_ITEMS[key].rpg) return false;     // the new items do not exist in Classic
+  if (rpgOn()) {
+    if (!marketOpen()) { warn('The Black Market is closed in this mode.'); return false; }
+    if (shopPurchasedThisTurn) { warn('The merchant only trades once per turn.'); return false; }
+    if (playerMarketBan[me] === 2) { warn('The Black Market is closed to you this turn (Cursed Fortune).'); return false; }
+    if (key === 'jack') {                                                      // Jack of Trader: the repo's gamble card, with the RPG price rules and stats
+      const price = getCost(me, key), had = RP(me).disc;
+      const ok = buyShopItemOriginal(key, target);
+      if (ok) { const r = RP(me); r.st.spent += price; r.st.kinds[key] = true; if (had) r.disc = 0; if (Object.keys(r.st.kinds).length >= 5) rpgAch(me, 'trader'); }
+      return ok;
+    }
+    const opp0 = target || rpgTarget(me);
+    if (TARGET_SHOP.has(key) && opp0 && RP(opp0).out) { warn('That hero has fallen.'); return false; }
+    if (SHOP_ITEMS[key].rpg) return rpgBuyNew(key, target, warn);
+    // the originals: still 1 per turn, now with the Cloak/Mirror/ally guard, a coupon, stats
+    if (TARGET_SHOP.has(key) && !target) target = rpgTarget(me) || undefined;
+    return rpgBuyOriginal(key, target, warn);
+  }
+  return buyShopItemOriginal(key, target);
+};
+function rpgNoteBuy(me, key, price) {
+  const r = RP(me);
+  r.st.spent += price; r.st.kinds[key] = true;
+  r.bought[key] = (r.bought[key] || 0) + 1; r.boughtAt[key] = RPG.round;
+  if (Object.keys(r.st.kinds).length >= 5) rpgAch(me, 'trader');
+  if (r.disc) r.disc = 0;
+  shopPurchasedThisTurn = true;
+}
+function rpgBuyOriginal(key, target, warn) {
+  const me = currentPlayer, r = RP(me);
+  const price = getCost(me, key), opp = target || defaultTarget(me);
+  if (shopPurchasedThisTurn) return false;
+  if (playerCash[me] < price) { warn(`Not enough gold — you need $${price}.`); return false; }
+  const hostile = key === 'swap' || key === 'freeze' || key === 'mine';
+  if (!hostile) {
+    const had = r.disc; const ok = buyShopItemOriginal(key, target);
+    if (ok) { r.st.spent += price; r.st.kinds[key] = true; r.bought[key] = (r.bought[key] || 0) + 1; r.boughtAt[key] = RPG.round; if (had) r.disc = 0; if (Object.keys(r.st.kinds).length >= 5) rpgAch(me, 'trader'); }
+    return ok;
+  }
+  // hostile: validate like the original, then run the guard before the effect lands
+  if (!opp || opp === me) { warn('Pick a rival first.'); return false; }
+  if (isAllied(me, opp)) { warn('You cannot target your ally. Betray them first!'); return false; }
+  if (key === 'swap' && playerPositions[me] === playerPositions[opp]) { warn('You already share a tile with your rival.'); return false; }
+  if (key === 'freeze') {
+    if (playerClasses[opp] === 'angel') { warn('Angels are immune to freeze — purchase cancelled.'); return false; }
+    if (playerPoisoned[opp]) { warn('Your rival is already frozen.'); return false; }
+    if (playerThawed[opp]) { warn('Your rival has just thawed out and is protected for a turn.'); return false; }
+  }
+  if (key === 'mine' && findFreeTile(playerPositions[opp], [3, 2, 4, 1, 5, 6]) == null) { warn('No free tile ahead of your rival for a mine.'); return false; }
+  const g = rpgGuard(opp, me, key === 'swap' ? 'swap' : key === 'freeze' ? 'freeze' : 'mine');
+  if (g === 'hit') {
+    const had = r.disc; const ok = buyShopItemOriginal(key, target);
+    if (ok) { r.st.spent += price; r.st.kinds[key] = true; r.bought[key] = (r.bought[key] || 0) + 1; r.boughtAt[key] = RPG.round; if (had) r.disc = 0; if (Object.keys(r.st.kinds).length >= 5) rpgAch(me, 'trader'); if (key !== 'mine') rpgHit(me, opp, key); }
+    return ok;
+  }
+  // blocked / reflected: the gold is spent, the effect is not
+  playerFreeBuy[me] = false; spend(me, price); r.st.spent += price; r.st.kinds[key] = true; r.bought[key] = (r.bought[key] || 0) + 1; r.boughtAt[key] = RPG.round; if (r.disc) r.disc = 0;
+  shopPurchasedThisTurn = true;
+  floatAtPlayer(me, `-$${price}`, '#fb7185');
+  if (g === 'reflect') rpgBacklash(me, opp, key);
+  refreshAll(); updateControls(); closeModal('shop-modal');
+  return true;
+}
+function rpgBacklash(src, victim, kind) {         // a Mirror Curse threw the action back at `src`
+  if (kind === 'freeze') {
+    if (playerClasses[src] === 'angel') { rpgLog(src, '😇 Divine Grace: the reflected freeze fizzles.'); return; }
+    playerPoisoned[src] = true; rpgLog(src, `❄️ The reflected frost <b>freezes ${playerName(src)}</b> instead!`); rpgSetback(src);
+  } else if (kind === 'swap') {
+    const l = lose(src, 60); bank(victim, l); rpgLog(src, `🪞 The reflected swap backfires: ${playerName(src)} pays <b>$${l}</b> to ${playerName(victim)}.`);
+  } else if (kind === 'mine' || kind === 'serpent trap') {
+    const to = nearestPlain(Math.max(2, playerPositions[src] - 4), -1); movePlayerTo(src, to, 0.6); rpgLog(src, `💥 The reflected blast hurls ${playerName(src)} back to tile ${to}!`); rpgSetback(src);
+  } else if (kind === 'lightning') {
+    const l = lose(src, 30); bank(victim, l); rpgLog(src, `🪞 The lightning arcs back: ${playerName(victim)} drains <b>$${l}</b> from ${playerName(src)}!`);
+  } else if (kind === 'duel') {
+    const l = lose(src, 50); bank(victim, l); rpgLog(src, `🪞 The duel challenge rebounds: ${playerName(src)} forfeits <b>$${l}</b>.`);
+  } else { const l = lose(src, 30); bank(victim, l); rpgLog(src, `🪞 Reflected: ${playerName(src)} loses <b>$${l}</b>.`); }
+  refreshAll();
+}
+
+function rpgBuyNew(key, target, warn) {
+  const me = currentPlayer, r = RP(me), item = SHOP_ITEMS[key];
+  const price = getCost(me, key), opp = target || rpgTarget(me);
+  const st = itemStatus(me, key);
+  if (st) { warn(`${item.name}: ${st}.`); return false; }
+  if (playerCash[me] < price) { warn(`Not enough gold — you need $${price}.`); return false; }
+  const why = itemUsable(me, key, opp);
+  if (why) { warn(`${item.name}: ${why}.`); return false; }
+  playerFreeBuy[me] = false; spend(me, price);
+  floatAtPlayer(me, price ? `-$${price}` : 'FREE!', '#fb7185');
+  rpgNoteBuy(me, key, price);
+  const who = playerName(me);
+  let sub = '', result = '', emoji = item.icon, tint = item.accent;
+  if (key === 'rewind') {
+    const to = r.lastFrom;
+    movePlayerTo(me, to, 0.9); r.hurt = false;
+    result = `Back to tile ${to}!`; rpgLog(me, `💸 Paid $${price}: ⏪ <b>Time Rewind</b> — returned to tile ${to}.`);
+    fxEmit(to, 'magic', 26);
+  } else if (key === 'mirror') { r.mirror = true; result = 'The next hostile action bounces back!'; rpgLog(me, `💸 Paid $${price}: 🪞 <b>Mirror Curse</b> raised.`); }
+  else if (key === 'loaded') { r.loaded = true; result = 'You choose your next roll.'; rpgLog(me, `💸 Paid $${price}: 🎲 <b>Loaded Dice</b> — your next roll is yours to choose.`); }
+  else if (key === 'cloak') { r.cloak = 2; result = 'Untargetable for 2 turns.'; rpgLog(me, `💸 Paid $${price}: 👻 <b>Phantom Cloak</b> for 2 turns.`); }
+  else if (key === 'hook') { r.hook = true; result = 'The next snake will be slain!'; rpgLog(me, `💸 Paid $${price}: 🪝 <b>Snakeslayer Hook</b> ready.`); }
+  else if (key === 'bounty') {
+    r.contract = { on: opp, exp: RPG.round + 5, paid: 0 };
+    sub = `on ${playerName(opp)}`; result = `$70 each time they hit a snake, mine or trap (x2).`;
+    rpgLog(me, `💸 Paid $${price}: 🎯 <b>Bounty Contract</b> on ${playerName(opp)} (5 rounds).`);
+  } else if (key === 'lightning') {
+    const hits = [];
+    alive().filter(q => q !== me).forEach(q => {
+      const g = rpgGuard(q, me, 'lightning');
+      if (g === 'hit') {
+        if (playerShields[q]) { playerShields[q] = false; RP(q).st.block++; rpgLog(q, `🛡️ Holy Shield <b>absorbed</b> the lightning from ${who}!`); return; }
+        const l = lose(q, 30); if (l) { bank(me, l, '', '#fde047'); hits.push(`${playerName(q)} −$${l}`); rpgHit(me, q, 'lightning'); }
+      } else if (g === 'reflect') rpgBacklash(me, q, 'lightning');
+    });
+    result = hits.length ? hits.join(' · ') : 'The storm found no purchase…';
+    rpgLog(me, `💸 Paid $${price}: ⚡ <b>Chain Lightning</b>${hits.length ? ' — ' + hits.join(', ') : ' fizzled'}.`);
+    fxEmit(playerPositions[me], 'magic', 30);
+  }
+  playSound('powerup'); sfx(key);
+  refreshAll(); updateControls(); closeModal('shop-modal');
+  if (!fastMode) quick({ kicker: 'BLACK MARKET', title: item.name, sub: `${who} ${sub}`, emoji, result, tint, rain: [item.icon, '✨'], ms: 1300, shake: key === 'lightning' ? 'big' : 0 });
+  return true;
+}
+
+/* ---- Loaded Dice: only which digit gets logged changes; everyone replays that digit ---- */
+function handleRollClick() {
+  if (isRolling || gameOver || isBot(currentPlayer)) return;
+  if (anyModalOpen() || splashActive()) return;
+  if (NET.on && !canAct()) return;
+  const me = currentPlayer;
+  if (rpgOn() && RP(me).loaded) {                  // the player picks the digit; it is always rolled on the normal die
+    const go = v => { if (NET.on) netPush(String(v)); executeTurn(v, false, 'normal'); };
+    const box = $('loaded-pick'); box.innerHTML = '';
+    const left = 100 - playerPositions[me];
+    for (let v = 1; v <= 6; v++) {
+      const b = document.createElement('button'); b.textContent = v;
+      if (v > left && RULES.bounce === false) { b.style.opacity = '.4'; b.title = 'overshoots tile 100'; }
+      b.onclick = () => { closeModal('loaded-modal'); go(v); };
+      box.appendChild(b);
+    }
+    openModal('loaded-modal');
+    return;
+  }
+  if (NET.on) {
+    const dk = DICE[selectedDie].cost <= playerCash[me] ? selectedDie : 'normal';
+    const v = rollDie(dk);
+    netPush(DICE[dk].code + String(v));            // everyone replays this exact roll: one digit, or a die letter + digit
+    executeTurn(v, false, dk);
+    return;
+  }
+  executeTurn();
+}
+function aiLoadedPick(p) {
+  const pos = playerPositions[p], left = 100 - pos;
+  if (left <= 6) return left;
+  let best = 6, score = -9;
+  for (let v = 6; v >= 1; v--) {
+    const t = pos + v; let s = v;
+    if (LADDERS[t]) s += 40; if (SNAKES[t]) s -= 40; if (placedMines[t] && placedMines[t] !== p) s -= 25;
+    if (RPG.tiles[t] && RPG.tiles[t].t === 'trap') s -= 8; if (RPG.tiles[t] && RPG.tiles[t].t === 'boss' && RPG.boss[RPG.tiles[t].k].alive) s -= 6;
+    if (s > score) { score = s; best = v; }
+  }
+  return best;
+}
+
+/* ---- the digit that was rolled becomes the move that is made ---- */
+function rpgAdjustRoll(p, raw) {
+  if (!rpgOn()) return raw;
+  const r = RP(p); let roll = raw;
+  if (r.loaded) { r.loaded = false; rpgLog(p, `🎲 Loaded Dice: ${playerName(p)} chose <b>${raw}</b>.`); }
+  if (RPG.mods.storm > 0 && roll > 4) { rpgLog(p, `⛈️ Dark Storm caps the roll at 4 (rolled ${roll}).`); roll = 4; }
+  if (r.curse === 'leaden' && roll > 1) { r.curse = null; const n = Math.max(1, roll - 2); rpgLog(p, `🪨 Leaden Boots drag the roll from ${roll} down to ${n}.`); roll = n; rpgSetback(p); }
+  if (r.slow > 0) { r.slow = 0; const n = Math.max(1, Math.ceil(roll / 2)); rpgLog(p, `🥶 Slowed: the roll is halved (${roll} → ${n}).`); roll = n; }
+  return roll;
+}
+function rpgSalary(p) {
+  let s = playerClasses[p] === 'human' ? TUNE.humanSalary : TUNE.baseSalary + (playerClasses[p] === 'demon' ? TUNE.demonBonus : playerClasses[p] === 'angel' ? TUNE.angelBonus : 0);
+  if (!rpgOn()) return s;
+  const r = RP(p);
+  s = Math.round(s * RPG.cfg.salaryMul);
+  if (RPG.mods.sal > 0) s *= 2;
+  if (r.curse === 'hexed') { r.curse = null; s = Math.round(s / 2); rpgLog(p, '🧿 Pauper Hex halves your salary.'); }
+  if (isTrailing(p)) { s += 30; }
+  return s;
+}
+
+/* ---- snakes and ladders: Double Trouble, Snake Awakening, Snake Curse, Hook (original rules when none apply) ---- */
+function ladderDest(pos, p) {
+  let dest = LADDERS[pos];
+  if (rpgOn() && RPG.cfg.dbl) dest = Math.min(98, pos + (dest - pos) * 2);
+  return dest;
+}
+function snakeDest(pos, p) {
+  let dest = SNAKES[pos];
+  if (!rpgOn()) return dest;
+  if (RPG.cfg.dbl) dest = Math.max(1, pos - (pos - dest) * 2);
+  if (RPG.mods.snake > 0) dest = Math.max(1, dest - 4);
+  return dest;
+}
+const bossBlocks = pos => { const t = RPG.tiles[pos]; return !!(t && t.t === 'boss' && RPG.boss[t.k] && RPG.boss[t.k].alive); };
+
+/* ============================================================
+   RPG LAYER 6/6 — rounds, world events, Wanted, the Arena (duel / competition / alliance / betrayal), turn bookkeeping
+   ============================================================ */
+const WORLD_LINES = {};   // filled per event so the cinematic can list who was affected
+
+/* a "round" is one full pass of the table. Everything below runs inside switchTurn(), the same way on every client. */
+function rpgRoundTick() {
+  if (!rpgOn()) return false;
+  RPG.round++;
+  const M = RPG.mods; ['snake', 'storm', 'fest', 'sal'].forEach(k => { if (M[k] > 0) M[k]--; });
+  // alliances run out
+  RPG.allies = RPG.allies.filter(a => {
+    if (RPG.round < a.exp || RP(a.a).out || RP(a.b).out) return true;
+    rpgLog(a.a, `🤝 The alliance between ${playerName(a.a)} and ${playerName(a.b)} has <b>ended</b>.`);
+    RP(a.a).allyCd = RP(a.b).allyCd = RPG.round + 2; return false;
+  });
+  if (RPG.cfg.rounds && RPG.round > RPG.cfg.rounds) return true;       // Richest Wins is over
+  if (RPG.mode === 'survival' || RPG.cfg.danger) rpgDangerTick();
+  rpgWantedTick();
+  if (RPG.round % 5 === 0) { rpgRespawnTraps(); rpgDecorateTiles(); }
+  if (RPG.round >= RPG.nextEv) rpgWorldEvent();
+  return false;
+}
+
+function rpgDangerTick() {
+  RPG.danger++;
+  const toll = RPG.danger * 4, hit = [];
+  alive().forEach(p => {
+    const l = lose(p, toll);
+    if (l < toll) { hit.push(p); }
+  });
+  rpgLog(alive()[0] || 1, `🔥 Survival: the dungeon takes <b>$${toll}</b> from every hero (danger ${RPG.danger}).`);
+  hit.forEach(p => { rpgLog(p, `🔥 ${playerName(p)} cannot pay the toll and loses a life!`); rpgLoseLife(p, 'the dungeon'); });
+  refreshAll();
+}
+
+function rpgEliminate(p, why) {
+  const r = RP(p); if (r.out) return;
+  r.out = true; r.lives = 0;
+  rpgLog(p, `☠️ <b>${playerName(p)}</b> has fallen${why ? ' to ' + why : ''} and is out of the match!`);
+  if (!fastMode) { sfx('defeat'); fxEmit(playerPositions[p], 'dark', 30); }
+  const a = allyOf(p); if (a) RPG.allies = RPG.allies.filter(x => x.a !== p && x.b !== p);
+  if (RPG.wanted === p) RPG.wanted = 0;
+  Object.values(RPG.p).forEach(x => { if (x.contract && x.contract.on === p) x.contract = null; });
+  refreshAll();
+  const A = alive();
+  if (A.length === 1 && NP > 1 && !gameOver) showWinModal(A[0], 'the last hero standing');
+}
+function rpgLoseLife(p, why) {
+  const r = RP(p); if (r.out) return;
+  if (!RPG.cfg.lives) return;
+  r.lives--;
+  if (r.lives <= 0) rpgEliminate(p, why);
+  else rpgLog(p, `❤️ ${playerName(p)} has <b>${r.lives}</b> ${r.lives === 1 ? 'life' : 'lives'} left.`);
+}
+
+/* ---- Wanted: whoever runs far ahead becomes a bounty target ---- */
+function rpgWantedTick() {
+  const A = alive();
+  if (A.length < 2) { RPG.wanted = 0; return; }
+  const lead = A.reduce((a, b) => (playerPositions[b] > playerPositions[a] ? b : a));
+  const second = Math.max(...A.filter(q => q !== lead).map(q => playerPositions[q]));
+  if (RPG.wanted) {
+    if (RP(RPG.wanted).out || playerPositions[RPG.wanted] < second + 3 || RPG.round - RPG.wantedAt >= 6) {
+      rpgLog(RPG.wanted, `🎯 The bounty on ${playerName(RPG.wanted)} has been <b>lifted</b>.`); RPG.wanted = 0; RPG.wantedCd = RPG.round + 4;
+    }
+  } else if (RPG.round >= RPG.wantedCd && playerPositions[lead] - second >= 12 && playerPositions[lead] >= 15) {
+    RPG.wanted = lead; RPG.wantedAt = RPG.round; RPG.wantedHits = 0;
+    rpgLog(lead, `🎯 <b>${playerName(lead)} is WANTED!</b> Sabotage them to collect a bounty.`);
+    sfx('bounty');
+    quick({ kicker: 'BOUNTY POSTED', title: 'WANTED', sub: `${playerName(lead)} runs too far ahead…`, emoji: '🎯', result: 'Sabotage them for $75 (3 times, 3 rounds apart)', tint: '#dc2626', rain: ['🎯', '💰'], ms: 1700 });
+  }
+}
+
+/* ---- world events (rolled by the shared PRNG at the start of a round) ---- */
+function rpgWorldEvent() {
+  const C = RPG.cfg;
+  let pool = Object.keys(WORLD_EVENTS).filter(k => k !== RPG.ev);
+  if (C.harmful) pool = pool.filter(k => !WORLD_EVENTS[k].good);
+  const key = Rpick(pool), E = WORLD_EVENTS[key], M = RPG.mods, A = alive(), lines = [];
+  RPG.ev = key; RPG.evCount++;
+  RPG.nextEv = RPG.round + C.evMin + Ri(C.evMax - C.evMin + 1);
+  if (key === 'goldrush') { A.forEach(p => { const g = bank(p, 50); lines.push(`${playerName(p)} +$${g}`); }); }
+  else if (key === 'awaken') { M.snake = 2; lines.push('Every snake bites 4 tiles deeper (2 rounds)'); }
+  else if (key === 'blessing') { A.forEach(p => { playerShields[p] = true; }); lines.push('Holy Shield for every hero'); }
+  else if (key === 'storm') { M.storm = 1; lines.push('Rolls above 4 count as 4 this round'); }
+  else if (key === 'festival') { M.fest = 2; lines.push('Black Market prices −30% (2 rounds)'); }
+  else if (key === 'wrath') {
+    const v = Rpick(A);
+    if (playerShields[v]) { playerShields[v] = false; RP(v).st.block++; lines.push(`${playerName(v)}'s shield melts, saving their gold`); }
+    else { const l = lose(v, 100); rpgSetback(v); lines.push(`${playerName(v)} is scorched for $${l}`); }
+  } else if (key === 'lucky') { A.forEach(p => { RP(p).bonusRoll = true; }); lines.push('Everyone earns an extra roll'); }
+  else if (key === 'frozenk') {
+    A.forEach(p => {
+      const hit = R() < 0.4;
+      if (hit && playerClasses[p] !== 'angel' && !playerPoisoned[p]) { playerPoisoned[p] = true; rpgSetback(p); lines.push(`${playerName(p)} freezes solid`); }
+    });
+    if (!lines.length) lines.push('The chill passes… everyone is spared');
+  } else if (key === 'salary') { M.sal = 3; lines.push('Salaries ×2 for 3 rounds'); }
+  else if (key === 'chaosday') {
+    A.forEach(p => {
+      const gold = R() < 0.5;
+      if (playerShields[p]) { playerShields[p] = false; RP(p).st.block++; lines.push(`${playerName(p)}'s shield absorbs the chaos`); return; }
+      if (gold || playerPositions[p] < 8) { const l = lose(p, 40); lines.push(`${playerName(p)} −$${l}`); }
+      else { const to = nearestPlain(playerPositions[p] - 3, -1); playerPositions[p] = to; lines.push(`${playerName(p)} thrown back to ${to}`); }
+      rpgSetback(p);
+    });
+  }
+  rpgLog(A[0] || 1, `${E.icon} <b>World event: ${E.name}</b> — ${E.sub}${lines.length ? ' (' + lines.join('; ') + ')' : ''}`);
+  refreshAll();
+  if (!fastMode) {
+    sfx(E.good ? 'event' : 'evbad');
+    stage(async c => {
+      c.card.innerHTML = stHead(E.good ? 'WORLD EVENT' : 'WORLD EVENT · DANGER', E.name, E.sub) +
+        `<div class="st-art"><div class="st-ring"></div><div class="st-ring"></div><div class="st-ring"></div><div class="st-emoji">${E.icon}</div></div>` +
+        `<div class="st-result" style="font-size:clamp(12px,3.4vw,16px);line-height:1.5">${lines.slice(0, 5).join('<br>')}</div>`;
+      if (!E.good) c.boardShake(true);
+      await c.wait(2300);
+    }, { tint: E.tint, rain: [E.icon, '✨'], shake: !E.good });
+  }
+}
+
+/* ---- per-turn bookkeeping ---- */
+function rpgTurnEnd(me) {
+  if (!rpgOn()) return;
+  const r = RP(me);
+  if (r.hurt) { r.st.streak = 0; r.hurt = false; } else { r.st.streak++; if (r.st.streak >= 6) rpgAch(me, 'unstoppable'); }
+  const lead = leaderPos();
+  alive().forEach(q => { RP(q).behind = Math.max(RP(q).behind, lead - playerPositions[q]); });
+}
+function rpgOnWin(p) {
+  if (!rpgOn()) return;
+  const r = RP(p); r.st.won = true;
+  if (r.behind >= 25) rpgAch(p, 'comeback');
+}
+function rpgLap(p) {                                  // Richest Wins: reaching 100 pays out and starts a new lap
+  const g = bank(p, 400);
+  RP(p).laps = (RP(p).laps || 0) + 1;
+  rpgLog(p, `💎 ${playerName(p)} completes a lap: <b>+$${g}</b> — back to tile 1 for another run!`);
+  movePlayerTo(p, 1, 0.9);
+  fxEmit(100, 'gold', 40); sfx('chest');
+  return quick({ kicker: 'RICHEST WINS', title: 'Lap Complete', sub: playerName(p), emoji: '💎', result: `+$${g} · running again`, tint: '#0ea5e9', rain: ['💎', '🪙'], ms: 1600 });
+}
+function rpgEndByRounds() {
+  const A = alive().slice().sort((a, b) => playerCash[b] - playerCash[a] || playerPositions[b] - playerPositions[a]);
+  showWinModal(A[0], `the richest hero after ${RPG.cfg.rounds} rounds`);
+}
+
+/* ============================================================
+   ARENA — one action per turn, before you roll
+   Tokens: d+target = duel, e = treasure competition, a+target = alliance offer, v = betray your ally.
+   Dice come from the shared PRNG, so every client sees the same result.
+   ============================================================ */
+const ARENA_CODE = { duel: 'd', comp: 'e', offer: 'a', betray: 'v' };
+const ARENA_BY_CODE = { d: 'duel', e: 'comp', a: 'offer', v: 'betray' };
+const ARENA_TARGETED = { duel: true, comp: false, offer: true, betray: false };
+
+function arenaWhy(kind, me, t) {              // reason an arena action is unavailable ('' = fine)
+  if (!rpgOn()) return 'only in RPG modes';
+  const r = RP(me);
+  if (r.out) return 'you have fallen';
+  if (RPG.actionUsed) return 'one arena action per turn';
+  if (kind === 'duel') {
+    if (!t || t === me || RP(t).out) return 'pick a rival';
+    if (isAllied(me, t)) return 'not against your ally';
+    if (playerCash[me] < 50) return 'you need $50';
+    if (playerCash[t] < 50) return `${playerName(t)} cannot match the $50 stake`;
+    if (RPG.round - r.duelAt < 3) return `wait ${3 - (RPG.round - r.duelAt)} round(s)`;
+    return '';
+  }
+  if (kind === 'comp') {
+    if (RPG.round - RPG.compAt < 6) return `held recently — again in ${6 - (RPG.round - RPG.compAt)} round(s)`;
+    const n = alive().filter(q => playerCash[q] >= 30).length;
+    if (n < 2) return 'needs two heroes with $30';
+    if (playerCash[me] < 30) return 'you need $30';
+    return '';
+  }
+  if (kind === 'offer') {
+    if (!t || t === me || RP(t).out) return 'pick a rival';
+    if (allyOf(me)) return 'you already have an ally';
+    if (allyOf(t)) return `${playerName(t)} is already allied`;
+    if (RPG.round < r.allyCd) return 'recently betrayed or dissolved — wait';
+    if (RPG.round < RP(t).allyCd) return `${playerName(t)} is not ready for a pact`;
+    return '';
+  }
+  if (kind === 'betray') {
+    const a = RPG.allies.find(x => x.a === me || x.b === me);
+    if (!a) return 'you have no ally';
+    if (RPG.round <= a.since) return 'the pact is too fresh';
+    return '';
+  }
+  return 'unknown';
+}
+
+function openArena() {
+  if (!rpgOn() || isRolling || gameOver || isBot(currentPlayer) || !canAct()) return;
+  const me = currentPlayer, list = $('arena-list'); list.innerHTML = '';
+  const row = (kind, icon, name, desc, t) => {
+    const why = arenaWhy(kind, me, t), b = document.createElement('button');
+    b.className = 'arena-opt'; b.disabled = !!why;
+    b.innerHTML = `<span class="ai">${icon}</span><span><b>${name}${t ? ' — ' + playerName(t) : ''}</b><small>${why ? '🔒 ' + why : desc}</small></span>`;
+    b.onclick = () => { closeModal('arena-modal'); commitArena(kind, t || 0); };
+    list.appendChild(b);
+  };
+  const rs = rivals(me);
+  (rs.length ? rs : [0]).forEach(t => row('duel', '⚔️', 'Magical Duel', 'Stake $50 each. Higher die wins the pot (wizards roll +1).', t));
+  row('comp', '🏆', 'Treasure Competition', 'Everyone with $30 antes in; the highest die takes the pot plus a $60 bonus.', 0);
+  (rs.length ? rs : [0]).forEach(t => row('offer', '🤝', 'Propose Alliance', '3 rounds: shared rewards, you cover each other, no friendly fire…', t));
+  if (allyOf(me)) row('betray', '🗡️', 'Betray your ally', `Steal up to $80 from ${playerName(allyOf(me))}. The pact breaks and you become a Villain.`, 0);
+  openModal('arena-modal');
+}
+function commitArena(kind, t) {
+  if (NET.on && !canAct()) return;
+  if (arenaWhy(kind, currentPlayer, t)) return;
+  if (NET.on) netPush(ARENA_CODE[kind] + (ARENA_TARGETED[kind] ? tchar(t) : ''));
+  rpgArena(kind, t, false);
+}
+
+async function rpgArena(kind, t, fromLog) {
+  const me = currentPlayer, gid = gameId;
+  if (arenaWhy(kind, me, t)) return;               // identical check on every client: a refused action is skipped everywhere
+  RPG.fromLog = !!fromLog; RPG.actionUsed = true;
+  const wasRolling = isRolling;
+  isRolling = true; updateControls();
+  try {
+    if (kind === 'duel') await arenaDuel(me, t);
+    else if (kind === 'comp') await arenaComp(me);
+    else if (kind === 'offer') await arenaOffer(me, t);
+    else if (kind === 'betray') await arenaBetray(me);
+  } finally {
+    if (gid === gameId) { isRolling = wasRolling; updateControls(); refreshAll(); }
+  }
+}
+
+const dieBonus = p => (playerClasses[p] === 'wizard' ? 1 : 0);
+async function arenaDuel(me, t) {
+  const g = rpgGuard(t, me, 'duel');
+  if (g !== 'hit') {
+    if (g === 'reflect') rpgBacklash(me, t, 'duel');
+    await quick({ kicker: 'DUEL REFUSED', title: g === 'reflect' ? 'Reflected!' : 'Blocked', sub: `${playerName(me)} → ${playerName(t)}`, emoji: g === 'reflect' ? '🪞' : '👻', tint: '#6366f1', ms: 1300 });
+    return;
+  }
+  RP(me).duelAt = RPG.round;
+  let a, b, tries = 0;
+  do { a = Rd6() + dieBonus(me); b = Rd6() + dieBonus(t); tries++; } while (a === b && tries < 4);
+  const win = a > b ? me : (b > a ? t : 0), lose_ = win === me ? t : me;
+  let text;
+  if (win) {
+    const amt = Math.min(50, playerCash[lose_]); lose(lose_, amt); bank(win, amt);
+    text = `${playerName(win)} wins <b>$${amt}</b>!`; rpgHit(win, lose_, 'duel'); rpgLucky(win);
+  } else text = 'A draw — both keep their gold.';
+  rpgLog(me, `⚔️ Magical Duel: ${playerName(me)} <b>${a}</b> vs ${playerName(t)} <b>${b}</b> — ${text}`);
+  refreshAll();
+  if (fastMode) return;
+  sfx('duel');
+  await stage(async c => {
+    c.card.innerHTML = stHead('MAGICAL DUEL', 'Duel!', `${playerName(me)} challenges ${playerName(t)} · $50 stake`) +
+      `<div class="duel-row"><div class="duel-side" id="dA"><div style="width:60px;margin:auto">${pieceSVG(playerClasses[me], me)}</div>${playerName(me)}<div class="arena-die" id="dieA">?</div></div>
+       <div class="arena-vs">VS</div>
+       <div class="duel-side" id="dB"><div style="width:60px;margin:auto">${pieceSVG(playerClasses[t], t)}</div>${playerName(t)}<div class="arena-die" id="dieB">?</div></div></div>
+       <div class="st-result" id="st-res" style="opacity:0">.</div>`;
+    await c.wait(900); $('dieA').textContent = a; sfx('hit'); await c.wait(750); $('dieB').textContent = b; sfx('hit'); await c.wait(500);
+    if (win) { $(win === me ? 'dA' : 'dB').classList.add('win'); $(win === me ? 'dB' : 'dA').classList.add('lose'); sfx('crit'); }
+    const re = $('st-res'); re.innerHTML = text; re.style.opacity = 1; await c.wait(1400);
+  }, { tint: '#e11d48', rain: ['⚔️', '✨'] });
+  if (win) fxEmit(playerPositions[win], 'gold', 20);
+}
+
+async function arenaComp(me) {
+  RPG.compAt = RPG.round;
+  const P = alive().filter(q => playerCash[q] >= 30);
+  P.forEach(q => lose(q, 30));
+  const pot = P.length * 30 + 60;
+  let cands = P.slice(), rolls = {}, tries = 0;
+  P.forEach(q => { rolls[q] = Rd6() + dieBonus(q); });
+  while (tries < 3) {
+    const top = Math.max(...cands.map(q => rolls[q]));
+    cands = cands.filter(q => rolls[q] === top);
+    if (cands.length === 1) break;
+    cands.forEach(q => { rolls[q] = Rd6() + dieBonus(q); }); tries++;
+  }
+  const share = Math.floor(pot / cands.length);
+  cands.forEach(q => { bank(q, share); rpgLucky(q); rpgShare(q, share); });
+  const names = cands.map(playerName).join(' & ');
+  rpgLog(me, `🏆 Treasure Competition (${P.map(q => playerName(q) + ' ' + rolls[q]).join(', ')}) — <b>${names}</b> take${cands.length === 1 ? 's' : ''} <b>$${share}</b>${cands.length > 1 ? ' each' : ''}!`);
+  refreshAll();
+  if (fastMode) return;
+  sfx('chest');
+  await stage(async c => {
+    c.card.innerHTML = stHead('TREASURE COMPETITION', 'High Roll Wins', `Pot: $${pot}`) +
+      `<div class="duel-row" style="flex-wrap:wrap">${P.map(q => `<div class="duel-side" id="cp${q}"><div style="width:48px;margin:auto">${pieceSVG(playerClasses[q], q)}</div>${playerName(q)}<div class="arena-die" id="cd${q}" style="width:44px;height:44px;font-size:24px">?</div></div>`).join('')}</div>
+       <div class="st-result" id="st-res" style="opacity:0">.</div>`;
+    await c.wait(700);
+    for (const q of P) { $('cd' + q).textContent = rolls[q]; sfx('hit'); await c.wait(450); }
+    cands.forEach(q => $('cp' + q).classList.add('win')); P.filter(q => !cands.includes(q)).forEach(q => $('cp' + q).classList.add('lose'));
+    sfx('wheelwin'); const re = $('st-res'); re.innerHTML = `${names} · $${share}`; re.style.opacity = 1; await c.wait(1500);
+  }, { tint: '#f59e0b', rain: ['🏆', '🪙'] });
+}
+
+async function arenaOffer(me, t) {
+  if (RP(t).cloak > 0) { await quick({ kicker: 'ALLIANCE', title: 'Unreachable', sub: `${playerName(t)} is cloaked`, emoji: '👻', tint: '#6366f1', ms: 1200 }); return; }
+  rpgLog(me, `🤝 ${playerName(me)} offers <b>${playerName(t)}</b> an alliance.`);
+  const ans = await promptDecision('ally', 'uq',
+    done => stage(async c => {
+      c.card.innerHTML = stHead('ALLIANCE OFFER', 'A Pact?', `${playerName(me)} proposes a 3-round alliance with you, ${playerName(t)}.`) +
+        `<div class="st-art"><div class="st-ring"></div><div class="st-emoji">🤝</div></div><div class="st-hint" style="position:static;margin-top:6px">Allies share rewards and cover each other — but a pact can be broken.</div>`;
+      sfx('ally');
+      const k = await stageChoice(c, [{ key: 'u', label: '🤝 Accept', cls: 'btn-primary' }, { key: 'q', label: '✋ Decline', cls: 'btn-ghost' }]);
+      done(k);
+    }, { tint: '#16a34a', rain: ['🤝', '✨'], hold: 0 }),
+    () => (playerPositions[t] + 8 < playerPositions[me] || Math.random() < 0.4 ? 'u' : 'q'), t);
+  if (ans === 'u') {
+    RPG.allies.push({ a: me, b: t, since: RPG.round, exp: RPG.round + 3 });
+    RP(me).allyGuard = 1; RP(t).allyGuard = 1;
+    rpgLog(me, `🤝 <b>${playerName(me)} and ${playerName(t)} are now allies</b> for 3 rounds!`);
+    refreshAll(); sfx('ally');
+    await quick({ kicker: 'ALLIANCE FORMED', title: 'Allies', sub: `${playerName(me)} 🤝 ${playerName(t)}`, emoji: '🤝', result: '3 rounds · share rewards · cover each other', tint: '#16a34a', rain: ['🤝', '✨'], ms: 1700 });
+  } else {
+    rpgLog(t, `✋ ${playerName(t)} <b>declined</b> the alliance.`);
+    await quick({ kicker: 'ALLIANCE', title: 'Declined', sub: `${playerName(t)} refuses ${playerName(me)}`, emoji: '✋', tint: '#64748b', ms: 1100 });
+  }
+}
+
+async function arenaBetray(me) {
+  const ally = allyOf(me);
+  RPG.allies = RPG.allies.filter(x => x.a !== me && x.b !== me);
+  const amt = Math.min(80, playerCash[ally]); lose(ally, amt); bank(me, amt);
+  const r = RP(me); r.st.sab += 2; r.allyCd = RPG.round + 4; RP(ally).allyCd = RPG.round + 2;
+  rpgHit(me, ally, 'betrayal');
+  rpgLog(me, `🗡️ <b>${playerName(me)} BETRAYED ${playerName(ally)}</b> and stole <b>$${amt}</b>!`);
+  refreshAll();
+  if (fastMode) return;
+  sfx('betray'); shakeBoard(true); fxEmit(playerPositions[ally], 'blood', 28);
+  await quick({ kicker: 'BETRAYAL', title: 'Backstab!', sub: `${playerName(me)} turns on ${playerName(ally)}`, emoji: '🗡️', result: `−$${amt} · the pact is broken`, tint: '#7f1d1d', rain: ['🗡️', '💀'], ms: 1800, shake: 'big' });
+}
+
+/* the bot's occasional arena move (single-device play only) */
+async function aiArena() {
+  const me = currentPlayer;
+  if (!rpgOn() || RPG.actionUsed || NET.on) return;
+  const t = rpgTarget(me) || rivals(me)[0];
+  if (allyOf(me) && !arenaWhy('betray', me) && playerCash[allyOf(me)] >= 250 && Math.random() < 0.4) { await rpgArena('betray', 0, false); return; }
+  if (!arenaWhy('duel', me, t) && playerCash[me] >= 160 && Math.random() < 0.25) { await rpgArena('duel', t, false); return; }
+  if (!arenaWhy('comp', me) && Math.random() < 0.2) { await rpgArena('comp', 0, false); }
+}
+
+/* ============================================================
+   BOSSES — Ice Titan (33), Ancient Dragon (56), Lich King (82)
+   A boss blocks the road: you stop on its tile and trade up to 3 exchanges of blows.
+   Boss health is SHARED, so every visit chips it down for everyone. Dice come from the shared PRNG.
+   ============================================================ */
+const BOSS_ATK = { ice: 0, dragon: 1, lich: 1 };
+const BOSS_LOOT = { ice: { gold: 150, gear: 'frost' }, dragon: { gold: 220, gear: 'dragon' }, lich: { gold: 300, gear: 'reaver' } };
+const HERO_HP = 12;
+
+async function rpgBossTile(p, pos, t) {
+  const bs = RPG.boss[t.k], b = BOSSES[t.k];
+  if (!bs.alive) return false;
+  const r = RP(p), cls = playerClasses[p];
+  const firstVisit = !bs.seen; bs.seen = true;
+  const hp0 = bs.hp, steps = [];
+  let hero = HERO_HP, killed = false, fell = false;
+  for (let i = 0; i < 3 && !killed && !fell; i++) {
+    const d = Rd6();
+    const crit = d === 6 || (cls === 'human' && d === 5);
+    const dmg = d + (cls === 'wizard' || cls === 'demon' ? 1 : 0) + (crit ? 3 : 0);
+    bs.hp = Math.max(0, bs.hp - dmg);
+    bs.dmg[p] = (bs.dmg[p] || 0) + dmg;
+    const st = { d, crit, dmg, bossHp: bs.hp, bd: 0, absorbed: false, heroHp: hero };
+    if (bs.hp <= 0) { killed = true; steps.push(st); break; }
+    let bd = Math.max(1, Rd6() + BOSS_ATK[t.k] - (cls === 'angel' ? 1 : 0));
+    if (playerShields[p]) { playerShields[p] = false; st.absorbed = true; r.st.block++; bd = 0; }
+    hero -= bd; st.bd = bd; st.heroHp = Math.max(0, hero);
+    steps.push(st);
+    if (hero <= 0) fell = true;
+  }
+  const total = hp0 - bs.hp;
+  const name = playerName(p);
+  let outcome, reward = 0, gear = null, text = '';
+  if (killed) {
+    outcome = 'win'; bs.alive = false;
+    const loot = BOSS_LOOT[t.k];
+    reward = bank(p, loot.gold); rpgShare(p, loot.gold);
+    r.gear = loot.gear; r.gearN = GEAR[loot.gear].n; gear = loot.gear;
+    rpgLucky(p);
+    if (t.k === 'dragon') rpgAch(p, 'slayer');
+    // everyone who bled the boss shares a little of the spoils (the bank pays, bounded by the boss's health)
+    Object.keys(bs.dmg).map(Number).filter(q => q !== p && !RP(q).out).forEach(q => { const g = bank(q, Math.min(60, bs.dmg[q] * 3)); if (g) rpgLog(q, `🏴 ${playerName(q)} shares the spoils of the ${b.name}: <b>+$${g}</b>.`); });
+    text = `${name} slew the ${b.name}! +$${reward} and ${GEAR[loot.gear].icon} ${GEAR[loot.gear].name}`;
+  } else if (fell) {
+    outcome = 'lose';
+    const l = lose(p, 60);
+    const to = nearestPlain(pos - 6, -1);
+    playerPositions[p] = to; rpgSetback(p); r.st.trapsHit++;
+    const g = bank(p, Math.min(40, total * 3));
+    text = `${name} was defeated by the ${b.name}! −$${l}, thrown back to tile ${to}.`;
+  } else {
+    outcome = 'push';
+    const g = bank(p, Math.min(50, total * 3)); reward = g;
+    const to = nearestPlain(pos - 1, -1);
+    playerPositions[p] = to; rpgSetback(p);
+    text = `${name} wounded the ${b.name} (${bs.hp}/${bs.max} HP left) but is driven back to tile ${to}. +$${g}`;
+  }
+  rpgLog(p, `${b.icon} <b>Boss fight:</b> ${text}`);
+  if (fell && RPG.cfg.lives) rpgLoseLife(p, 'the ' + b.name);
+  rpgDecorateTiles(); refreshAll();
+  if (fastMode) return outcome !== 'win';
+  // ---- the cinematic (purely visual: everything above has already happened) ----
+  const gid = gameId;
+  sfx('boss'); shakeBoard(true); fxEmit(pos, t.k === 'ice' ? 'ice' : t.k === 'dragon' ? 'fire' : 'dark', 30);
+  await stage(async c => {
+    c.card.innerHTML = stHead(firstVisit ? b.cry : 'BOSS BATTLE', `${b.icon} ${b.name}`, firstVisit ? `${name} stands against the ${b.name}!` : `${name} returns to the fight`) +
+      `<div class="arena" style="--tint:${b.tint}">
+         <div class="fighter" id="fH"><div class="fig">${pieceSVG(cls, p)}</div><div class="hpbar"><i id="hpH"></i></div><div class="hp-lbl" id="hpHl">${HERO_HP}/${HERO_HP}</div></div>
+         <div class="arena-vs">VS</div>
+         <div class="fighter boss" id="fB" style="--tint:${b.tint}"><div class="fig">${b.icon}</div><div class="hpbar boss"><i id="hpB"></i></div><div class="hp-lbl" id="hpBl">${hp0}/${bs.max}</div></div>
+       </div><div class="boss-banner" id="bb"></div>`;
+    const pct = (v, m) => Math.max(0, v / m * 100) + '%';
+    $('hpB').style.width = pct(hp0, bs.max);
+    const pop = (side, txt, crit) => { const a = c.card.querySelector('.arena'); const d = document.createElement('div'); d.className = 'float-text dmg' + (crit ? ' crit' : ''); d.style.left = side === 'B' ? '74%' : '24%'; d.style.color = crit ? '#fde047' : '#fb7185'; d.textContent = txt; a.appendChild(d); setTimeout(() => d.remove(), 1200); };
+    await c.wait(firstVisit ? 1400 : 700);
+    for (const s of steps) {
+      if (c.skipped()) break;
+      $('fH').classList.remove('lunge-r', 'hit'); $('fB').classList.remove('lunge-l', 'hit'); void $('fH').offsetWidth;
+      $('fH').classList.add('lunge-r'); await c.wait(260);
+      $('fB').classList.add('hit'); pop('B', '-' + s.dmg + (s.crit ? '!' : ''), s.crit); sfx(s.crit ? 'crit' : 'hit');
+      if (s.crit) c.boardShake();
+      $('hpB').style.width = pct(s.bossHp, bs.max); $('hpBl').textContent = `${s.bossHp}/${bs.max}`;
+      await c.wait(700);
+      if (s.bossHp <= 0) break;
+      $('fB').classList.add('lunge-l'); await c.wait(260);
+      if (s.absorbed) { pop('H', '🛡️ blocked', false); sfx('camp'); }
+      else { $('fH').classList.add('hit'); pop('H', '-' + s.bd, false); sfx('hit'); c.boardShake(); }
+      $('hpH').style.width = pct(s.heroHp, HERO_HP); $('hpHl').textContent = `${s.heroHp}/${HERO_HP}`;
+      if (s.heroHp / HERO_HP < .35) $('hpH').parentNode.classList.add('low');
+      await c.wait(650);
+    }
+    const bb = $('bb');
+    if (outcome === 'win') { $('fB').classList.add('dead'); sfx('bossdown'); bb.className = 'boss-banner win'; bb.textContent = 'VICTORY!'; fxEmit(pos, 'gold', 40); }
+    else if (outcome === 'lose') { $('fH').classList.add('dead'); sfx('defeat'); bb.className = 'boss-banner lose'; bb.textContent = RPG.cfg.lives && RP(p).out ? 'YOU HAVE FALLEN' : 'DEFEATED'; }
+    else { bb.className = 'boss-banner'; bb.style.color = '#fde68a'; bb.textContent = 'DRIVEN BACK'; }
+    $('st-sub').innerHTML = text;
+    await c.wait(2200);
+  }, { tint: b.tint, rain: [b.icon, '✨'], shake: true, hold: 200 });
+  return outcome !== 'win';
+}
+
+/* ---- power-ups (roll a 6) and the bot's shopping list also pass through the Cloak / Mirror / ally guard ---- */
+const applyPowerUpOriginal = applyPowerUp;
+applyPowerUp = function (player, type, target) {
+  if (rpgOn() && (type === 'swap' || type === 'freeze')) {
+    const opp = target || defaultTarget(player);
+    if (opp && opp !== player && !RP(opp).out) {
+      const g = rpgGuard(opp, player, type);
+      if (g !== 'hit') { if (g === 'reflect') rpgBacklash(player, opp, type); refreshAll(); return Promise.resolve(); }
+      const done = applyPowerUpOriginal(player, type, target);
+      if (!(type === 'freeze' && playerClasses[opp] === 'angel')) rpgHit(player, opp, type);
+      return done;
+    }
+  }
+  return applyPowerUpOriginal(player, type, target);
+};
+
+const aiChooseItemOriginal = aiChooseItem;
+aiChooseItem = function () {
+  if (rpgOn()) { const k = rpgAiItem(); if (k) return k; }
+  return aiChooseItemOriginal();
+};
+function rpgAiItem() {
+  const me = 2, op = 1, r = RP(me), pos = playerPositions[me], cash = playerCash[me];
+  if (!marketOpen() || r.out || RP(op).out) return null;
+  const ok = k => !itemStatus(me, k) && cash >= getCost(me, k) && !itemUsable(me, k, op);
+  if (ok('rewind') && r.lastFrom - pos >= 8) return 'rewind';
+  const snakeAhead = Object.keys(SNAKES).some(s => { s = +s; return s > pos && s <= pos + 6 && customSnakeOwner[s] !== me; });
+  if (ok('hook') && snakeAhead && !playerBribes[me] && !playerShields[me]) return 'hook';
+  if (ok('loaded') && 100 - pos <= 6) return 'loaded';
+  if (ok('lightning') && playerCash[op] >= 120 && cash >= 300) return 'lightning';
+  if (ok('cloak') && pos > playerPositions[op] + 8 && cash >= 350 && Math.random() < 0.3) return 'cloak';
+  if (ok('mirror') && cash >= 300 && playerCash[op] >= 200 && Math.random() < 0.15) return 'mirror';
+  if (ok('bounty') && cash >= 350 && Math.random() < 0.2) return 'bounty';
+  return null;
+}
+
+/* ---- win screen extras: titles and achievements earned this match (cosmetic) ---- */
+function rpgWinExtras() {
+  let box = $('win-extra');
+  if (!box) { box = document.createElement('div'); box.id = 'win-extra'; box.className = 'text-xs text-slate-300 mt-2'; $('win-subtitle').after(box); }
+  if (!rpgOn()) { box.innerHTML = ''; return; }
+  box.innerHTML = PLAYERS().map(p => {
+    const t = titleOf(p), a = Object.keys(RP(p).ach).map(k => ACH[k].icon + ' ' + ACH[k].name).join(' · ');
+    return `<div style="margin-top:4px"><b>${playerName(p)}</b>${t ? ' — ' + t : ''}${a ? '<br><span style="opacity:.85">' + a + '</span>' : ''}</div>`;
+  }).join('');
+}
+
 /* ============================================================
    INPUT
    ============================================================ */
@@ -3906,7 +5944,7 @@ window.addEventListener('keydown', e => {
     return;
   }
   if (splashActive()) {
-    if (e.code === 'Space' || e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); if (splashSkip) splashSkip(); }
+    if (e.code === 'Space' || e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); if (splashSkip) splashSkip(); if (stageSkip) stageSkip(); }
     return;
   }
   if (anyModalOpen()) {
@@ -4061,6 +6099,7 @@ function introStart() {
    ============================================================ */
 function init() {
   initAudio();
+  fxInit();
   syncMemeButton();
   syncMusicButton();
   introBuild();
@@ -4085,6 +6124,7 @@ function init() {
   $('net-code').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); netJoin(); } });
   pendingClasses = { ...playerClasses };
   pendingMode = gameMode;
+  pendingRpgMode = modeKey;
   pendingBounce = soloBounce;
   buildClassModal();
   // Opening screen: the main menu (an invite link skips straight to the online Join tab)

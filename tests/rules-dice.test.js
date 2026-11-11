@@ -13,6 +13,7 @@ function boot() {
   vc.on('jsdomError', e => errors.push('jsdomError: ' + (e.detail || e.message)));
   const dom = new JSDOM(html, { url: 'https://yutfi.github.io/Dungeon-of-Snakes-Ladders/', runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc,
     beforeParse(w) {
+      w.HTMLCanvasElement.prototype.getContext = () => null;   // the effects canvas is not needed (and not implemented) in jsdom
       const st = w.setTimeout.bind(w);
       w.setTimeout = (fn, ms, ...a) => st(fn, ((ms || 0) >= 5000 ? ms : Math.min(ms || 0, 2)), ...a);
       w.addEventListener('error', e => errors.push('window.onerror: ' + e.message));
@@ -27,7 +28,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   const w = boot(); await sleep(100);
   const ev = s => w.eval(s);
   // A clean two-player same-screen game (angels, with the starting shield removed so snakes bite)
-  const fresh = () => ev("gameMode='PvP'; playerClasses={1:'angel',2:'angel'}; soloBounce=true; resetGame(); fastMode=true; playerShields={1:false,2:false}");
+  const fresh = () => ev("gameMode='PvP'; playerClasses={1:'angel',2:'angel'}; soloBounce=true; modeKey='classic'; resetGame(); fastMode=true; playerShields={1:false,2:false}");
   // Play one full turn for the current player. A roll of 6 opens the power-up prompt; pick the cash bounty.
   const turn = async (roll, die) => {
     ev(`executeTurn(${roll}, false, ${die ? "'" + die + "'" : 'undefined'})`);

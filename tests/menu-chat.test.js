@@ -33,6 +33,7 @@ function boot(opts = {}) {
   vc.on('jsdomError', e => errors.push('jsdomError: ' + (e.detail || e.message)));
   const dom = new JSDOM(html, { url: opts.url || BASE, runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc,
     beforeParse(w) {
+      w.HTMLCanvasElement.prototype.getContext = () => null;   // the effects canvas is not needed (and not implemented) in jsdom
       const st = w.setTimeout.bind(w);
       w.setTimeout = (fn, ms, ...a) => st(fn, ((ms || 0) >= 5000 ? ms : Math.min(ms || 0, 2)), ...a);
       if (opts.tok) w.sessionStorage.setItem('sl-tok', opts.tok);

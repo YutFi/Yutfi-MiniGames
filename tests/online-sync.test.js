@@ -30,16 +30,18 @@ function boot(tok) {
   vc.on('jsdomError', e => errors.push('jsdomError: ' + (e.detail || e.message)));
   const dom = new JSDOM(html, { url: 'https://yutfi.github.io/Dungeon-of-Snakes-Ladders/', runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc,
     beforeParse(w) {
+      w.HTMLCanvasElement.prototype.getContext = () => null;   // the effects canvas is not needed (and not implemented) in jsdom
       const st = w.setTimeout.bind(w);
       w.setTimeout = (fn, ms, ...a) => st(fn, ((ms || 0) >= 5000 ? ms : Math.min(ms || 0, 2)), ...a);
       if (tok) w.sessionStorage.setItem('sl-tok', tok);
       w.mqtt = fakeMqtt;
+      w.HTMLCanvasElement.prototype.getContext = () => null;   // jsdom has no canvas; the game falls back to no particles
       w.addEventListener('error', e => errors.push('window.onerror: ' + e.message));
     } });
   return { w: dom.window, d: dom.window.document };
 }
 const ev = (c, s) => c.w.eval(s);
-const state = c => JSON.stringify(ev(c, '({p:playerPositions,c:playerCash,s:playerShields,b:playerBribes,cp:playerCheckpoints,f:playerPoisoned,cur:currentPlayer,over:gameOver,snk:SNAKES,mines:placedMines,own:customSnakeOwner,sp:shopPurchasedThisTurn,x:extraRollPending,rule:RULES.bounce,st:playerStats,fn:playerFrozenNext,br:playerBonusRolls,dg:playerDelayedGold,fb:playerFreeBuy,rc:playerRollCap,mb:playerMarketBan,ev:playerEvents})'));
+const state = c => JSON.stringify(ev(c, '({p:playerPositions,c:playerCash,s:playerShields,b:playerBribes,cp:playerCheckpoints,f:playerPoisoned,cur:currentPlayer,over:gameOver,snk:SNAKES,mines:placedMines,own:customSnakeOwner,sp:shopPurchasedThisTurn,x:extraRollPending,rule:RULES.bounce,st:playerStats,fn:playerFrozenNext,br:playerBonusRolls,dg:playerDelayedGold,fb:playerFreeBuy,rc:playerRollCap,mb:playerMarketBan,ev:playerEvents,rpg:{mode:RPG.mode,round:RPG.round,rng:RPG.s,p:RPG.p,tiles:RPG.tiles,boss:RPG.boss,mods:RPG.mods,allies:RPG.allies,wanted:RPG.wanted,cool:RPG.cool,danger:RPG.danger,ev:RPG.ev,used:RPG.actionUsed}})'));
 async function drive(clients, maxSteps, stopWhen) {
   for (let i = 0; i < maxSteps; i++) {
     await sleep(6);
@@ -47,6 +49,11 @@ async function drive(clients, maxSteps, stopWhen) {
     for (const c of clients) {
       const w = c.w, d = c.d;
       const tm = d.getElementById('target-modal');
+      // cinematic questions (altar, alliance offers) are answered by the client the question is for
+      const sb = [...d.querySelectorAll('#stage .st-choices button')];
+      if (sb.length) { sb[Math.floor(Math.random() * sb.length)].click(); continue; }
+      const lm = d.getElementById('loaded-modal');
+      if (!lm.classList.contains('hidden')) { const b = [...d.querySelectorAll('#loaded-pick button')]; b[Math.floor(Math.random() * b.length)].click(); continue; }
       if (!tm.classList.contains('hidden')) { const b = [...d.querySelectorAll('#target-list button')].filter(x => !x.disabled); if (b.length && Math.random() < 0.9) b[Math.floor(Math.random() * b.length)].click(); else w.eval("closeModal('target-modal')"); continue; }
       // Jack of Trader: pick a card (or walk away), and press Continue when the card has flipped
       const jm = d.getElementById('jack-modal');
@@ -60,7 +67,11 @@ async function drive(clients, maxSteps, stopWhen) {
       if (!pm.classList.contains('hidden') && ev(c, 'canAct()')) { w.selectPowerUp(['swap', 'freeze', 'shield', 'cash'][Math.floor(Math.random() * 4)]); continue; }
       if (ev(c, 'canAct()') && !ev(c, 'isRolling') && !ev(c, 'splashActive()') && pm.classList.contains('hidden')) {
         if (Math.random() < 0.5 && !ev(c, 'shopPurchasedThisTurn')) { const keys = Object.keys(ev(c, 'SHOP_ITEMS')); w.uiBuy(keys[Math.floor(Math.random() * keys.length)]); if (!tm.classList.contains('hidden')) continue; }
-        w.eval("['win-modal','shop-modal'].forEach(id=>{const m=document.getElementById(id); m.classList.add('hidden'); m.dataset.state='closed';})");
+        if (ev(c, 'rpgOn()') && !ev(c, 'RPG.actionUsed') && Math.random() < 0.22) {
+          w.openArena(); const ab = [...d.querySelectorAll('#arena-list button')].filter(x => !x.disabled);
+          if (ab.length) { ab[Math.floor(Math.random() * ab.length)].click(); continue; }
+        }
+        w.eval("['win-modal','shop-modal','arena-modal'].forEach(id=>{const m=document.getElementById(id); m.classList.add('hidden'); m.dataset.state='closed';})");
         if (Math.random() < 0.35) w.selectDie(ev(c, 'DICE_KEYS')[Math.floor(Math.random() * 4)]);   // sometimes roll a special die
         w.handleRollClick();
       }
@@ -68,21 +79,23 @@ async function drive(clients, maxSteps, stopWhen) {
   }
   return false;
 }
-async function settled(clients) { for (let i = 0; i < 600; i++) { await sleep(10); if (clients.every(c => !ev(c, 'isRolling') && !ev(c, 'NET.puWait') && ev(c, 'NET.applied') === ev(c, 'NET.G.log.length') && !ev(c, 'splashDepth') && !ev(c, 'jack') && c.d.getElementById('jack-modal').classList.contains('hidden') && c.d.getElementById('target-modal').classList.contains('hidden'))) return true; } return false; }
+async function settled(clients) { for (let i = 0; i < 600; i++) { await sleep(10); if (clients.every(c => !ev(c, 'isRolling') && !ev(c, 'NET.puWait') && !ev(c, 'NET.decWait') && ev(c, 'NET.applied') === ev(c, 'NET.G.log.length') && !ev(c, 'splashDepth') && !ev(c, 'jack') && c.d.getElementById('jack-modal').classList.contains('hidden') && c.d.getElementById('target-modal').classList.contains('hidden'))) return true; } return false; }
 const same = (cs) => { const s = cs.map(state); return s.every(x => x === s[0]); };
 
-async function scenario(n, classes) {
-  console.log(`\n=== ${n}-player room ===`);
+async function scenario(n, classes, mode) {
+  console.log(`\n=== ${n}-player room${mode ? ' · mode ' + mode : ''} ===`);
   const clients = Array.from({ length: n }, () => boot()); await sleep(80);
   const [H, ...G] = clients;
   H.d.getElementById('net-nick').value = 'Host'; ev(H, `NET.cls='${classes[0]}'`);
   await H.w.netCreate(); const code = ev(H, 'NET.code');
+  if (mode) ev(H, `NET.G.mode='${mode}'; netPublish()`);
   for (let i = 0; i < G.length; i++) { const c = G[i]; c.d.getElementById('net-nick').value = 'Guest'; ev(c, `NET.cls='${classes[i + 1]}'`); c.d.getElementById('net-code').value = code; await c.w.netJoin(); await sleep(30); }
   await sleep(120);
   console.log('roster on host:', ev(H, 'NET.G.seats.length'), '| guest sees lobby roster rows:', G[0].d.querySelectorAll('#online-roster .roster-row').length, '| host start btn visible:', !H.d.getElementById('net-start-btn').classList.contains('hidden'), '| guest start hidden:', G[0].d.getElementById('net-start-btn').classList.contains('hidden'));
   H.w.netStartMatch();
   for (let i = 0; i < 200 && !clients.every(c => ev(c, 'NET.G && NET.G.gen') >= 1); i++) await sleep(10);
   console.log('seats:', clients.map(c => ev(c, 'NET.seat')).join(','), '| NP', clients.map(c => ev(c, 'NP')).join(','), '| nicks', JSON.stringify(ev(G[0], 'NET.nicks')), '| cards', H.d.querySelectorAll('.player-card').length, 'tokens', H.d.querySelectorAll('.game-token').length);
+  console.log('mode on every client:', clients.map(c => ev(c, 'RPG.mode')).join(','), '| seed shared:', new Set(clients.map(c => ev(c, 'NET.G.seed'))).size === 1);
   console.log('only current player can roll:', clients.map(c => !c.d.getElementById('roll-btn').disabled).join(','));
   const done = await drive(clients, 9000, () => clients.some(c => ev(c, 'gameOver')));
   await settled(clients);
@@ -113,5 +126,6 @@ async function scenario(n, classes) {
   const D = boot(); await sleep(100); D.d.getElementById('net-code').value = 'ZZZZ'; await D.w.netJoin(); console.log('wrong code, still searching:', ev(D, 'NET.on'));
   // invite link
   console.log('copy link text would be:', ev(clients[0], "location.href.split('#')[0] + '#room-' + NET.code"));
+  if (!process.env.QUICK) for (const m of ['classic', 'hardcore', 'richest', 'survival', 'bounty', 'chaos', 'double', 'speed', 'nomarket']) await scenario(3, ['human', 'wizard', 'demon'], m);
   console.log('ERRORS:', errors.length ? errors.slice(0, 8) : 'none'); process.exit(0);
 })();
