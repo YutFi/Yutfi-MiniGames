@@ -3516,7 +3516,7 @@ function netBetter(a, b) {
 
 function canAct() {
   if (!NET.on) return true;
-  return NET.seat > 0 && !!NET.G && NET.G.gen > 0 && currentPlayer === NET.seat && NET.applied >= NET.G.log.length && !fastMode && !gameOver;
+  return NET.seat > 0 && !!NET.G && NET.G.gen > 0 && currentPlayer === NET.seat && NET.applied >= NET.G.log.length && !fastMode && !gameOver && !NET.decWait && !jack;   // a pending decision (altar, alliance offer) holds every other action: its answer must be logged before anything else
 }
 
 /* ---- choosing a rival (swap / freeze / mine) ---- */
@@ -4852,7 +4852,7 @@ function promptDecision(kind, need, ui, botPick, who) {
     w.show();
   });
 }
-function netResolveDecision(ch) { const w = NET.decWait; NET.decWait = null; if (w) w.res(ch); }
+function netResolveDecision(ch) { const w = NET.decWait; NET.decWait = null; if (w) w.res(ch); if (!fastMode) updateControls(); }
 
 /* ---- free landing spots, so teleports can never create chains or loops ---- */
 function plainTile(n) {
@@ -5359,7 +5359,7 @@ function rpgBuyNew(key, target, warn) {
 
 /* ---- Loaded Dice: only which digit gets logged changes; everyone replays that digit ---- */
 function handleRollClick() {
-  if (isRolling || gameOver || isBot(currentPlayer)) return;
+  if (isRolling || gameOver || isBot(currentPlayer) || jack) return;           // a Jack deal holds the board: its tile effects finish before the next roll starts
   if (anyModalOpen() || splashActive()) return;
   if (NET.on && !canAct()) return;
   const me = currentPlayer;

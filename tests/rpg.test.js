@@ -441,6 +441,16 @@ test('fuzz: whole games in every mode terminate, stay consistent, never throw', 
   console.log(`   fuzz: ${finished}/${games} games finished`);
 });
 
+test('online guards: nothing starts while a Jack deal or a pending decision holds the board', async () => {
+  fresh('std', ['human', 'wizard', 'demon'], 9);
+  E('fastMode = false; NET.on = true; NET.seat = currentPlayer; NET.G = { gen: 1, seed: 9, log: "", seats: ["a","b","c"] }; NET.applied = 0; isRolling = false; gameOver = false');
+  ok(E('canAct()') === true, 'baseline: the current player can act');
+  E('NET.decWait = { kind: "ally", need: "uq", who: 3 }'); ok(E('canAct()') === false, 'a pending alliance/altar decision blocks every other action');
+  E('NET.decWait = null; jack = { p: currentPlayer }'); ok(E('canAct()') === false, 'a Jack deal in progress blocks actions');
+  const h0 = E('moveHistory.length'); E('handleRollClick()'); ok(E('isRolling') === false && E('moveHistory.length') === h0, 'clicking the dice during a Jack deal does nothing');
+  E('jack = null; NET.on = false; fastMode = true');
+});
+
 // ---------------------------------------------------------------------------------------------
 (async () => {
   await new Promise(r => setTimeout(r, 150));

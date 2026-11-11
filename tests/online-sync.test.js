@@ -38,6 +38,7 @@ function boot(tok) {
       w.HTMLCanvasElement.prototype.getContext = () => null;   // jsdom has no canvas; the game falls back to no particles
       w.addEventListener('error', e => errors.push('window.onerror: ' + e.message));
     } });
+  if (process.env.TRACE) dom.window.eval(`window.TRACE=[]; (function(){const _a=addLogEntry; addLogEntry=function(p,t){ try{TRACE.push([NET.applied,p,String(t).replace(/<[^>]+>/g,''),JSON.stringify(playerPositions),JSON.stringify(playerShields),isRolling,!!jack,fastMode]);}catch(e){} return _a.apply(this,arguments); };})();`);
   return { w: dom.window, d: dom.window.document };
 }
 const ev = (c, s) => c.w.eval(s);
@@ -112,6 +113,16 @@ async function scenario(n, classes, mode) {
   if (process.env.ONLYMODE) {                         // e.g. ONLYMODE=richest node online-sync.test.js: one 3-player room in that mode, with stuck-client diagnostics
     const { clients } = await scenario(3, ['human', 'wizard', 'demon'], process.env.ONLYMODE);
     clients.forEach((c, i) => console.log(' c' + i, 'applied', ev(c, 'NET.applied') + '/' + ev(c, 'NET.G.log.length'), 'next', JSON.stringify(ev(c, 'NET.G.log.slice(NET.applied, NET.applied + 4)')), 'rolling', ev(c, 'isRolling'), 'splash', ev(c, 'splashDepth'), 'dec', JSON.stringify(ev(c, 'NET.decWait ? {k: NET.decWait.kind, who: NET.decWait.who, need: NET.decWait.need} : null')), 'seat', ev(c, 'NET.seat'), 'pu', !!ev(c, 'NET.puWait'), 'jack', !!ev(c, 'jack'), 'stage', !c.d.getElementById('stage').classList.contains('hidden'), 'cur', ev(c, 'currentPlayer')));
+    if (!same(clients)) {                              // who is right? a fresh client replays the whole log from the room record and is compared with every live client
+      const fs = require('fs'); fs.writeFileSync('/tmp/mismatch.json', JSON.stringify({ log: ev(clients[0], 'NET.G.log'), mode: process.env.ONLYMODE, seed: ev(clients[0], 'NET.G.seed'), states: clients.map(state), hist: clients.map(c => ev(c, 'moveHistory.map(m=>m.player+":"+m.text.replace(/<[^>]+>/g,""))')), trace: process.env.TRACE ? clients.map(c => ev(c, 'TRACE')) : null }));
+      const tok = ev(clients[2], 'NET.tok'); await clients[2].w.netLeave(); await sleep(100);
+      const R = boot(tok); await sleep(100); R.d.getElementById('net-code').value = ev(clients[0], 'NET.code'); await R.w.netJoin();
+      for (let i = 0; i < 600 && !(ev(R, 'NET.G') && ev(R, 'NET.applied') === ev(R, 'NET.G.log.length')); i++) await sleep(10);
+      await sleep(300);
+      if (process.env.TRACE) require('fs').writeFileSync('/tmp/mismatch_trace_fresh.json', JSON.stringify(ev(R, 'TRACE')));
+      require('fs').writeFileSync('/tmp/mismatch_fresh.json', JSON.stringify(ev(R, 'moveHistory.map(m=>m.player+":"+m.text.replace(/<[^>]+>/g,""))')));
+      console.log('fresh replayer matches c0:', state(R) === state(clients[0]), '| c1:', state(R) === state(clients[1]), '| c2(old):', state(R) === state(clients[2]));
+    }
     console.log('ERRORS:', errors.length ? errors.slice(0, 8) : 'none'); process.exit(0);
   }
   await scenario(2, ['wizard','demon']);
