@@ -2,13 +2,14 @@
   "name": "dungeon-sl-tests",
   "private": true,
   "scripts": {
-    "test": "node online-sync.test.js && node menu-chat.test.js && node rules-dice.test.js && node jack.test.js && node rpg.test.js && node stages.test.js",
+    "test": "node online-sync.test.js && node menu-chat.test.js && node rules-dice.test.js && node jack.test.js && node rpg.test.js && node stages.test.js && node tour.test.js",
     "test:sync": "node online-sync.test.js",
     "test:menu": "node menu-chat.test.js",
     "test:rules": "node rules-dice.test.js",
     "test:jack": "node jack.test.js",
     "test:rpg": "node rpg.test.js",
-    "test:stages": "node stages.test.js"
+    "test:stages": "node stages.test.js",
+    "test:tour": "node tour.test.js"
   },
   "dependencies": {
     "jsdom": "^31.0.0"

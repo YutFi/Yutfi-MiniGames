@@ -461,6 +461,55 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
 @keyframes bubbleLife{0%{opacity:0;transform:translate(-30%,-100%) scale(.7)}10%{opacity:1;transform:translate(-30%,-135%) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(-30%,-165%) scale(1)}}
 .emoji-pop{position:absolute;z-index:3;font-size:clamp(30px,7vw,46px);line-height:1;pointer-events:none;filter:drop-shadow(0 4px 4px rgba(0,0,0,.6));transform:translate(-50%,-100%);animation:emojiPop 1.9s ease-out forwards}
 @keyframes emojiPop{0%{opacity:0;transform:translate(-50%,-60%) scale(.3)}15%{opacity:1;transform:translate(-50%,-110%) scale(1.25)}30%{transform:translate(-50%,-110%) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-220%) scale(1)}}
+
+/* First-time tour: spotlight + animated coach card */
+#tour-layer{position:fixed;inset:0;z-index:95;touch-action:manipulation}
+#tour-layer.hidden{display:none}
+.tour-block{position:absolute;inset:0}
+.tour-hole{position:absolute;border-radius:16px;box-shadow:0 0 0 100vmax rgba(5,3,10,.8);transition:top .35s cubic-bezier(.3,.9,.3,1),left .35s cubic-bezier(.3,.9,.3,1),width .35s,height .35s;pointer-events:none}
+.tour-hole::before,.tour-hole::after{content:'';position:absolute;inset:-4px;border-radius:20px;border:3px solid #22d3ee;animation:tourRing 1.6s ease-out infinite}
+.tour-hole::after{animation-delay:.8s}
+.tour-hole.center{opacity:0}
+@keyframes tourRing{0%{transform:scale(1);opacity:.95}100%{transform:scale(1.12);opacity:0}}
+.tour-card{position:absolute;width:min(360px,calc(100vw - 24px));padding:16px 16px 14px;border-radius:18px;color:#e7e3f1;background:linear-gradient(180deg,#2a243a,#16131f);border:1px solid #22d3ee66;box-shadow:0 18px 50px rgba(0,0,0,.7),0 0 30px rgba(34,211,238,.18);animation:tourPop .28s cubic-bezier(.2,1.4,.4,1)}
+@keyframes tourPop{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+.tour-top{display:flex;align-items:center;gap:12px}
+.tour-demo{flex:none;width:92px;height:64px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid #ffffff18;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px}
+.tour-title{font-family:'Cinzel',serif;font-weight:800;font-size:17px;line-height:1.15;color:#fff}
+.tour-step{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#67e8f9;margin-bottom:2px}
+.tour-text{margin-top:10px;font-size:13.5px;line-height:1.5;color:#d6d0e6}
+.tour-text b{color:#fde68a}
+.tour-dots{display:flex;gap:5px;margin-top:12px;justify-content:center}
+.tour-dots i{width:7px;height:7px;border-radius:50%;background:#ffffff2a;transition:all .2s}
+.tour-dots i.on{background:#22d3ee;width:20px;border-radius:6px}
+.tour-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
+.tour-nav .grow{flex:1}
+.tour-skip{background:none;border:0;color:#8a83a3;font-size:12px;font-weight:700;cursor:pointer;padding:8px 6px}
+.tour-skip:hover{color:#e7e3f1}
+.btn-nudge{animation:nudge 1.1s ease-in-out infinite;box-shadow:0 0 0 0 rgba(34,211,238,.7)}
+@keyframes nudge{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(34,211,238,.65)}50%{transform:scale(1.05);box-shadow:0 0 0 12px rgba(34,211,238,0)}}
+/* mini demos (pure CSS) */
+.td-run{position:absolute;left:8px;top:22px;animation:tdRun 2.2s ease-in-out infinite}.td-flag{position:absolute;right:8px;top:18px;font-size:22px}
+.td-dots{position:absolute;left:10px;right:34px;top:40px;border-top:2px dotted #ffffff44}
+@keyframes tdRun{0%{transform:translateX(0)}80%,100%{transform:translateX(44px)}}
+.td-up{position:absolute;left:16px;bottom:6px;animation:tdUp 2.4s ease-in-out infinite}.td-down{position:absolute;right:14px;top:4px;animation:tdDown 2.4s ease-in-out infinite}
+.td-l{position:absolute;left:12px;top:6px;bottom:6px;width:3px;background:#fcd34d;border-radius:2px}.td-s{position:absolute;right:20px;top:8px;font-size:22px;opacity:.9}
+@keyframes tdUp{0%,15%{transform:translateY(0)}60%,100%{transform:translateY(-38px)}}
+@keyframes tdDown{0%,15%{transform:translateY(0)}60%,100%{transform:translateY(34px)}}
+.td-die{animation:tdDie 1.3s ease-in-out infinite;display:inline-block}
+@keyframes tdDie{0%{transform:rotate(0) translateY(0)}25%{transform:rotate(90deg) translateY(-8px)}50%{transform:rotate(200deg) translateY(0)}75%{transform:rotate(300deg) translateY(-5px)}100%{transform:rotate(360deg) translateY(0)}}
+.td-coin{position:absolute;font-size:18px;animation:tdCoin 1.8s ease-out infinite}
+@keyframes tdCoin{0%{transform:translateY(24px) scale(.5);opacity:0}30%{opacity:1}100%{transform:translateY(-20px) scale(1);opacity:0}}
+.td-cart{animation:tdCart 1.6s ease-in-out infinite;display:inline-block}
+@keyframes tdCart{0%,100%{transform:translateX(-10px)}50%{transform:translateX(10px)}}
+.td-clash{display:flex;gap:2px;align-items:center}.td-clash span:first-child{animation:tdL 1s ease-in-out infinite}.td-clash span:last-child{animation:tdR 1s ease-in-out infinite}
+@keyframes tdL{0%,100%{transform:translateX(-6px) rotate(-10deg)}50%{transform:translateX(4px) rotate(8deg)}}
+@keyframes tdR{0%,100%{transform:translateX(6px) rotate(10deg)}50%{transform:translateX(-4px) rotate(-8deg)}}
+.td-cycle{display:flex;gap:6px;font-size:20px}.td-cycle span{animation:tdCyc 2.4s ease-in-out infinite;opacity:.35}.td-cycle span:nth-child(2){animation-delay:.6s}.td-cycle span:nth-child(3){animation-delay:1.2s}.td-cycle span:nth-child(4){animation-delay:1.8s}
+@keyframes tdCyc{0%,100%{opacity:.3;transform:scale(.9)}20%{opacity:1;transform:scale(1.25) translateY(-3px)}}
+.td-bounce{animation:tdBounce 1s ease-in-out infinite;display:inline-block}
+@keyframes tdBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media (prefers-reduced-motion: reduce){.tour-hole::before,.tour-hole::after,.tour-card,.btn-nudge,.td-run,.td-up,.td-down,.td-die,.td-coin,.td-cart,.td-clash span,.td-cycle span,.td-bounce{animation:none!important}.td-cycle span{opacity:1}}
 @media (prefers-reduced-motion: reduce){.chat-line,.chat-bubble,.emoji-pop{animation-duration:.01s}.chat-bubble,.emoji-pop{animation:none;opacity:1}}
 @media (max-width:639px){.hide-sm{display:none}}
 @media (prefers-reduced-motion: reduce){
@@ -755,6 +804,7 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
     <button id="classes-btn" class="btn btn-ghost" onclick="openClassSelectModal()">🎭 Champions</button>
     <button class="btn btn-danger" onclick="confirmReset()">↺ Restart</button>
       <button class="btn btn-guide" onclick="openGuide()" title="How the dungeon works">📖 <span class="hide-sm">Guide</span></button>
+      <button id="tour-btn" class="btn btn-guide" onclick="tourStart(true)" title="Replay the quick animated tour">🎓 <span class="hide-sm">Tour</span></button>
       <button id="fx-btn" class="btn btn-ghost" onclick="toggleFx()" title="Effects quality (turn down on slow phones)">✨ <span id="fx-text" class="hide-sm">FX High</span></button>
     <button id="menu-btn" class="btn btn-primary" style="padding:9px 14px;font-size:13px" onclick="showMenu('home')" title="Open the main menu">☰ Menu</button>
   </div>
@@ -1199,6 +1249,7 @@ body.jack-quake .board-frame{animation:shakeIt .5s 1}
       <p class="text-xs text-slate-400">The classic rules still apply: exact roll to land on 100, snakes slide, ladders climb.</p></div>
       <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeModal('guide-modal')">✕</button>
     </div>
+    <button class="btn btn-primary w-full mb-3" style="font-size:13px" onclick="closeModal('guide-modal'); tourStart(true)">🎓 New here? Take the 1-minute animated tour</button>
     <div id="guide-body"></div>
   </div>
 </div>
@@ -3404,6 +3455,7 @@ function hideMenu() {
   const m = $('main-menu');
   if (m.classList.contains('hidden')) return;
   setTimeout(() => musicSync(), 260);   // after the menu has finished fading out
+  if (!tourSeen) setTimeout(() => tourStart(false), 1100);   // a brand-new player gets the animated tour once the board is showing
   m.dataset.state = 'closed';
   m.classList.remove('show');
   setTimeout(() => { if (m.dataset.state === 'closed') m.classList.add('hidden'); }, 240);
@@ -4201,6 +4253,118 @@ function chatDock() {
 chatDock();
 if (window.visualViewport) { window.visualViewport.addEventListener('resize', chatDock); window.visualViewport.addEventListener('scroll', chatDock); }
 window.addEventListener('resize', chatDock); window.addEventListener('orientationchange', chatDock);
+
+/* ============================================================
+   FIRST-TIME TOUR — a spotlight walks a new player through the screen, one idea at a time.
+   Local to this device (never touches the shared move log). Starts once after the first game opens; replay from 🎓 Tour or the Guide.
+   ============================================================ */
+let tourSeen = false;
+try { tourSeen = localStorage.getItem('sl-tour') === '1'; } catch (e) {}
+const tourLive = { on: false, i: 0, steps: [], tries: 0 };
+const TOUR_STEPS = [
+  { sel: null, icon: '<span class="td-run">🧍</span><span class="td-dots"></span><span class="td-flag">🏁</span>', title: 'Welcome to the Dungeon!', text: 'Race your piece up the board to <b>tile 100</b>. First one to the top wins. This quick tour shows you everything in about a minute.' },
+  { sel: '#board-grid', icon: '<span class="td-l"></span><span class="td-up">🧍</span><span class="td-s">🐍</span><span class="td-down">🧍</span>', title: 'The board', text: '<b style="color:#fcd34d">▲ Ladders</b> carry you up. <b style="color:#fda4af">▼ Snakes</b> drag you down. Tiles count from 1 at the bottom to 100 at the top, zig-zagging.' },
+  { sel: '#roll-btn', icon: '<span class="td-die">🎲</span>', title: 'Roll the dice', text: 'On your turn, tap <b>ROLL DICE</b> (or press Space). Your piece walks that many tiles. Roll a <b>6</b> for a bonus.' },
+  { sel: '#dice-picker', icon: '<span class="td-die">🎯</span>', title: 'Special dice', text: 'Normal is free. <b>Steady</b>, <b>Lucky</b> and <b>Gambler</b> cost gold but bend the odds. Pick one before you roll.' },
+  { sel: '.player-card', icon: '<span class="td-coin" style="left:20px">🪙</span><span class="td-coin" style="left:44px;animation-delay:.5s">🪙</span><span class="td-coin" style="left:66px;animation-delay:1s">🪙</span>', title: 'Your gold', text: 'Every turn pays you a <b>salary</b>. Your class has a perk too — read it on your card. Gold is how you buy power.' },
+  { sel: '#open-shop-btn', icon: '<span class="td-cart">🛒</span>', title: 'The Black Market', text: 'Spend gold on tricks: freeze a rival, plant a mine, swap places. You may buy <b>one item per turn</b>, before you roll.' },
+  { sel: '#open-arena-btn', rpg: true, icon: '<span class="td-clash"><span>⚔️</span><span>🗡️</span></span>', title: 'The Arena', text: 'Duel a rival for gold, start a treasure contest, or team up in an <b>alliance</b> (and betray it if you dare).' },
+  { sel: '.legend', icon: '<span class="td-cycle"><span>🎁</span><span>🌀</span><span>🎡</span><span>🔮</span></span>', title: 'Special tiles', text: 'Chests, portals, wheels and altars hide rewards and risks. Hidden traps are <b>❓ unknown</b> until someone steps on them. Bosses block the road!' },
+  { sel: '.btn-guide', icon: '<span class="td-bounce">📖</span>', title: 'Never stuck', text: 'The <b>Guide</b> explains every rule, and <b>🎓 Tour</b> replays this walkthrough any time. Tap tiles and cards for hints.' },
+  { sel: '#roll-btn', icon: '<span class="td-bounce">🎉</span>', title: "You're ready!", text: 'That is all you need. Take a turn — the dice button will glow. <b>Good luck, adventurer!</b>', last: true }
+];
+const tourVisible = el => { if (!el) return false; const r = el.getBoundingClientRect(); return r.width > 4 && r.height > 4 && getComputedStyle(el).display !== 'none'; };
+function tourBuildSteps() { return TOUR_STEPS.filter(st => (!st.rpg || rpgOn()) && (!st.sel || tourVisible(document.querySelector(st.sel)))); }
+
+function tourDone(skipped) {
+  tourLive.on = false;
+  const L = $('tour-layer'); if (L) L.classList.add('hidden');
+  document.removeEventListener('keydown', tourKey, true);
+  window.removeEventListener('resize', tourPlace); window.removeEventListener('scroll', tourPlace);
+  tourSeen = true; try { localStorage.setItem('sl-tour', '1'); } catch (e) {}
+  const rb = $('roll-btn');
+  if (rb && !gameOver) { rb.classList.add('btn-nudge'); rb.addEventListener('click', () => rb.classList.remove('btn-nudge'), { once: true }); }
+  const dw = document.querySelector('.dice-wrap'); if (dw) dw.addEventListener('click', () => rb && rb.classList.remove('btn-nudge'), { once: true });
+}
+function tourKey(e) {
+  if (!tourLive.on) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); tourDone(true); }
+  else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); tourGo(1); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); tourGo(-1); }
+  else if (e.key === ' ') { e.preventDefault(); e.stopPropagation(); }
+}
+function tourGo(d) {
+  const n = tourLive.i + d;
+  if (n >= tourLive.steps.length) { tourDone(false); return; }
+  if (n < 0) return;
+  tourLive.i = n; tourRender();
+}
+function tourEnsureLayer() {
+  let L = $('tour-layer');
+  if (L) return L;
+  L = document.createElement('div'); L.id = 'tour-layer'; L.className = 'hidden'; L.setAttribute('role', 'dialog'); L.setAttribute('aria-label', 'Quick tour');
+  L.innerHTML = '<div class="tour-block"></div><div class="tour-hole center" id="tour-hole"></div><div class="tour-card" id="tour-card"></div>';
+  document.body.appendChild(L);
+  return L;
+}
+function tourRender() {
+  const st = tourLive.steps[tourLive.i], n = tourLive.steps.length, card = $('tour-card');
+  const el = st.sel ? document.querySelector(st.sel) : null;
+  if (el && el.scrollIntoView) { try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { el.scrollIntoView(); } }
+  card.style.animation = 'none'; void card.offsetWidth; card.style.animation = '';
+  card.innerHTML = `<div class="tour-top"><div class="tour-demo">${st.icon}</div><div><div class="tour-step">Step ${tourLive.i + 1} of ${n}</div><div class="tour-title">${st.title}</div></div></div>
+    <div class="tour-text">${st.text}</div>
+    <div class="tour-dots">${tourLive.steps.map((_, k) => `<i class="${k === tourLive.i ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="tour-nav"><button class="tour-skip" onclick="tourDone(true)">${st.last ? '' : 'Skip tour'}</button><span class="grow"></span>
+      ${tourLive.i > 0 ? '<button class="btn btn-ghost" style="padding:8px 14px" onclick="tourGo(-1)">← Back</button>' : ''}
+      <button class="btn btn-primary" style="padding:8px 18px" onclick="tourGo(1)">${st.last ? "Let's play! 🎲" : 'Next →'}</button></div>`;
+  tourPlace();
+  setTimeout(tourPlace, 380);      // again once the smooth scroll has settled
+}
+function tourPlace() {
+  if (!tourLive.on) return;
+  const st = tourLive.steps[tourLive.i], hole = $('tour-hole'), card = $('tour-card');
+  if (!st || !hole || !card) return;
+  const el = st.sel ? document.querySelector(st.sel) : null, vw = window.innerWidth, vh = window.innerHeight, pad = 6;
+  card.style.left = card.style.top = card.style.bottom = '';
+  const ch = card.offsetHeight, cw = card.offsetWidth;
+  if (!el) {                                            // a centred step: no spotlight
+    hole.classList.add('center'); Object.assign(hole.style, { left: vw / 2 + 'px', top: vh / 2 + 'px', width: '0px', height: '0px' });
+    card.style.left = Math.max(12, (vw - cw) / 2) + 'px'; card.style.top = Math.max(12, (vh - ch) / 2) + 'px';
+    return;
+  }
+  const r = el.getBoundingClientRect();
+  const top = Math.max(4, r.top - pad), left = Math.max(4, r.left - pad), bottom = Math.min(vh - 4, r.bottom + pad), right = Math.min(vw - 4, r.right + pad);
+  hole.classList.remove('center');
+  Object.assign(hole.style, { left: left + 'px', top: top + 'px', width: (right - left) + 'px', height: (bottom - top) + 'px' });
+  const below = vh - bottom, above = top, cl = Math.min(Math.max(12, (left + right) / 2 - cw / 2), vw - cw - 12);
+  card.style.left = cl + 'px';
+  if (below >= ch + 16) card.style.top = (bottom + 12) + 'px';
+  else if (above >= ch + 16) card.style.top = (top - ch - 12) + 'px';
+  else if (vw - right >= cw + 24) { card.style.left = (right + 14) + 'px'; card.style.top = Math.max(12, Math.min(vh - ch - 12, (top + bottom) / 2 - ch / 2)) + 'px'; }     // a tall target on a wide screen: the card sits beside it
+  else if (left >= cw + 24) { card.style.left = (left - cw - 14) + 'px'; card.style.top = Math.max(12, Math.min(vh - ch - 12, (top + bottom) / 2 - ch / 2)) + 'px'; }
+  else card.style.top = Math.max(12, vh - ch - 12) + 'px';        // a tall target on a phone: park the card at the bottom edge
+  card.style.top = Math.min(Math.max(12, parseFloat(card.style.top) || 12), Math.max(12, vh - ch - 12)) + 'px';     // never off-screen
+}
+function tourStart(manual) {
+  if (tourLive.on) return;
+  if (!manual) {                                        // the automatic run waits for a quiet, live board
+    if (tourSeen || fastMode || gameOver || /jsdom/i.test(navigator.userAgent)) return;      // (the automated test browsers never see the tour)
+    if (anyModalOpen() || splashActive() || isRolling || document.querySelector('.stage.show')) {
+      if (++tourLive.tries < 40) setTimeout(() => tourStart(false), 900);
+      return;
+    }
+  } else if (anyModalOpen() || document.querySelector('.stage.show')) { toast('Close the open window first, then tap 🎓 Tour.', 'warn'); return; }
+  tourLive.tries = 0;
+  const steps = tourBuildSteps();
+  if (!steps.length) return;
+  tourLive.steps = steps; tourLive.i = 0; tourLive.on = true;
+  window.scrollTo(0, 0);
+  tourEnsureLayer().classList.remove('hidden');
+  document.addEventListener('keydown', tourKey, true);
+  window.addEventListener('resize', tourPlace); window.addEventListener('scroll', tourPlace, { passive: true });     // follows the smooth scroll to each target
+  tourRender();
+}
 
 function chatRefreshUi() {
   const live = inOnlineMatch();
