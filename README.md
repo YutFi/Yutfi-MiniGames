@@ -53,7 +53,7 @@ Limits worth knowing:
 - Matches can't be joined after the host presses Start.
 
 ### Rules in brief
-- Roll a die and climb ladders / slide down snakes. You need the **exact** roll to land on tile 100.
+- Roll a die and climb ladders / slide down snakes. You need the **exact** roll to land on tile 100. If you roll too high, you walk up to 100 and **bounce back** with the leftover steps (e.g. on 98 rolling 5: 99, 100, then back 99, 98, 97).
 - Earn salary each turn, spend gold at the **Black Market** (one purchase per turn): swap places, freeze a rival, bribe a snake, set a checkpoint, plant a serpent trap or a mine.
 - Roll a **6** for an extra roll and a power-up.
 - Classes: **Human** (extra income), **Wizard** (cheaper market, longer ladders), **Demon** (steals gold as it passes rivals), **Angel** (starts shielded, immune to freeze).

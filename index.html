@@ -549,7 +549,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
   </aside>
 </main>
 
-<footer class="page text-center pb-5 text-[11px] text-slate-600">Dungeon Snakes &amp; Ladders · exact roll needed to land on 100</footer>
+<footer class="page text-center pb-5 text-[11px] text-slate-600">Dungeon Snakes &amp; Ladders · land exactly on 100 to win — overshoot and you bounce back</footer>
 
 <!-- Welcome splash (also gives the browser the tap it needs before it will play music) -->
 <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Welcome to Yutfi MiniGames" onclick="introStart()">
@@ -640,7 +640,7 @@ kbd{font-family:inherit;font-size:11px;font-weight:800;padding:1px 6px;border-ra
       <button class="btn btn-ghost" style="padding:4px 10px" onclick="closeHelp()" aria-label="Close">✕</button>
     </div>
     <div class="help-h">Goal</div>
-    <p class="help-p">Be first to reach the treasure on tile <b>100</b>. You need the <b>exact</b> roll to land on it. Ladders ▲ carry you up, snakes ▼ drag you down.</p>
+    <p class="help-p">Be first to reach the treasure on tile <b>100</b>. You need the <b>exact</b> roll to land on it — roll too high and you walk up to 100, then <b>bounce back</b> with the leftover steps (on 98 rolling 5: 99, 100, then 99, 98, 97). Ladders ▲ carry you up, snakes ▼ drag you down.</p>
     <div class="help-h">Every turn</div>
     <ul class="help-list">
       <li>Roll the die. You earn salary each turn.</li>
@@ -1501,6 +1501,9 @@ const SPLASHES = {
   needExact:   { emoji: '😭', tint: '#64748b', rain: ['😭', '💧'], ms: 1500,
                  top: ['SO CLOSE', 'NOT LIKE THIS', 'OVERSHOT IT'],
                  bottom: ['{who} needs the exact number'] },
+  bounceBack:  { emoji: '↩️', tint: '#64748b', rain: ['😭', '💧'], ms: 1500,
+                 top: ['SO CLOSE', 'BOUNCED OFF THE TREASURE', 'OVERSHOT IT'],
+                 bottom: ['{who} bounces back to tile {n}'] },
   trapSet:     { emoji: '😈', tint: '#be123c', rain: ['🐍', '😈'], ms: 1600,
                  top: ['EVIL LAUGH', 'SET THE TRAP'],
                  bottom: ['{who} summons a snake on tile {n}'] },
@@ -1894,37 +1897,53 @@ async function executeTurn(forcedRoll, fromLog) {
   // Movement
   const from = playerPositions[me];
   const target = from + roll;
-  if (target > 100) {
-    addLogEntry(me, `Rolled ${roll} but needs exactly <b>${100 - from}</b> to land on 100.`);
-    floatAtPlayer(me, 'Need exact!', '#fca5a5');
-    await splash('needExact', { p: me });
-    await sleep(900);
-  } else {
-    for (let pos = from + 1; pos <= target; pos++) {
-      movePlayerTo(me, pos, 0.2);
-      hop(me);
-      playSound('step');
-      if (playerClasses[me] === 'demon') {
-        for (const q of rivals(me)) {
-          if (pos !== playerPositions[q] || playerCash[q] <= 0) continue;
-          const stolen = Math.min(50, playerCash[q]);
-          playerCash[q] -= stolen;
-          playerCash[me] += stolen;
-          floatAtPlayer(q, `-$${stolen}`, '#fb7185');
-          floatAtPlayer(me, `+$${stolen}`, '#fde68a');
-          addLogEntry(me, `😈 Hellfire: passed ${playerName(q)} and stole <b>$${stolen}</b>!`);
-          playSound('cash');
-          refreshAll();
-          await splash('steal', { p: me, t: q, amt: stolen });
-        }
+
+  // One animated step onto `pos` (shared by forward and bounce-back movement)
+  const stepOnto = async (pos) => {
+    movePlayerTo(me, pos, 0.2);
+    hop(me);
+    playSound('step');
+    if (playerClasses[me] === 'demon') {
+      for (const q of rivals(me)) {
+        if (pos !== playerPositions[q] || playerCash[q] <= 0) continue;
+        const stolen = Math.min(50, playerCash[q]);
+        playerCash[q] -= stolen;
+        playerCash[me] += stolen;
+        floatAtPlayer(q, `-$${stolen}`, '#fb7185');
+        floatAtPlayer(me, `+$${stolen}`, '#fde68a');
+        addLogEntry(me, `😈 Hellfire: passed ${playerName(q)} and stole <b>$${stolen}</b>!`);
+        playSound('cash');
+        refreshAll();
+        await splash('steal', { p: me, t: q, amt: stolen });
       }
-      await sleep(210);
+    }
+    await sleep(210);
+  };
+
+  // Walk forward as far as tile 100, then bounce back for any leftover steps.
+  // Example: on 98 rolling 5 → 99, 100 (2 forward) then 99, 98, 97 (3 back) → lands on 97.
+  const forwardEnd = Math.min(target, 100);
+  for (let pos = from + 1; pos <= forwardEnd; pos++) {
+    await stepOnto(pos);
+    if (gid !== gameId) return;
+  }
+
+  if (target > 100) {
+    const back = target - 100;
+    const landing = 100 - back;
+    addLogEntry(me, `Rolled ${roll} from ${from} — hit tile 100 and <b>bounced back ${back}</b> to tile <b>${landing}</b>.`);
+    floatAtPlayer(me, 'Bounce!', '#fca5a5');
+    await splash('bounceBack', { p: me, n: landing });
+    if (gid !== gameId) return;
+    for (let pos = 99; pos >= landing; pos--) {
+      await stepOnto(pos);
       if (gid !== gameId) return;
     }
-    await resolveTile(me, gid);
-    if (gid !== gameId) return;
-    if (playerPositions[me] === 100) { showWinModal(me); return; }
   }
+
+  await resolveTile(me, gid);
+  if (gid !== gameId) return;
+  if (playerPositions[me] === 100) { showWinModal(me); return; }
 
   if (extraRollPending) {
     addLogEntry(me, '🔥 Rolled a 6 — <b>extra roll</b>!');
