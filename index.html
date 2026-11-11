@@ -4346,6 +4346,23 @@ const ITEM_LIMITS = {   // per-match caps and cooldowns (in rounds) for the new 
   rewind:    { max: 2, cd: 3 }, mirror: { max: 3, cd: 0 }, loaded: { max: 1, cd: 0 }, cloak: { max: 3, cd: 2 },
   hook:      { max: 3, cd: 0 }, bounty: { max: 2, cd: 3 }, lightning: { max: 2, cd: 4 }
 };
+/* ---- balance by table size ----
+   The table above is tuned for 3 players. With only 2, every hostile power lands on the same single rival, so the caps tighten (and cooldowns lengthen).
+   With 4 or 5 the harm is spread across more rivals and there is more table to cover, so the caps open up. Loaded Dice stays at one use per match.
+   NP is identical on every client, so this is safe for replay. */
+const TABLE_BAL = {
+  2: { itemMax: -1, itemCd: +1, duelCd: 4, compCd: 8 },
+  3: { itemMax:  0, itemCd:  0, duelCd: 3, compCd: 6 },
+  4: { itemMax: +1, itemCd:  0, duelCd: 3, compCd: 5 },
+  5: { itemMax: +2, itemCd: -1, duelCd: 2, compCd: 4 }
+};
+const tableBal = () => TABLE_BAL[Math.max(2, Math.min(5, NP | 0))] || TABLE_BAL[3];
+function itemLimit(key) {
+  const b = ITEM_LIMITS[key]; if (!b) return null;
+  const t = tableBal();
+  if (key === 'loaded') return { max: b.max, cd: b.cd };
+  return { max: Math.max(1, b.max + t.itemMax), cd: b.cd ? Math.max(1, b.cd + t.itemCd) : 0 };
+}
 
 function blankP(lives) {
   return { out: false, lives, skip: 0, why: '', poison: 0, curse: null, mirror: false, loaded: false, cloak: 0, hook: false, disc: 0, hurt: false, twin: false, laps: 0,
@@ -4767,7 +4784,7 @@ function openGuide() {
     <li>🏕️ <b>Rest Camp</b> — cures poison, curses and freezes; restores a shield; a little gold.</li>
     <li>❓ <b>Hidden traps</b> — spikes, poison, gold-thieving pits, cages. 🧙 Wizards sense them ahead, 🧑 Humans may disarm them, 😇 Angels shrug off poison and cages, 😈 Demons ignore spikes.</li>
     <li>👹 <b>Bosses</b> block the way: 🧊 Ice Titan (33), 🐉 Ancient Dragon (56), 💀 Lich King (82). Their health is shared — chip away, land the final blow for the best loot.</li></ul></div>
-  <div class="guide-sec"><h4>🛒 New Black Market items</h4><p>⏪ Time Rewind · 🪞 Mirror Curse · 🎲 Loaded Dice (1/match) · 👻 Phantom Cloak · 🪝 Snakeslayer Hook · 🎯 Bounty Contract · ⚡ Chain Lightning. Still one purchase per turn, with match limits and cooldowns.</p></div>
+  <div class="guide-sec"><h4>🛒 New Black Market items</h4><p>⏪ Time Rewind · 🪞 Mirror Curse · 🎲 Loaded Dice (1/match) · 👻 Phantom Cloak · 🪝 Snakeslayer Hook · 🎯 Bounty Contract · ⚡ Chain Lightning. Still one purchase per turn, with match limits and cooldowns that scale with the table: <b>2 players = tighter caps</b> (a single rival takes every hit), <b>4–5 players = more uses</b>, shorter cooldowns.</p></div>
   <div class="guide-sec"><h4>🌍 World events</h4><p>Every 3–5 rounds the dungeon announces an event (Gold Rush, Dark Storm, Dragon's Wrath…). Everyone sees the same event.</p></div>
   <div class="guide-sec"><h4>⚔️ The Arena</h4><p>Duel a rival (higher roll wins $50), start a Treasure Competition, form a 3-round Alliance (and betray it if you dare). The player in the lead is <b>Wanted</b>: sabotaging them pays a bounty.</p></div>
   <div class="guide-sec"><h4>🏅 Titles &amp; achievements</h4><p>Earned by how you play and shown beside your name. They are cosmetic: they never change the numbers.</p></div>
@@ -5180,7 +5197,7 @@ function getCost(p, key) {
 const marketOpen = () => !rpgOn() || RPG.cfg.market;
 function itemStatus(p, key) {                  // '' when buyable, otherwise the reason it is not
   if (!rpgOn() || !SHOP_ITEMS[key].rpg) return '';
-  const lim = ITEM_LIMITS[key], r = RP(p); if (!lim) return '';
+  const lim = itemLimit(key), r = RP(p); if (!lim) return '';
   const n = r.bought[key] || 0;
   if (n >= lim.max) return 'sold out';
   const wait = lim.cd - (RPG.round - (r.boughtAt[key] === undefined ? -99 : r.boughtAt[key]));
@@ -5218,7 +5235,7 @@ function renderShop() {
     if (item.rpg && !rpgOn()) return;
     const price = getCost(p, key), full = SHOP_ITEMS[key].cost;
     const poor = playerCash[p] < price, why = itemStatus(p, key);
-    const lim = rpgOn() && item.rpg ? ITEM_LIMITS[key] : null, left = lim ? Math.max(0, lim.max - (RP(p).bought[key] || 0)) : 0;
+    const lim = rpgOn() && item.rpg ? itemLimit(key) : null, left = lim ? Math.max(0, lim.max - (RP(p).bought[key] || 0)) : 0;
     const btn = document.createElement('button');
     btn.className = 'shop-item' + ((poor || shopPurchasedThisTurn || why || !open || banned) ? ' disabled' : '');
     btn.style.setProperty('--accent', item.accent);
@@ -5612,11 +5629,11 @@ function arenaWhy(kind, me, t) {              // reason an arena action is unava
     if (isAllied(me, t)) return 'not against your ally';
     if (playerCash[me] < 50) return 'you need $50';
     if (playerCash[t] < 50) return `${playerName(t)} cannot match the $50 stake`;
-    if (RPG.round - r.duelAt < 3) return `wait ${3 - (RPG.round - r.duelAt)} round(s)`;
+    if (RPG.round - r.duelAt < tableBal().duelCd) return `wait ${tableBal().duelCd - (RPG.round - r.duelAt)} round(s)`;
     return '';
   }
   if (kind === 'comp') {
-    if (RPG.round - RPG.compAt < 6) return `held recently — again in ${6 - (RPG.round - RPG.compAt)} round(s)`;
+    if (RPG.round - RPG.compAt < tableBal().compCd) return `held recently — again in ${tableBal().compCd - (RPG.round - RPG.compAt)} round(s)`;
     const n = alive().filter(q => playerCash[q] >= 30).length;
     if (n < 2) return 'needs two heroes with $30';
     if (playerCash[me] < 30) return 'you need $30';

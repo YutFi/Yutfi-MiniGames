@@ -212,7 +212,7 @@ test('black market: new items, prices, limits, once per turn', async () => {
   // wizard discount & festival
   fresh('std', ['wizard', 'angel'], 1, true); eq(E("getCost(1,'cloak')"), 120, 'wizard −25%'); E('RPG.mods.fest = 2'); eq(E("getCost(1,'cloak')"), 84, 'festival −30% stacks'); E('RP(1).disc = 0.5'); eq(E("getCost(1,'cloak')"), 42, 'coupon −50% stacks');
   // limits & cooldowns
-  fresh('std', ['demon', 'angel'], 1, true); E('playerCash[1] = 5000');
+  fresh('std', ['demon', 'angel', 'human'], 1, true); E('playerCash[1] = 5000');   // limits are tuned for 3 players (see the balance test for 2 / 4 / 5)
   eq(E("buyShopItem('loaded')"), true, 'loaded dice bought'); E('shopPurchasedThisTurn=false; RP(1).loaded=false'); eq(E("buyShopItem('loaded')"), false, 'loaded dice: 1 per match');
   E('shopPurchasedThisTurn=false'); eq(E("buyShopItem('cloak')"), true, 'cloak #1'); E('shopPurchasedThisTurn=false; RP(1).cloak=0'); eq(E("buyShopItem('cloak')"), false, 'cloak cooldown (2 rounds)'); E('RPG.round += 2; shopPurchasedThisTurn=false'); eq(E("buyShopItem('cloak')"), true, 'cloak again after the cooldown');
   E('RP(1).cloak=0'); for (let i = 0; i < 4; i++) { E('RPG.round += 3; shopPurchasedThisTurn=false; RP(1).cloak=0'); E("buyShopItem('cloak')"); } eq(E('RP(1).bought.cloak'), 3, 'cloak capped at 3 per match');
@@ -449,6 +449,25 @@ test('online guards: nothing starts while a Jack deal or a pending decision hold
   E('NET.decWait = null; jack = { p: currentPlayer }'); ok(E('canAct()') === false, 'a Jack deal in progress blocks actions');
   const h0 = E('moveHistory.length'); E('handleRollClick()'); ok(E('isRolling') === false && E('moveHistory.length') === h0, 'clicking the dice during a Jack deal does nothing');
   E('jack = null; NET.on = false; fastMode = true');
+});
+
+test('balance: power limits scale with the number of players', async () => {
+  const L = (n, k) => { fresh('std', ['human', 'wizard', 'demon', 'angel', 'human'].slice(0, n), 11); return E(`itemLimit('${k}')`); };
+  const keys = ['rewind', 'mirror', 'loaded', 'cloak', 'hook', 'bounty', 'lightning'];
+  for (const k of keys) {
+    const l2 = L(2, k), l3 = L(3, k), l4 = L(4, k), l5 = L(5, k);
+    ok(l2.max <= l3.max && l3.max <= l4.max && l4.max <= l5.max, `${k}: caps never shrink as the table grows (${l2.max},${l3.max},${l4.max},${l5.max})`);
+    ok(l2.max >= 1, `${k}: always at least one use`);
+    if (k === 'loaded') ok(l2.max === 1 && l5.max === 1, 'Loaded Dice stays one use per match at every table size');
+    else { ok(l2.max < l3.max || l3.max === 1, `${k}: 2 players is tighter than 3`); ok(l4.max > l3.max && l5.max > l4.max, `${k}: 4 and 5 players open the cap`); }
+    if (l3.cd) ok(l2.cd > l3.cd && l5.cd < l3.cd, `${k}: cooldown longer with 2 players, shorter with 5`);
+  }
+  ok(JSON.stringify(L(3, 'hook')) === JSON.stringify({ max: 3, cd: 0 }) && JSON.stringify(L(3, 'lightning')) === JSON.stringify({ max: 2, cd: 4 }), '3 players keeps the original tuning');
+  // the purchase gate really uses it: with 2 players the 3rd Hook is sold out, with 4 it is not
+  fresh('std', ['human', 'wizard'], 11); E('RP(1).bought.hook = 2'); ok(E("itemStatus(1,'hook')") === 'sold out', '2 players: Hook sells out after 2');
+  fresh('std', ['human', 'wizard', 'demon', 'angel'], 11); E('RP(1).bought.hook = 3'); ok(E("itemStatus(1,'hook')") === '', '4 players: a 4th Hook is still on sale');
+  fresh('std', ['human', 'wizard'], 11); E('RP(1).duelAt = RPG.round - 3'); ok(E("arenaWhy('duel',1,2)").startsWith('wait'), '2 players: duel cooldown is 4 rounds');
+  fresh('std', ['human', 'wizard', 'demon'], 11); E('RP(1).duelAt = RPG.round - 3'); ok(!E("arenaWhy('duel',1,2)").startsWith('wait'), '3 players: duel cooldown is 3 rounds');
 });
 
 // ---------------------------------------------------------------------------------------------
